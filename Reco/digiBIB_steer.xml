@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!--
+?xml-stylesheet type="text/xsl"
+href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
+-->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+  <!-- == List of processors to execute                                                                      == -->
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+
+  <execute>
+    <!-- ========== setup  ========== -->
+    <processor name="MyAIDAProcessor"/>
+    <processor name="EventNumber" />
+    <processor name="Config" />
+
+    <!-- ==========  Geometry initialization  ========== -->
+    <processor name="InitDD4hep"/>
+
+    <!-- ==========  Overlay  ========== -->
+    <processor name="OverlayBIB"/>
+
+    <!-- ==========  Digitization  ========== -->
+    <processor name="VXDBarrelDigitiser"/>
+    <processor name="VXDEndcapDigitiser"/>
+    <processor name="InnerPlanarDigiProcessor"/>
+    <processor name="InnerEndcapPlanarDigiProcessor"/>
+    <processor name="OuterPlanarDigiProcessor"/>
+    <processor name="OuterEndcapPlanarDigiProcessor"/>
+    <processor name="MyDDCaloDigi"/>
+
+    <!-- ==========  Output  ========== -->
+    <processor name="Output_REC"/>
+
+  </execute>
+
+
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+  <!-- == Global setup                                                                                       == -->
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+
+  <processor name="Config" type="CLICRecoConfig" >
+    <parameter name="Verbosity" options="DEBUG0-9,MESSAGE0-9,WARNING0-9,ERROR0-9,SILENT"> DEBUG7  </parameter>
+    <!--Which option to use for Overlay: False, BIB. Then use, e.g., Config.OverlayFalse in the condition-->
+    <parameter name="Overlay" type="string">BIB</parameter>
+    <!--Possible values and conditions for option Overlay-->
+    <parameter name="OverlayChoices" type="StringVec">False BIB</parameter>
+    <!--Which option to use for Tracking: Truth, ConformalPlusExtrapolator, Conformal. Then use, e.g., Config.TrackingTruth in the condition-->
+    <parameter name="Tracking" type="string">Truth</parameter>
+    <!--Possible values and conditions for option Tracking-->
+    <parameter name="TrackingChoices" type="StringVec">Truth Conformal</parameter>
+    <!--Which option to use for VertexUnconstrained: ON, OFF. Then use, e.g., Config.VertexUnconstrainedOFF in the condition-->
+    <parameter name="VertexUnconstrained" type="string">OFF </parameter>
+    <!--Possible values and conditions for option Tracking-->
+    <parameter name="VertexUnconstrainedChoices" type="StringVec">ON OFF  </parameter>
+    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE  </parameter> 
+  </processor>
+
+  <processor name="EventNumber" type="Statusmonitor">
+    <parameter name="HowOften" type="int">1 </parameter>
+    <parameter name="Verbosity" type="string"> MESSAGE </parameter>
+  </processor>
+
+  <processor name="MyAIDAProcessor" type="AIDAProcessor">
+    <parameter name="FileName" type="string">
+      lctuple_nuGun_actsseededckf
+    </parameter>
+    <parameter name="FileType" type="string">root</parameter>
+  </processor>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      /data/nuGun/sim/nuGun_sim.slcio
+    </parameter>
+    <parameter name="MaxRecordNumber" value="2" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity"	options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">MESSAGE0</parameter>
+  </global>
+
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+  <!-- == Output configuration                                                                               == -->
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+
+  <processor name="Output_REC" type="LCIOOutputProcessor">
+    <!--   standard output: full reconstruction keep all collections -->
+    <parameter name="LCIOOutputFile" type="string"> nuGun_BIB10_digi.slcio </parameter>
+    <parameter name="FullSubsetCollections" type="StringVec"> EfficientMCParticles InefficientMCParticles </parameter>
+    <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+    <!-- <parameter name="SplitFileSizekB" type="int">996147 </parameter> -->
+    <parameter name="Verbosity" type="string">WARNING </parameter>
+    <parameter name="DropCollectionNames" type="StringVec"></parameter>
+    <parameter name="DropCollectionTypes" type="StringVec"></parameter>
+    <parameter name="KeepCollectionNames" type="StringVec"> MCParticle_Tracks </parameter>
+  </processor>
+
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+  <!-- == DD4hep configuration                                                                               == -->
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+  
+  <processor name="InitDD4hep" type="InitializeDD4hep">
+    <!--InitializeDD4hep reads a compact xml file and initializes the dd4hep::Detector object-->
+    <!--Name of the DD4hep compact xml file to load-->
+    <parameter name="DD4hepXMLFile" type="string">
+      /code/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml
+    </parameter>
+    <!--Alternate name for EncodingStringParameterName-->
+    <!--If given, the Compact File parameter of that name will be used as argument to LCTrackerCellID::set_encoding_string()-->
+    <parameter name="EncodingStringParameterName" type="string"> GlobalTrackerReadoutID  </parameter>
+    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+    <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
+  </processor>
+
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+  <!-- == Overlay configuration                                                                              == -->
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+
+  <group name="Overlay">
+    <parameter name="MCParticleCollectionName" type="string">MCParticle </parameter>
+    <!--The output MC Particle Collection Name for the physics event-->
+    <parameter name="MCPhysicsParticleCollectionName" type="string"> MCPhysicsParticles </parameter>
+    <!--Time difference between bunches in the bunch train in ns-->
+    <parameter name="Delta_t" type="float" value="1"/>
+    <!--Number of bunches in a bunch train-->
+    <parameter name="NBunchtrain" type="int" value="1"/>
+    <!--Whether MCParticle collections should be merged (slow with BIB) -->
+    <parameter name="MergeMCParticles" type="bool" value="false"/>
+    <!--Lower time limit for collections with a single value -->
+    <parameter name="IntegrationTimeMin" type="float" value="-0.36"/>
+
+    <parameter name="Collection_IntegrationTimes" type="StringVec" >
+      VertexBarrelCollection        -0.36 0.48
+      VertexEndcapCollection        -0.36 0.48
+
+      InnerTrackerBarrelCollection  -0.36 0.48
+      InnerTrackerEndcapCollection  -0.36 0.48
+
+      OuterTrackerBarrelCollection  -0.36 0.48
+      OuterTrackerEndcapCollection  -0.36 0.48
+
+      ECalBarrelCollection          10.
+      ECalEndcapCollection          10.
+      ECalPlugCollection            10.
+
+      HCalBarrelCollection          10.
+      HCalEndcapCollection          10.
+      HCalRingCollection            10.
+    </parameter>
+    <!--Number of the Bunch crossing of the physics event-->
+    <parameter name="PhysicsBX" type="int" value="1"/>
+    <!--Draw random number of Events to overlay from Poisson distribution with  mean value NumberBackground-->
+    <parameter name="Poisson_random_NOverlay" type="bool" value="false"/>
+    <!--Place the physics event at an random position in the train - overrides PhysicsBX-->
+    <parameter name="RandomBx" type="bool" value="false"/>
+    <!--[mm/ns] (float) - default 5.0e-2 (5cm/us)-->
+    <parameter name="TPCDriftvelocity" type="float" value="0.05"/>
+    <parameter name="BackgroundFileNames" type="StringVec"> </parameter>
+
+    <processor name="OverlayFalse" type="OverlayTimingGeneric">
+      <parameter name="BackgroundFileNames" type="StringVec"> /dev/null</parameter>
+      <parameter name="NBunchtrain" type="int" value="0"/>
+      <parameter name="NumberBackground" type="float" value="0."/>
+    </processor>
+
+    <processor name="OverlayBIB" type="OverlayTimingGeneric">
+      <parameter name="BackgroundFileNames" type="StringVec">
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0010_allHits.slcio
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0011_allHits.slcio
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0012_allHits.slcio
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0013_allHits.slcio
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0014_allHits.slcio
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0015_allHits.slcio
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0016_allHits.slcio
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0017_allHits.slcio
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0018_allHits.slcio
+/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0019_allHits.slcio
+      </parameter>
+      <parameter name="StartBackgroundFileIndex" type="int" value="0"/>
+      <parameter name="AllowReusingBackgroundFiles" type="bool" value="true" />
+      <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG0 </parameter>
+      <parameter name="NBunchtrain" type="int" value="1" />
+      <parameter name="NumberBackground" type="float" value="1" />
+    </processor>
+    
+    <!-- processor name="OverlayBIB" type="OverlayTimingGeneric">
+      <parameter name="BackgroundFileNames" type="StringVec">
+      /data/BIB10TeV/BIB10TeV_muplus_sim.slcio
+      /data/BIB10TeV/BIB10TeV_muminus_sim.slcio
+      </parameter>
+      <parameter name="StartBackgroundFileIndex" type="int" value="0"/>
+      <parameter name="AllowReusingBackgroundFiles" type="bool" value="true" />
+      <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG0 </parameter>
+      <parameter name="NBunchtrain" type="int" value="1" />
+      <parameter name="NumberBackground" type="float" value="1276" />
+    </processor -->
+
+  </group>
+
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+  <!-- == Tracker Digitizer configuration                                                                    == -->
+  <!-- ======================================================================================================== -->
+  <!-- ======================================================================================================== -->
+
+  <processor name="VXDBarrelDigitiser" type="DDPlanarDigiProcessor">
+    <parameter name="SubDetectorName" type="string"> Vertex </parameter>
+    <parameter name="IsStrip" type="bool">false </parameter>
+    <parameter name="ResolutionU" type="float"> 0.005 </parameter>
+    <parameter name="ResolutionV" type="float"> 0.005 </parameter>
+    <parameter name="SimTrackHitCollectionName" type="string" lcioInType="SimTrackerHit"> VertexBarrelCollection </parameter>
+    <parameter name="SimTrkHitRelCollection" type="string" lcioOutType="LCRelation"> VBTrackerHitsRelations </parameter>
+    <parameter name="TrackerHitCollectionName" type="string" lcioOutType="TrackerHitPlane"> VBTrackerHits </parameter>
+    <parameter name="ResolutionT" type="FloatVec"> 0.03  </parameter>
+    <parameter name="UseTimeWindow" type="bool"> true </parameter>
+    <parameter name="CorrectTimesForPropagation" type="bool" value="true"/>
+    <parameter name="TimeWindowMin" type="float"> -0.09 </parameter>
+    <parameter name="TimeWindowMax" type="float"> 0.15 </parameter>
+    <parameter name="Verbosity" type="string"> WARNING </parameter>
+  </processor>
+
+  <processor name="VXDEndcapDigitiser" type="DDPlanarDigiProcessor">
+    <parameter name="SubDetectorName" type="string"> Vertex </parameter>
+    <parameter name="IsStrip" type="bool">false </parameter>
+    <parameter name="ResolutionU" type="float"> 0.005 </parameter>
+    <parameter name="ResolutionV" type="float"> 0.005 </parameter>
+    <parameter name="SimTrackHitCollectionName" type="string" lcioInType="SimTrackerHit"> VertexEndcapCollection </parameter>
+    <parameter name="SimTrkHitRelCollection" type="string" lcioOutType="LCRelation"> VETrackerHitsRelations </parameter>
+    <parameter name="TrackerHitCollectionName" type="string" lcioOutType="TrackerHitPlane"> VETrackerHits </parameter>
+    <parameter name="ResolutionT" type="FloatVec"> 0.03  </parameter>
+    <parameter name="UseTimeWindow" type="bool"> true </parameter>
+    <parameter name="CorrectTimesForPropagation" type="bool" value="true"/>
+    <parameter name="TimeWindowMin" type="float"> -0.09 </parameter>
+    <parameter name="TimeWindowMax" type="float"> 0.15 </parameter>
+    <parameter name="Verbosity" type="string"> WARNING </parameter>
+  </processor>
+
+  <processor name="InnerPlanarDigiProcessor" type="DDPlanarDigiProcessor">
+    <parameter name="SubDetectorName" type="string"> InnerTrackers </parameter>
+    <parameter name="IsStrip" type="bool"> false </parameter>
+    <parameter name="ResolutionU" type="float"> 0.007 </parameter>
+    <parameter name="ResolutionV" type="float"> 0.090 </parameter>
+    <parameter name="SimTrackHitCollectionName" type="string" lcioInType="SimTrackerHit"> InnerTrackerBarrelCollection </parameter>
+    <parameter name="SimTrkHitRelCollection" type="string" lcioOutType="LCRelation"> IBTrackerHitsRelations </parameter>
+    <parameter name="TrackerHitCollectionName" type="string" lcioOutType="TrackerHitPlane"> IBTrackerHits </parameter>
+    <parameter name="ResolutionT" type="FloatVec"> 0.06  </parameter>
+    <parameter name="UseTimeWindow" type="bool"> true </parameter>
+    <parameter name="CorrectTimesForPropagation" type="bool" value="true"/>
+    <parameter name="TimeWindowMin" type="float"> -0.18 </parameter>
+    <parameter name="TimeWindowMax" type="float"> 0.3 </parameter>
+    <parameter name="Verbosity" type="string"> WARNING </parameter>
+  </processor>
+
+  <processor name="InnerEndcapPlanarDigiProcessor" type="DDPlanarDigiProcessor">
+    <parameter name="SubDetectorName" type="string"> InnerTrackers </parameter>
+    <parameter name="IsStrip" type="bool"> false </parameter>
+    <parameter name="ResolutionU" type="float"> 0.007 </parameter>
+    <parameter name="ResolutionV" type="float"> 0.090 </parameter>
+    <parameter name="SimTrackHitCollectionName" type="string" lcioInType="SimTrackerHit"> InnerTrackerEndcapCollection </parameter>
+    <parameter name="SimTrkHitRelCollection" type="string" lcioOutType="LCRelation"> IETrackerHitsRelations </parameter>
+    <parameter name="TrackerHitCollectionName" type="string" lcioOutType="TrackerHitPlane"> IETrackerHits </parameter>
+    <parameter name="ResolutionT" type="FloatVec"> 0.06  </parameter>
+    <parameter name="UseTimeWindow" type="bool"> true </parameter>
+    <parameter name="CorrectTimesForPropagation" type="bool" value="true"/>
+    <parameter name="TimeWindowMin" type="float"> -0.18 </parameter>
+    <parameter name="TimeWindowMax" type="float"> 0.3 </parameter>
+    <parameter name="Verbosity" type="string"> WARNING </parameter>
+  </processor>
+
+  <processor name="OuterPlanarDigiProcessor" type="DDPlanarDigiProcessor">
+    <parameter name="SubDetectorName" type="string"> OuterTrackers </parameter>
+    <parameter name="IsStrip" type="bool"> false </parameter>
+    <parameter name="ResolutionU" type="float"> 0.007 </parameter>
+    <parameter name="ResolutionV" type="float"> 0.090 </parameter>
+    <parameter name="SimTrackHitCollectionName" type="string" lcioInType="SimTrackerHit"> OuterTrackerBarrelCollection </parameter>
+    <parameter name="SimTrkHitRelCollection" type="string" lcioOutType="LCRelation"> OBTrackerHitsRelations </parameter>
+    <parameter name="TrackerHitCollectionName" type="string" lcioOutType="TrackerHitPlane"> OBTrackerHits </parameter>
+    <parameter name="ResolutionT" type="FloatVec"> 0.06  </parameter>
+    <parameter name="UseTimeWindow" type="bool"> true </parameter>
+    <parameter name="CorrectTimesForPropagation" type="bool" value="true"/>
+    <parameter name="TimeWindowMin" type="float"> -0.18 </parameter>
+    <parameter name="TimeWindowMax" type="float"> 0.3 </parameter>
+    <parameter name="Verbosity" type="string"> WARNING </parameter>
+  </processor>
+
+  <processor name="OuterEndcapPlanarDigiProcessor" type="DDPlanarDigiProcessor">
+    <parameter name="SubDetectorName" type="string"> OuterTrackers </parameter>
+    <parameter name="IsStrip" type="bool"> false </parameter>
+    <parameter name="ResolutionU" type="float"> 0.007 </parameter>
+    <parameter name="ResolutionV" type="float"> 0.090 </parameter>
+    <parameter name="SimTrackHitCollectionName" type="string" lcioInType="SimTrackerHit"> OuterTrackerEndcapCollection </parameter>
+    <parameter name="SimTrkHitRelCollection" type="string" lcioOutType="LCRelation"> OETrackerHitsRelations </parameter>
+    <parameter name="TrackerHitCollectionName" type="string" lcioOutType="TrackerHitPlane"> OETrackerHits </parameter>
+    <parameter name="ResolutionT" type="FloatVec"> 0.06  </parameter>
+    <parameter name="UseTimeWindow" type="bool"> true </parameter>
+    <parameter name="CorrectTimesForPropagation" type="bool" value="true"/>
+    <parameter name="TimeWindowMin" type="float"> -0.18 </parameter>
+    <parameter name="TimeWindowMax" type="float"> 0.3 </parameter>
+    <parameter name="Verbosity" type="string"> WARNING </parameter>
+  </processor>
+
+  <processor name="MyDDCaloDigi" type="DDCaloDigi">
+    <!--Performs simple digitization of sim calo hits...-->
+
+    <!--Hit times histograms-->
+    <parameter name="Histograms" type="int">0 </parameter>
+    <parameter name="RootFile" type="string">Digi_SiW.root</parameter>
+    <!--CaloHit Relation Collection-->
+    <parameter name="RelationOutputCollection" type="string" lcioOutType="LCRelation">RelationCaloHit </parameter>
+    <!--energy required to create e-h pair in silicon (in eV)-->
+    <parameter name="energyPerEHpair" type="float">3.6 </parameter>
+    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+    <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
+
+    <!-- ECAL -->
+
+    <!--ECAL Collection Names-->
+    <parameter name="ECALCollections" type="StringVec" lcioInType="SimCalorimeterHit">ECalBarrelCollection ECalEndcapCollection ECalPlugCollection </parameter>
+    <!--ECAL Collection of real Hits-->
+    <parameter name="ECALOutputCollection0" type="string" lcioOutType="CalorimeterHit">ECALBarrel </parameter>
+    <!--ECAL Collection of real Hits-->
+    <parameter name="ECALOutputCollection1" type="string" lcioOutType="CalorimeterHit">ECALEndcap </parameter>
+    <!--ECAL Collection of real Hits-->
+    <parameter name="ECALOutputCollection2" type="string" lcioOutType="CalorimeterHit">ECALOther </parameter>
+    <!--Digital Ecal-->
+    <parameter name="IfDigitalEcal" type="int">0 </parameter>
+    <!--Index of ECal Layers-->
+    <parameter name="ECALLayers" type="IntVec">41 100  </parameter>
+    <!--default ECAL layer configuration (used if not found in gear file)-->
+    <parameter name="ECAL_default_layerConfig" type="string">000000000000000 </parameter>
+    <!--default number of virtual cells (used if not found in gear file)-->
+    <parameter name="StripEcal_default_nVirtualCells" type="int">9 </parameter>
+
+    <!--calibration to convert ECAL deposited energy to MIPs-->
+    <parameter name="CalibECALMIP" type="float">0.0001 </parameter>
+    <!--Calibration coefficients for ECAL-->
+    <parameter name="CalibrECAL" type="FloatVec">35.8411424188 35.8411424188</parameter>
+    <!--Threshold for ECAL Hits in GeV-->
+    <parameter name="ECALThreshold" type="float">5e-05 </parameter>
+    <!--Unit for ECAL Threshold. Can be "GeV", "MIP" or "px". MIP and px need properly set calibration constants-->
+    <parameter name="ECALThresholdUnit" type="string">GeV </parameter>
+    <!--Energy correction for ECAL endcap-->
+    <parameter name="ECALEndcapCorrectionFactor" type="float">1.0672142727</parameter>
+    <!--Correct for ECAL gaps-->
+    <parameter name="ECALGapCorrection" type="int">1 </parameter>
+    <!--Factor applied to gap correction-->
+    <parameter name="ECALGapCorrectionFactor" type="float">1 </parameter>
+    <!--Factor applied to module gap correction-->
+    <parameter name="ECALModuleGapCorrectionFactor" type="float">0.0 </parameter>
+    <!--Ecal correction for theta dependency of calibration for MAPS-->
+    <parameter name="MapsEcalCorrection" type="int">0 </parameter>
+
+    <!--ECAL total number of MPPC/SiPM pixels for implementation of saturation effect-->
+    <parameter name="ECAL_PPD_N_Pixels" type="int">10000 </parameter>
+    <!--ECAL fractional uncertainty of effective total number of MPPC/SiPM pixels-->
+    <parameter name="ECAL_PPD_N_Pixels_uncertainty" type="float">0.05 </parameter>
+    <!--# Photo-electrons per MIP (scintillator): used to poisson smear #PEs if >0-->
+    <parameter name="ECAL_PPD_PE_per_MIP" type="float">7 </parameter>
+    <!--apply realistic digitisation to ECAL hits? (0=none, 1=silicon, 2=scintillator)-->
+    <parameter name="ECAL_apply_realistic_digi" type="int">0 </parameter>
+    <!--ECAL random dead cell fraction (as a fraction: 0->1) -->
+    <parameter name="ECAL_deadCellRate" type="float">0 </parameter>
+    <!--store dead ECAL cells in memory? (WARNING: can take a lot of memory if used...) -->
+    <parameter name="ECAL_deadCell_memorise" type="bool">false </parameter>
+    <!--typical electronics noise (ECAL, in MIP units)-->
+    <parameter name="ECAL_elec_noise_mips" type="float">0 </parameter>
+    <!--maximum of dynamic range for ECAL (in MIPs)-->
+    <parameter name="ECAL_maxDynamicRange_MIP" type="float">2500 </parameter>
+    <!--correlated ECAL random gaussian miscalibration (as a fraction: 1.0 = 100%) -->
+    <parameter name="ECAL_miscalibration_correl" type="float">0 </parameter>
+    <!--uncorrelated ECAL random gaussian miscalibration (as a fraction: 1.0 = 100%) -->
+    <parameter name="ECAL_miscalibration_uncorrel" type="float">0 </parameter>
+    <!--store oncorrelated ECAL miscalbrations in memory? (WARNING: can take a lot of memory if used...) -->
+    <parameter name="ECAL_miscalibration_uncorrel_memorise" type="bool">false </parameter>
+    <!--variation of mppc/sipm pixels capacitance in ECAL (as a fraction: 0.01=1%)-->
+    <parameter name="ECAL_pixel_spread" type="float">0.05 </parameter>
+    <!--length scale for absorbtion along scintillator strip (mm)-->
+    <parameter name="ECAL_strip_absorbtionLength" type="float">1e+06 </parameter>
+
+    <!--Use ECAL hit times-->
+    <parameter name="UseEcalTiming" type="int">1 </parameter>
+    <!--Correct ECAL hit times for propagation: radial distance/c-->
+    <parameter name="ECALCorrectTimesForPropagation" type="int">1 </parameter>
+    <!--ECAL Time Window minimum time in ns-->
+    <parameter name="ECALTimeWindowMin" type="float">-1 </parameter>
+    <!--ECAL BarrelTime Window maximum time in ns-->
+    <parameter name="ECALBarrelTimeWindowMax" type="float">10 </parameter>
+    <!--ECAL Endcap Time Window maximum time in ns-->
+    <parameter name="ECALEndcapTimeWindowMax" type="float">10 </parameter>
+    <!--Use simple time window cut on hit times? If false: use original hit-time clustering algorithm. If true: use time window defined by ECALBarrelTimeWindowMin and ECALBarrelTimeWindowMax-->
+    <parameter name="ECALSimpleTimingCut" type="bool">true </parameter>
+    <!--ECAL Minimum Delta Time in ns for resolving two hits--> <!-- used only if ECALSimpleTimingCut is false -->
+    <parameter name="ECALDeltaTimeHitResolution" type="float">10 </parameter>
+    <!--ECAL Time Resolution used to smear hit times-->
+    <parameter name="ECALTimeResolution" type="float">10 </parameter>
+
+    <!-- HCAL -->
+
+    <!--HCAL Collection Names-->
+    <parameter name="HCALCollections" type="StringVec" lcioInType="SimCalorimeterHit">HCalBarrelCollection HCalEndcapCollection HCalRingCollection </parameter>
+    <!--HCAL Collection of real Hits-->
+    <parameter name="HCALOutputCollection0" type="string" lcioOutType="CalorimeterHit">HCALBarrel </parameter>
+    <!--HCAL Collection of real Hits-->
+    <parameter name="HCALOutputCollection1" type="string" lcioOutType="CalorimeterHit">HCALEndcap </parameter>
+    <!--HCAL Collection of real Hits-->
+    <parameter name="HCALOutputCollection2" type="string" lcioOutType="CalorimeterHit">HCALOther </parameter>
+    <!--Digital Hcal-->
+    <parameter name="IfDigitalHcal" type="int">0 </parameter>
+    <!--Index of HCal Layers-->
+    <parameter name="HCALLayers" type="IntVec">100  </parameter>
+
+    <!--calibration to convert HCAL deposited energy to MIPs-->
+    <parameter name="CalibHCALMIP" type="float">0.0001 </parameter>
+    <!--Calibration coefficients for Barrel HCAL-->
+    <parameter name="CalibrHCALBarrel" type="FloatVec">49.2031079063</parameter>
+    <!-- CalibrHcalBarrel Should be 38.995 for 17 mm -->
+    <!--Calibration coefficients for EndCap HCAL-->
+    <parameter name="CalibrHCALEndcap" type="FloatVec">53.6263377733</parameter>
+    <!--Calibration coefficients for Other (Ring) HCAL-->
+    <parameter name="CalibrHCALOther" type="FloatVec">62.2125698179</parameter>
+    <!--Threshold for HCAL Hits in GeV-->
+    <parameter name="HCALThreshold" type="FloatVec">0.00025  </parameter>
+    <!--Unit for HCAL Threshold. Can be "GeV", "MIP" or "px". MIP and px need properly set calibration constants-->
+    <parameter name="HCALThresholdUnit" type="string">GeV </parameter>
+    <!--Energy correction for HCAL endcap-->
+    <parameter name="HCALEndcapCorrectionFactor" type="float">1.000 </parameter>
+    <!--Correct for ECAL gaps-->
+    <parameter name="HCALGapCorrection" type="int">1 </parameter>
+    <!--Factor applied to module gap correction-->
+    <parameter name="HCALModuleGapCorrectionFactor" type="float">0.5 </parameter>
+
+    <!--HCAL total number of MPPC/SiPM pixels for implementation of saturation effect-->
+    <parameter name="HCAL_PPD_N_Pixels" type="int">400 </parameter>
+    <!--HCAL fractional uncertainty of effective total number of MPPC/SiPM pixels-->
+    <parameter name="HCAL_PPD_N_Pixels_uncertainty" type="float">0.05 </parameter>
+    <!--# Photo-electrons per MIP (for AHCAL): used to poisson smear #PEs if >0-->
+    <parameter name="HCAL_PPD_PE_per_MIP" type="float">10 </parameter>
+    <!--apply realistic digitisation to HCAL hits? (0=none, 1=scintillator/SiPM)-->
+    <parameter name="HCAL_apply_realistic_digi" type="int">0 </parameter>
+    <!--HCAL random dead cell fraction (as a fraction: 0->1) -->
+    <parameter name="HCAL_deadCellRate" type="float">0 </parameter>
+    <!--store dead HCAL cells in memory? (WARNING: can take a lot of memory if used...) -->
+    <parameter name="HCAL_deadCell_memorise" type="bool">false </parameter>
+    <!--typical electronics noise (HCAL, in MIP units)-->
+    <parameter name="HCAL_elec_noise_mips" type="float">0 </parameter>
+    <!--maximum of dynamic range for HCAL (in MIPs)-->
+    <parameter name="HCAL_maxDynamicRange_MIP" type="float">200 </parameter>
+    <!--correlated HCAL random gaussian miscalibration (as a fraction: 1.0 = 100%) -->
+    <parameter name="HCAL_miscalibration_correl" type="float">0 </parameter>
+    <!--uncorrelated HCAL random gaussian miscalibration (as a fraction: 1.0 = 100%) -->
+    <parameter name="HCAL_miscalibration_uncorrel" type="float">0 </parameter>
+    <!--store oncorrelated HCAL miscalbrations in memory? (WARNING: can take a lot of memory if used...) -->
+    <parameter name="HCAL_miscalibration_uncorrel_memorise" type="bool">false </parameter>
+    <!--variation of mppc/sipm pixels capacitance in HCAL (as a fraction: 0.01=1%)-->
+    <parameter name="HCAL_pixel_spread" type="float">0 </parameter>
+
+    <!--Use HCAL hit times-->
+    <parameter name="UseHcalTiming" type="int">1 </parameter>
+    <!--Correct HCAL hit times for propagation: radial distance/c-->
+    <parameter name="HCALCorrectTimesForPropagation" type="int">1 </parameter>
+    <!--HCAL Time Window minimum time in ns-->
+    <parameter name="HCALTimeWindowMin" type="float">-1 </parameter>
+    <!--HCAL Time Window maximum time in ns-->
+    <parameter name="HCALBarrelTimeWindowMax" type="float">10 </parameter>
+    <!--HCAL Time Window maximum time in ns-->
+    <parameter name="HCALEndcapTimeWindowMax" type="float">10 </parameter>
+    <!--Use simple time window cut on hit times? If false: use original hit-time clustering algorithm. If true: use time window defined by HCALBarrelTimeWindowMin and HCALBarrelTimeWindowMax-->
+    <parameter name="HCALSimpleTimingCut" type="bool">true </parameter>
+    <!--HCAL Minimum Delta Time in ns for resolving two hits--> <!-- used only if HCALSimpleTimingCut is false -->
+    <parameter name="HCALDeltaTimeHitResolution" type="float">10 </parameter>
+    <!--HCAL Time Resolution used to smear hit times-->
+    <parameter name="HCALTimeResolution" type="float">10 </parameter>
+
+  </processor>
+
+</marlin>
