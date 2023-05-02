@@ -7,6 +7,7 @@ SIM = DD4hepSimulation()
 # The compact XML file
 #SIM.compactFile = "/code/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml"
 SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"
+#SIM.compactFile = "/opt/ilcsoft/muonc/lcgeo/v00-16-08-MC/CLIC/compact/CLIC_o4_v14/CLIC_o4_v14.xml"
 # Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 0.
 SIM.enableDetailedShowerMode = True
@@ -141,7 +142,7 @@ SIM.gun.direction = (1, 1, 0)
 # Setting a distribution will set isotrop = True
 ##
 #SIM.gun.distribution = "uniform"
-SIM.gun.energy = 10.0*GeV
+SIM.gun.energy = GUN_ENERGY*GeV
 
 # isotropic distribution for the particle gun
 ##
@@ -151,7 +152,7 @@ SIM.gun.energy = 10.0*GeV
 
 SIM.gun.isotrop = False
 SIM.gun.multiplicity = 1
-SIM.gun.particle = "gamma"
+SIM.gun.particle = "GUN_PARTICLE_TYPE"
 SIM.gun.phiMax = None
 
 # Minimal azimuthal angle for random distribution
@@ -225,8 +226,7 @@ SIM.physics.pdgfile = os.path.join(
 # Set printlevel to DEBUG to see a printout of all range cuts,
 # but this only works if range cut is not "None"
 ##
-SIM.physics.rangecut = 0.7*mm
-
+SIM.physics.rangecut = None
 SIM.physics.rejectPDGs = {1, 2, 3, 4, 5, 6, 21, 23, 24, 25}
 
 ################################################################################

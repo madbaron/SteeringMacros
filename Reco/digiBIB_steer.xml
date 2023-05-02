@@ -137,28 +137,18 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <parameter name="Delta_t" type="float" value="1"/>
     <!--Number of bunches in a bunch train-->
     <parameter name="NBunchtrain" type="int" value="1"/>
-    <!--Whether MCParticle collections should be merged (slow with BIB) -->
-    <parameter name="MergeMCParticles" type="bool" value="false"/>
-    <!--Lower time limit for collections with a single value -->
-    <parameter name="IntegrationTimeMin" type="float" value="-0.36"/>
+    <parameter name="MergeMCParticles" type="bool" value="false"/> 
 
     <parameter name="Collection_IntegrationTimes" type="StringVec" >
-      VertexBarrelCollection        -0.36 0.48
-      VertexEndcapCollection        -0.36 0.48
+      VertexBarrelCollection -0.36 0.48
+      VertexEndcapCollection -0.36 0.48
 
-      InnerTrackerBarrelCollection  -0.36 0.48
-      InnerTrackerEndcapCollection  -0.36 0.48
+      InnerTrackerBarrelCollection -0.36 0.48
+      InnerTrackerEndcapCollection -0.36 0.48
 
-      OuterTrackerBarrelCollection  -0.36 0.48
-      OuterTrackerEndcapCollection  -0.36 0.48
+      OuterTrackerBarrelCollection -0.36 0.48
+      OuterTrackerEndcapCollection -0.36 0.48
 
-      ECalBarrelCollection          10.
-      ECalEndcapCollection          10.
-      ECalPlugCollection            10.
-
-      HCalBarrelCollection          10.
-      HCalEndcapCollection          10.
-      HCalRingCollection            10.
     </parameter>
     <!--Number of the Bunch crossing of the physics event-->
     <parameter name="PhysicsBX" type="int" value="1"/>
@@ -178,22 +168,29 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
 
     <processor name="OverlayBIB" type="OverlayTimingGeneric">
       <parameter name="BackgroundFileNames" type="StringVec">
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0010_allHits.slcio
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0011_allHits.slcio
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0012_allHits.slcio
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0013_allHits.slcio
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0014_allHits.slcio
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0015_allHits.slcio
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0016_allHits.slcio
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0017_allHits.slcio
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0018_allHits.slcio
-/data/BIB/sim_mumu-1e3x500-26m-lowth-excl_seed0019_allHits.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mumi-1e3x500-26m-lowth-excl_j1.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mumi-1e3x500-26m-lowth-excl_j2.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mumi-1e3x500-26m-lowth-excl_j3.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mumi-1e3x500-26m-lowth-excl_j4.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mumi-1e3x500-26m-lowth-excl_j5.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mumi-1e3x500-26m-lowth-excl_j6.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mumi-1e3x500-26m-lowth-excl_j7.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mumi-1e3x500-26m-lowth-excl_j8.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mupl-1e3x500-26m-lowth-excl_j1.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mupl-1e3x500-26m-lowth-excl_j2.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mupl-1e3x500-26m-lowth-excl_j3.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mupl-1e3x500-26m-lowth-excl_j4.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mupl-1e3x500-26m-lowth-excl_j5.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mupl-1e3x500-26m-lowth-excl_j6.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mupl-1e3x500-26m-lowth-excl_j7.slcio
+/data/MuCollv1_25ns_nEkin150MeV_QGSPBERT_merged/sim_mupl-1e3x500-26m-lowth-excl_j8.slcio
       </parameter>
       <parameter name="StartBackgroundFileIndex" type="int" value="0"/>
-      <parameter name="AllowReusingBackgroundFiles" type="bool" value="true" />
-      <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG0 </parameter>
+      <parameter name="AllowReusingBackgroundFiles" type="bool" value="false" />
       <parameter name="NBunchtrain" type="int" value="1" />
-      <parameter name="NumberBackground" type="float" value="1" />
+      <!-- parameter name="NumberBackground" type="float" value="2993" /-->
+      <parameter name="NumberBackground" type="float" value="2993" />
+      <parameter name="MergeMCParticles" type="bool" value="false" />
     </processor>
     
     <!-- processor name="OverlayBIB" type="OverlayTimingGeneric">
