@@ -68,7 +68,7 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
   <processor name="Config" type="CLICRecoConfig" >
     <parameter name="Verbosity" options="DEBUG0-9,MESSAGE0-9,WARNING0-9,ERROR0-9,SILENT"> DEBUG7  </parameter>
     <!--Which option to use for Overlay: False, BIB. Then use, e.g., Config.OverlayFalse in the condition-->
-    <parameter name="Overlay" type="string">False</parameter>
+    <parameter name="Overlay" type="string">BIB</parameter>
     <!--Possible values and conditions for option Overlay-->
     <parameter name="OverlayChoices" type="StringVec">False BIB</parameter>
     <!--Which option to use for Tracking: Truth, ConformalPlusExtrapolator, Conformal. Then use, e.g., Config.TrackingTruth in the condition-->
@@ -99,7 +99,8 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <parameter name="LCIOInputFiles">
       /data/TYPEEVENT/sim/TYPEEVENT_sim_INFILENAME.slcio
     </parameter>
-    <parameter name="MaxRecordNumber" value="-1" />
+    <!-- parameter name="MaxRecordNumber" value="-1" /-->
+    <parameter name="MaxRecordNumber" value="2" />
     <parameter name="SkipNEvents" value="0" />
     <parameter name="SupressCheck" value="false" />
     <parameter name="Verbosity"	options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">MESSAGE0</parameter>
@@ -107,13 +108,18 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
 
   <processor name="Output_REC" type="LCIOOutputProcessor">
     <!--   standard output: full reconstruction keep all collections -->
-    <parameter name="LCIOOutputFile" type="string"> /data/TYPEEVENT/reco/TYPEEVENT_reco_INFILENAME.slcio </parameter>
+    <if condition="Config.OverlayBIB">
+      <parameter name="LCIOOutputFile" type="string"> /data/TYPEEVENT/recoBIB/TYPEEVENT_reco_INFILENAME.slcio </parameter>
+    </if>
+    <if condition="Config.OverlayFalse">
+      <parameter name="LCIOOutputFile" type="string"> /data/TYPEEVENT/reco/TYPEEVENT_reco_INFILENAME.slcio </parameter>
+    </if>
     <parameter name="FullSubsetCollections" type="StringVec"> EfficientMCParticles InefficientMCParticles </parameter>
     <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
     <!-- <parameter name="SplitFileSizekB" type="int">996147 </parameter> -->
     <parameter name="Verbosity" type="string">WARNING </parameter>
     <parameter name="DropCollectionNames" type="StringVec"></parameter>
-    <parameter name="DropCollectionTypes" type="StringVec">SimCqalorimeterHit SimTrackerHit</parameter>
+    <parameter name="DropCollectionTypes" type="StringVec">SimCalorimeterHit SimTrackerHit</parameter>
     <parameter name="KeepCollectionNames" type="StringVec"></parameter>
 
   </processor>
@@ -160,14 +166,14 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <parameter name="IntegrationTimeMin" type="float" value="-0.36"/>
 
     <parameter name="Collection_IntegrationTimes" type="StringVec" >
-      VertexBarrelCollection -0.36 0.48
-      VertexEndcapCollection -0.36 0.48
+      VertexBarrelCollection -0.5 10.
+      VertexEndcapCollection -0.5 10.
 
-      InnerTrackerBarrelCollection -0.36 0.48
-      InnerTrackerEndcapCollection -0.36 0.48
+      InnerTrackerBarrelCollection -0.5 10.
+      InnerTrackerEndcapCollection -0.5 10.
 
-      OuterTrackerBarrelCollection -0.36 0.48
-      OuterTrackerEndcapCollection -0.36 0.48
+      OuterTrackerBarrelCollection -0.5 10.
+      OuterTrackerEndcapCollection -0.5 10.
 
       ECalBarrelCollection          -0.25 10.
       ECalEndcapCollection          -0.25 10.
@@ -459,7 +465,8 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <!--Calibration coefficients for ECAL-->
     <parameter name="CalibrECAL" type="FloatVec">35.8411424188 35.8411424188</parameter>
     <!--Threshold for ECAL Hits in GeV-->
-    <parameter name="ECALThreshold" type="float">5e-05 </parameter>
+    <!-- parameter name="ECALThreshold" type="float">5e-05 </parameter-->
+    <parameter name="ECALThreshold" type="float">0.0002</parameter>
     <!-- parameter name="ECALThreshold" type="float">0.002</parameter-->
     <!--Unit for ECAL Threshold. Can be "GeV", "MIP" or "px". MIP and px need properly set calibration constants-->
     <parameter name="ECALThresholdUnit" type="string">GeV </parameter>
@@ -543,7 +550,8 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <!--Calibration coefficients for Other (Ring) HCAL-->
     <parameter name="CalibrHCALOther" type="FloatVec">62.2125698179</parameter>
     <!--Threshold for HCAL Hits in GeV-->
-    <parameter name="HCALThreshold" type="FloatVec">0.00025  </parameter>
+    <!-- parameter name="HCALThreshold" type="FloatVec">0.00025  </parameter-->
+    <parameter name="HCALThreshold" type="FloatVec">0.0005  </parameter>
     <!--parameter name="HCALThreshold" type="FloatVec">0.002  </parameter-->
     <!--Unit for HCAL Threshold. Can be "GeV", "MIP" or "px". MIP and px need properly set calibration constants-->
     <parameter name="HCALThresholdUnit" type="string">GeV </parameter>
