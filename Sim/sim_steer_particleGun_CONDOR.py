@@ -5,9 +5,9 @@ from g4units import mm, GeV, MeV, m, deg
 SIM = DD4hepSimulation()
 
 # The compact XML file
-#SIM.compactFile = "/code/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml"
+#SIM.compactFile = "/opt/ilcsoft/muonc/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml"
 SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"
-#SIM.compactFile = "/opt/ilcsoft/muonc/lcgeo/v00-16-08-MC/CLIC/compact/CLIC_o4_v14/CLIC_o4_v14.xml"
+
 # Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 0.
 SIM.enableDetailedShowerMode = True
@@ -128,7 +128,7 @@ SIM.filter.tracker = "edep1kev"
 ################################################################################
 
 # direction of the particle gun, 3 vector
-SIM.gun.direction = (1, 1, 0)
+SIM.gun.direction = (0, 1, 0)
 
 # choose the distribution of the random direction for theta
 ##

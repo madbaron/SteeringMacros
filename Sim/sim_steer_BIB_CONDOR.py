@@ -5,7 +5,7 @@ from g4units import mm, GeV, MeV, m, deg
 SIM = DD4hepSimulation()
 
 # The compact XML file
-SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_v0B/MuColl_v1.xml"
+SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"
 #SIM.compactFile = "/code/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml"
 # Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 0.
@@ -224,7 +224,7 @@ SIM.physics.pdgfile = os.path.join(
 # Set printlevel to DEBUG to see a printout of all range cuts,
 # but this only works if range cut is not "None"
 ##
-SIM.physics.rangecut = 0.7*mm
+SIM.physics.rangecut = None
 
 SIM.physics.rejectPDGs = {1, 2, 3, 4, 5, 6, 21, 23, 24, 25}
 
