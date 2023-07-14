@@ -43,14 +43,26 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <processor name="CKFTracking"/>
     <processor name="TrackDeduper"/>
     <processor name="Refit" />
+    <processor name="MyTrackTruth"/>
 
-    <!-- ===============  Calo and muon digitisation  ================= -->
-    <processor name="MyDDCaloDigi"/>
-    <!--processor name="MyDDSimpleMuonDigi"/-->
+    <!-- ===============  Calo digitisation  ================= -->
+    <processor name="MyEcalBarrelDigi"/>
+    <processor name="MyEcalBarrelReco"/>
+    <processor name="MyEcalEndcapDigi"/>
+    <processor name="MyEcalEndcapReco"/>
+    <processor name="MyHcalBarrelDigi"/>
+    <processor name="MyHcalBarrelReco"/>    
+    <processor name="MyHcalEndcapDigi"/>
+    <processor name="MyHcalEndcapReco"/>
+
+    <!-- ==========  Calo BIB subtraction  ========== -->
+    <processor name="MyEcalBarrelSelector"/>
+    <processor name="MyEcalEndcapSelector"/>
+    <processor name="MyHcalBarrelSelector"/>
+    <processor name="MyHcalEndcapSelector"/>
 
     <!-- ===============  The more misterious processors  ================= -->
-    <processor name="DDMarlinPandora"/>
-    <group name="PfoSelector" />
+    <processor name="DDMarlinPandora" />
     <processor name="FastJetProcessor"/>
 
     <!-- ==========  Output  ========== -->
@@ -100,7 +112,7 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
       /data/TYPEEVENT/sim/TYPEEVENT_sim_INFILENAME.slcio
     </parameter>
     <!-- parameter name="MaxRecordNumber" value="-1" /-->
-    <parameter name="MaxRecordNumber" value="2" />
+    <parameter name="MaxRecordNumber" value="-1" />
     <parameter name="SkipNEvents" value="0" />
     <parameter name="SupressCheck" value="false" />
     <parameter name="Verbosity"	options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">MESSAGE0</parameter>
@@ -108,19 +120,14 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
 
   <processor name="Output_REC" type="LCIOOutputProcessor">
     <!--   standard output: full reconstruction keep all collections -->
-    <if condition="Config.OverlayBIB">
-      <parameter name="LCIOOutputFile" type="string"> /data/TYPEEVENT/recoBIB/TYPEEVENT_reco_INFILENAME.slcio </parameter>
-    </if>
-    <if condition="Config.OverlayFalse">
-      <parameter name="LCIOOutputFile" type="string"> /data/TYPEEVENT/reco/TYPEEVENT_reco_INFILENAME.slcio </parameter>
-    </if>
+    <parameter name="LCIOOutputFile" type="string"> /data/TYPEEVENT/recoBIB/TYPEEVENT_reco_INFILENAME.slcio </parameter>
     <parameter name="FullSubsetCollections" type="StringVec"> EfficientMCParticles InefficientMCParticles </parameter>
     <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
     <!-- <parameter name="SplitFileSizekB" type="int">996147 </parameter> -->
     <parameter name="Verbosity" type="string">WARNING </parameter>
     <parameter name="DropCollectionNames" type="StringVec"></parameter>
     <parameter name="DropCollectionTypes" type="StringVec">SimCalorimeterHit SimTrackerHit</parameter>
-    <parameter name="KeepCollectionNames" type="StringVec"></parameter>
+    <parameter name="KeepCollectionNames" type="StringVec">MCParticle_SiTracks_Refitted</parameter>
 
   </processor>
 
@@ -133,12 +140,13 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
   <processor name="InitDD4hep" type="InitializeDD4hep">
     <!--InitializeDD4hep reads a compact xml file and initializes the dd4hep::Detector object-->
     <!--Name of the DD4hep compact xml file to load-->
-    <!--parameter name="DD4hepXMLFile" type="string">
-      /opt/ilcsoft/muonc/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml
-    </parameter-->
-    <parameter name="DD4hepXMLFile" type="string">    
-    /code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml
+    <parameter name="DD4hepXMLFile" type="string">
+      /code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml
     </parameter>
+    <!--parameter name="DD4hepXMLFile" type="string">    
+    /code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml
+    /opt/ilcsoft/muonc/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml
+    </parameter-->
     <!--Alternate name for EncodingStringParameterName-->
     <!--If given, the Compact File parameter of that name will be used as argument to LCTrackerCellID::set_encoding_string()-->
     <parameter name="EncodingStringParameterName" type="string"> GlobalTrackerReadoutID  </parameter>
@@ -166,22 +174,20 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <parameter name="IntegrationTimeMin" type="float" value="-0.36"/>
 
     <parameter name="Collection_IntegrationTimes" type="StringVec" >
-      VertexBarrelCollection -0.5 10.
-      VertexEndcapCollection -0.5 10.
+      VertexBarrelCollection        -0.36 0.48
+      VertexEndcapCollection        -0.36 0.48
 
-      InnerTrackerBarrelCollection -0.5 10.
-      InnerTrackerEndcapCollection -0.5 10.
+      InnerTrackerBarrelCollection  -0.36 0.48
+      InnerTrackerEndcapCollection  -0.36 0.48
 
-      OuterTrackerBarrelCollection -0.5 10.
-      OuterTrackerEndcapCollection -0.5 10.
+      OuterTrackerBarrelCollection  -0.36 0.48
+      OuterTrackerEndcapCollection  -0.36 0.48
 
       ECalBarrelCollection          -0.25 10.
       ECalEndcapCollection          -0.25 10.
-      ECalPlugCollection            -0.25 10.
 
       HCalBarrelCollection          -0.25 10.
       HCalEndcapCollection          -0.25 10.
-      HCalRingCollection            -0.25 10.
 
       YokeBarrelCollection          -0.25 10.
       YokeEndcapCollection          -0.25 10.    
@@ -328,11 +334,11 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
   <processor name="CKFTracking" type="ACTSSeededCKFTrackingProc">
     <!-- Path to material description -->
     <parameter name="MatFile" type="string">
-    /opt/ilcsoft/muonc/ACTSTracking/v1.0.0/data/material-maps.json
+    /code/materialMap/MuColl_v1/material-maps.json
     </parameter>
     <!-- Path to tracking geometry -->
     <parameter name="TGeoFile" type="string">
-    /opt/ilcsoft/muonc/ACTSTracking/v1.0.0/data/MuColl_v1.root
+    /code/materialMap/MuColl_v1/MuColl_v1.root
     </parameter>
     <!-- Vol Layer, use -1 for all, ACTS numbers -->
     <parameter name="SeedingLayers" type="string">
@@ -422,214 +428,204 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
 <parameter name="MinClustersOnTrackAfterFit" type="int">3 </parameter>
 </processor>
 
+  <processor name="MyTrackTruth" type="TrackTruthProc">
+    <parameter name="TrackCollection" type="string" lcioInType="Track">SiTracks_Refitted</parameter>
+    <parameter name="MCParticleCollection" type="string" lcioInType="MCParticle">MCParticle</parameter>
+    <parameter name="TrackerHit2SimTrackerHitRelationName" type="StringVec" lcioInType="LCRelation">
+    VBTrackerHitsRelations
+    IBTrackerHitsRelations
+    OBTrackerHitsRelations
+    VETrackerHitsRelations
+    IETrackerHitsRelations
+    OETrackerHitsRelations
+    </parameter>
+    <parameter name="Particle2TrackRelationName" type="string" lcioOutType="LCRelation">MCParticle_SiTracks_Refitted</parameter>
+  </processor>
+
   <!-- ======================================================================================================== -->
   <!-- ======================================================================================================== -->
   <!-- ==  PFO stuff                                                                         == -->
   <!-- ======================================================================================================== -->
   <!-- ======================================================================================================== -->
-
-  <processor name="MyDDCaloDigi" type="DDCaloDigi">
-    <!--Performs simple digitization of sim calo hits...-->
-
-    <!--Hit times histograms-->
-    <parameter name="Histograms" type="int">0 </parameter>
-    <parameter name="RootFile" type="string">Digi_SiW.root</parameter>
-    <!--CaloHit Relation Collection-->
-    <parameter name="RelationOutputCollection" type="string" lcioOutType="LCRelation">RelationCaloHit </parameter>
-    <!--energy required to create e-h pair in silicon (in eV)-->
-    <parameter name="energyPerEHpair" type="float">3.6 </parameter>
-    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-    <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
-
-    <!-- ECAL -->
-
-    <!--ECAL Collection Names-->
-    <parameter name="ECALCollections" type="StringVec" lcioInType="SimCalorimeterHit">ECalBarrelCollection ECalEndcapCollection ECalPlugCollection </parameter>
-    <!--ECAL Collection of real Hits-->
-    <parameter name="ECALOutputCollection0" type="string" lcioOutType="CalorimeterHit">ECALBarrel </parameter>
-    <!--ECAL Collection of real Hits-->
-    <parameter name="ECALOutputCollection1" type="string" lcioOutType="CalorimeterHit">ECALEndcap </parameter>
-    <!--ECAL Collection of real Hits-->
-    <parameter name="ECALOutputCollection2" type="string" lcioOutType="CalorimeterHit">ECALOther </parameter>
-    <!--Digital Ecal-->
-    <parameter name="IfDigitalEcal" type="int">0 </parameter>
-    <!--Index of ECal Layers-->
-    <parameter name="ECALLayers" type="IntVec">41 100  </parameter>
-    <!--default ECAL layer configuration (used if not found in gear file)-->
-    <parameter name="ECAL_default_layerConfig" type="string">000000000000000 </parameter>
-    <!--default number of virtual cells (used if not found in gear file)-->
-    <parameter name="StripEcal_default_nVirtualCells" type="int">9 </parameter>
-
-    <!--calibration to convert ECAL deposited energy to MIPs-->
-    <parameter name="CalibECALMIP" type="float">0.0001 </parameter>
-    <!--Calibration coefficients for ECAL-->
-    <parameter name="CalibrECAL" type="FloatVec">35.8411424188 35.8411424188</parameter>
-    <!--Threshold for ECAL Hits in GeV-->
-    <!-- parameter name="ECALThreshold" type="float">5e-05 </parameter-->
-    <parameter name="ECALThreshold" type="float">0.0002</parameter>
-    <!-- parameter name="ECALThreshold" type="float">0.002</parameter-->
-    <!--Unit for ECAL Threshold. Can be "GeV", "MIP" or "px". MIP and px need properly set calibration constants-->
-    <parameter name="ECALThresholdUnit" type="string">GeV </parameter>
-    <!--Energy correction for ECAL endcap-->
-    <parameter name="ECALEndcapCorrectionFactor" type="float">1.0672142727</parameter>
-    <!--Correct for ECAL gaps-->
-    <parameter name="ECALGapCorrection" type="int">1 </parameter>
-    <!--Factor applied to gap correction-->
-    <parameter name="ECALGapCorrectionFactor" type="float">1 </parameter>
-    <!--Factor applied to module gap correction-->
-    <parameter name="ECALModuleGapCorrectionFactor" type="float">0.0 </parameter>
-    <!--Ecal correction for theta dependency of calibration for MAPS-->
-    <parameter name="MapsEcalCorrection" type="int">0 </parameter>
-
-    <!--ECAL total number of MPPC/SiPM pixels for implementation of saturation effect-->
-    <parameter name="ECAL_PPD_N_Pixels" type="int">10000 </parameter>
-    <!--ECAL fractional uncertainty of effective total number of MPPC/SiPM pixels-->
-    <parameter name="ECAL_PPD_N_Pixels_uncertainty" type="float">0.05 </parameter>
-    <!--# Photo-electrons per MIP (scintillator): used to poisson smear #PEs if >0-->
-    <parameter name="ECAL_PPD_PE_per_MIP" type="float">7 </parameter>
-    <!--apply realistic digitisation to ECAL hits? (0=none, 1=silicon, 2=scintillator)-->
-    <parameter name="ECAL_apply_realistic_digi" type="int">0 </parameter>
-    <!--ECAL random dead cell fraction (as a fraction: 0->1) -->
-    <parameter name="ECAL_deadCellRate" type="float">0 </parameter>
-    <!--store dead ECAL cells in memory? (WARNING: can take a lot of memory if used...) -->
-    <parameter name="ECAL_deadCell_memorise" type="bool">false </parameter>
-    <!--typical electronics noise (ECAL, in MIP units)-->
-    <parameter name="ECAL_elec_noise_mips" type="float">0 </parameter>
-    <!--maximum of dynamic range for ECAL (in MIPs)-->
-    <parameter name="ECAL_maxDynamicRange_MIP" type="float">2500 </parameter>
-    <!--correlated ECAL random gaussian miscalibration (as a fraction: 1.0 = 100%) -->
-    <parameter name="ECAL_miscalibration_correl" type="float">0 </parameter>
-    <!--uncorrelated ECAL random gaussian miscalibration (as a fraction: 1.0 = 100%) -->
-    <parameter name="ECAL_miscalibration_uncorrel" type="float">0 </parameter>
-    <!--store oncorrelated ECAL miscalbrations in memory? (WARNING: can take a lot of memory if used...) -->
-    <parameter name="ECAL_miscalibration_uncorrel_memorise" type="bool">false </parameter>
-    <!--variation of mppc/sipm pixels capacitance in ECAL (as a fraction: 0.01=1%)-->
-    <parameter name="ECAL_pixel_spread" type="float">0.05 </parameter>
-    <!--length scale for absorbtion along scintillator strip (mm)-->
-    <parameter name="ECAL_strip_absorbtionLength" type="float">1e+06 </parameter>
-
-    <!--Use ECAL hit times-->
-    <parameter name="UseEcalTiming" type="int">1 </parameter>
-    <!--Correct ECAL hit times for propagation: radial distance/c-->
-    <parameter name="ECALCorrectTimesForPropagation" type="int">1 </parameter>
-    <!--ECAL Time Window minimum time in ns-->
-    <parameter name="ECALTimeWindowMin" type="float">-1 </parameter>
-    <!--ECAL BarrelTime Window maximum time in ns-->
-    <parameter name="ECALBarrelTimeWindowMax" type="float">10 </parameter>
-    <!--ECAL Endcap Time Window maximum time in ns-->
-    <parameter name="ECALEndcapTimeWindowMax" type="float">10 </parameter>
-    <!--Use simple time window cut on hit times? If false: use original hit-time clustering algorithm. If true: use time window defined by ECALBarrelTimeWindowMin and ECALBarrelTimeWindowMax-->
-    <parameter name="ECALSimpleTimingCut" type="bool">true </parameter>
-    <!--ECAL Minimum Delta Time in ns for resolving two hits--> <!-- used only if ECALSimpleTimingCut is false -->
-    <parameter name="ECALDeltaTimeHitResolution" type="float">10 </parameter>
-    <!--ECAL Time Resolution used to smear hit times-->
-    <parameter name="ECALTimeResolution" type="float">10 </parameter>
-
-    <!-- HCAL -->
-
-    <!--HCAL Collection Names-->
-    <parameter name="HCALCollections" type="StringVec" lcioInType="SimCalorimeterHit">HCalBarrelCollection HCalEndcapCollection HCalRingCollection </parameter>
-    <!--HCAL Collection of real Hits-->
-    <parameter name="HCALOutputCollection0" type="string" lcioOutType="CalorimeterHit">HCALBarrel </parameter>
-    <!--HCAL Collection of real Hits-->
-    <parameter name="HCALOutputCollection1" type="string" lcioOutType="CalorimeterHit">HCALEndcap </parameter>
-    <!--HCAL Collection of real Hits-->
-    <parameter name="HCALOutputCollection2" type="string" lcioOutType="CalorimeterHit">HCALOther </parameter>
-    <!--Digital Hcal-->
-    <parameter name="IfDigitalHcal" type="int">0 </parameter>
-    <!--Index of HCal Layers-->
-    <parameter name="HCALLayers" type="IntVec">100  </parameter>
-
-    <!--calibration to convert HCAL deposited energy to MIPs-->
-    <parameter name="CalibHCALMIP" type="float">0.0001 </parameter>
-    <!--Calibration coefficients for Barrel HCAL-->
-    <parameter name="CalibrHCALBarrel" type="FloatVec">49.2031079063</parameter>
-    <!-- CalibrHcalBarrel Should be 38.995 for 17 mm -->
-    <!--Calibration coefficients for EndCap HCAL-->
-    <parameter name="CalibrHCALEndcap" type="FloatVec">53.6263377733</parameter>
-    <!--Calibration coefficients for Other (Ring) HCAL-->
-    <parameter name="CalibrHCALOther" type="FloatVec">62.2125698179</parameter>
-    <!--Threshold for HCAL Hits in GeV-->
-    <!-- parameter name="HCALThreshold" type="FloatVec">0.00025  </parameter-->
-    <parameter name="HCALThreshold" type="FloatVec">0.0005  </parameter>
-    <!--parameter name="HCALThreshold" type="FloatVec">0.002  </parameter-->
-    <!--Unit for HCAL Threshold. Can be "GeV", "MIP" or "px". MIP and px need properly set calibration constants-->
-    <parameter name="HCALThresholdUnit" type="string">GeV </parameter>
-    <!--Energy correction for HCAL endcap-->
-    <parameter name="HCALEndcapCorrectionFactor" type="float">1.000 </parameter>
-    <!--Correct for ECAL gaps-->
-    <parameter name="HCALGapCorrection" type="int">1 </parameter>
-    <!--Factor applied to module gap correction-->
-    <parameter name="HCALModuleGapCorrectionFactor" type="float">0.5 </parameter>
-
-    <!--HCAL total number of MPPC/SiPM pixels for implementation of saturation effect-->
-    <parameter name="HCAL_PPD_N_Pixels" type="int">400 </parameter>
-    <!--HCAL fractional uncertainty of effective total number of MPPC/SiPM pixels-->
-    <parameter name="HCAL_PPD_N_Pixels_uncertainty" type="float">0.05 </parameter>
-    <!--# Photo-electrons per MIP (for AHCAL): used to poisson smear #PEs if >0-->
-    <parameter name="HCAL_PPD_PE_per_MIP" type="float">10 </parameter>
-    <!--apply realistic digitisation to HCAL hits? (0=none, 1=scintillator/SiPM)-->
-    <parameter name="HCAL_apply_realistic_digi" type="int">0 </parameter>
-    <!--HCAL random dead cell fraction (as a fraction: 0->1) -->
-    <parameter name="HCAL_deadCellRate" type="float">0 </parameter>
-    <!--store dead HCAL cells in memory? (WARNING: can take a lot of memory if used...) -->
-    <parameter name="HCAL_deadCell_memorise" type="bool">false </parameter>
-    <!--typical electronics noise (HCAL, in MIP units)-->
-    <parameter name="HCAL_elec_noise_mips" type="float">0 </parameter>
-    <!--maximum of dynamic range for HCAL (in MIPs)-->
-    <parameter name="HCAL_maxDynamicRange_MIP" type="float">200 </parameter>
-    <!--correlated HCAL random gaussian miscalibration (as a fraction: 1.0 = 100%) -->
-    <parameter name="HCAL_miscalibration_correl" type="float">0 </parameter>
-    <!--uncorrelated HCAL random gaussian miscalibration (as a fraction: 1.0 = 100%) -->
-    <parameter name="HCAL_miscalibration_uncorrel" type="float">0 </parameter>
-    <!--store oncorrelated HCAL miscalbrations in memory? (WARNING: can take a lot of memory if used...) -->
-    <parameter name="HCAL_miscalibration_uncorrel_memorise" type="bool">false </parameter>
-    <!--variation of mppc/sipm pixels capacitance in HCAL (as a fraction: 0.01=1%)-->
-    <parameter name="HCAL_pixel_spread" type="float">0 </parameter>
-
-    <!--Use HCAL hit times-->
-    <parameter name="UseHcalTiming" type="int">1 </parameter>
-    <!--Correct HCAL hit times for propagation: radial distance/c-->
-    <parameter name="HCALCorrectTimesForPropagation" type="int">1 </parameter>
-    <!--HCAL Time Window minimum time in ns-->
-    <parameter name="HCALTimeWindowMin" type="float">-1 </parameter>
-    <!--HCAL Time Window maximum time in ns-->
-    <parameter name="HCALBarrelTimeWindowMax" type="float">10 </parameter>
-    <!--HCAL Time Window maximum time in ns-->
-    <parameter name="HCALEndcapTimeWindowMax" type="float">10 </parameter>
-    <!--Use simple time window cut on hit times? If false: use original hit-time clustering algorithm. If true: use time window defined by HCALBarrelTimeWindowMin and HCALBarrelTimeWindowMax-->
-    <parameter name="HCALSimpleTimingCut" type="bool">true </parameter>
-    <!--HCAL Minimum Delta Time in ns for resolving two hits--> <!-- used only if HCALSimpleTimingCut is false -->
-    <parameter name="HCALDeltaTimeHitResolution" type="float">10 </parameter>
-    <!--HCAL Time Resolution used to smear hit times-->
-    <parameter name="HCALTimeResolution" type="float">10 </parameter>
-
+  <!--### the Ecal barrel ###-->
+  <!--digitisation -->
+  <processor name="MyEcalBarrelDigi" type="RealisticCaloDigiSilicon">
+    <parameter name="inputHitCollections"> ECalBarrelCollection </parameter>
+    <parameter name="outputHitCollections"> EcalBarrelCollectionDigi </parameter>
+    <parameter name="outputRelationCollections"> EcalBarrelRelationsSimDigi </parameter>
+    <parameter name="threshold"> 0.002 </parameter>
+    <parameter name="thresholdUnit"> GeV </parameter>
+    <parameter name="timingCut"> 1  </parameter>
+    <parameter name="timingCorrectForPropagation"> 1  </parameter>
+    <parameter name="timingWindowMin"> -0.5  </parameter>
+    <parameter name="timingWindowMax"> 10  </parameter>
+    <parameter name="timingResolution"> 0  </parameter>
+    <parameter name="calibration_mip">0.0001575</parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
   </processor>
-  
-  <!-- ======================================================================================================== -->
-  <!-- ======================================================================================================== -->
-  <!-- == Muon Detectors Digitizer configuration                                                             == -->
-  <!-- ======================================================================================================== -->
-  <!-- ======================================================================================================== -->
-
-  <processor name="MyDDSimpleMuonDigi" type="DDSimpleMuonDigi">
-    <!--Performs simple digitization of sim calo hits...-->
-    <!--Calibration coefficients for MUON-->
-    <parameter name="CalibrMUON" type="FloatVec">70.1</parameter>
-    <!-- maximum hit energy for a MUON hit -->
-    <parameter name="MaxHitEnergyMUON" type="float">2.0</parameter>
-    <!--MUON Collection Names-->
-    <!--parameter name="MUONCollections" type="StringVec">
-      YokeBarrelCollection YokeEndcapCollection</parameter-->    
-    <parameter name="MUONCollections" type="StringVec"> </parameter>
-    <!--MUON Collection of real Hits-->
-    <parameter name="MUONOutputCollection" type="string">MUON </parameter>
-    <!--Threshold for MUON Hits in GeV-->
-    <parameter name="MuonThreshold" type="float">5e-05 </parameter>
-    <!--parameter name="MuonThreshold" type="float">1e-06 </parameter-->
-    <!--MuonHit Relation Collection-->
-    <parameter name="RelationOutputCollection" type="string">RelationMuonHit </parameter>
+  <!-- reconstruction -->
+  <processor name="MyEcalBarrelReco" type="RealisticCaloRecoSilicon">
+    <parameter name="inputHitCollections"> EcalBarrelCollectionDigi </parameter>
+    <parameter name="inputRelationCollections"> EcalBarrelRelationsSimDigi </parameter>
+    <parameter name="outputHitCollections"> EcalBarrelCollectionRec </parameter>
+    <parameter name="outputRelationCollections"> EcalBarrelRelationsSimRec </parameter>
+    <parameter name="calibration_layergroups"> 50 </parameter>
+    <parameter name="calibration_factorsMipGev">0.00641222630095</parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
   </processor>
+  <!-- gap filling -->
+  <processor name="MyEcalBarrelGapFiller" type="BruteForceEcalGapFiller">
+    <parameter name="inputHitCollection"> EcalBarrelCollectionRec </parameter>
+    <parameter name="outputHitCollection"> EcalBarrelCollectionGapHits </parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
+    <parameter name="CellIDModuleString"> module </parameter>
+    <parameter name="CellIDStaveString"> stave </parameter>
+    <parameter name="applyInterModuleCorrection"> false </parameter>
+    <parameter name="expectedInterModuleDistance"> 7.0 </parameter>
+  </processor>
+
+  <!--### the Ecal endcap ###-->
+  <!--digitisation -->
+  <processor name="MyEcalEndcapDigi" type="RealisticCaloDigiSilicon">
+    <parameter name="inputHitCollections"> ECalEndcapCollection </parameter>
+    <parameter name="outputHitCollections"> EcalEndcapCollectionDigi </parameter>
+    <parameter name="outputRelationCollections"> EcalEndcapRelationsSimDigi </parameter>
+    <parameter name="threshold"> 0.002 </parameter>
+    <parameter name="thresholdUnit"> GeV </parameter>
+    <parameter name="timingCut"> 1  </parameter>
+    <parameter name="timingCorrectForPropagation"> 1  </parameter>
+    <parameter name="timingWindowMin"> -0.5  </parameter>
+    <parameter name="timingWindowMax"> 10  </parameter>
+    <parameter name="timingResolution"> 0  </parameter>
+    <parameter name="calibration_mip">0.0001575</parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
+  </processor>
+  <!-- reconstruction -->
+  <processor name="MyEcalEndcapReco" type="RealisticCaloRecoSilicon">
+    <parameter name="inputHitCollections"> EcalEndcapCollectionDigi </parameter>
+    <parameter name="inputRelationCollections"> EcalEndcapRelationsSimDigi </parameter>
+    <parameter name="outputHitCollections"> EcalEndcapCollectionRec </parameter>
+    <parameter name="outputRelationCollections"> EcalEndcapRelationsSimRec </parameter>
+    <parameter name="calibration_layergroups"> 50 </parameter>
+    <parameter name="calibration_factorsMipGev">0.00641222630095</parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
+  </processor>
+  <!-- gap filling -->
+  <processor name="MyEcalEndcapGapFiller" type="BruteForceEcalGapFiller">
+    <parameter name="inputHitCollection"> EcalEndcapCollectionRec </parameter>
+    <parameter name="outputHitCollection"> EcalEndcapCollectionGapHits </parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
+    <parameter name="CellIDModuleString"> module </parameter>
+    <parameter name="CellIDStaveString"> stave </parameter>
+    <parameter name="applyInterModuleCorrection"> false </parameter>
+    <parameter name="expectedInterModuleDistance"> 7.0 </parameter>
+  </processor>
+
+  <!--### the Hcal barrel ###-->
+  <!-- digitisation -->
+  <processor name="MyHcalBarrelDigi" type="RealisticCaloDigiScinPpd">
+    <parameter name="inputHitCollections"> HCalBarrelCollection </parameter>
+    <parameter name="outputHitCollections"> HcalBarrelsCollectionDigi </parameter>
+    <parameter name="outputRelationCollections"> HcalBarrelsRelationsSimDigi </parameter>
+    <parameter name="threshold"> 0.002 </parameter>
+    <parameter name="thresholdUnit"> GeV </parameter>
+    <parameter name="timingCut"> 1  </parameter>
+    <parameter name="timingCorrectForPropagation"> 1  </parameter>
+    <parameter name="timingWindowMin"> -0.5  </parameter>
+    <parameter name="timingWindowMax"> 10  </parameter>
+    <parameter name="timingResolution"> 0  </parameter>
+    <!-- the ave energy deposition of a MIP in the scint -->
+    <parameter name="calibration_mip">0.0004825</parameter>
+    <parameter name="ppd_mipPe"> 15 </parameter>
+    <parameter name="ppd_npix"> 2000 </parameter>
+    <parameter name="ppd_npix_uncert"> 0 </parameter>
+    <parameter name="ppd_pix_spread"> 0 </parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
+  </processor>
+  <!-- reconstruction -->
+  <processor name="MyHcalBarrelReco" type="RealisticCaloRecoScinPpd">
+    <parameter name="inputHitCollections"> HcalBarrelsCollectionDigi </parameter>
+    <parameter name="inputRelationCollections"> HcalBarrelsRelationsSimDigi </parameter>
+    <parameter name="outputHitCollections"> HcalBarrelsCollectionRec </parameter>
+    <parameter name="outputRelationCollections"> HcalBarrelsRelationsSimRec </parameter>
+    <parameter name="ppd_mipPe"> 15 </parameter> 
+    <parameter name="ppd_npix"> 2000 </parameter> 
+    <parameter name="calibration_layergroups"> 100 </parameter>
+    <!-- factor to convert from MIP to GeV (including energy in absorber) -->
+    <parameter name="calibration_factorsMipGev">0.0231348530678</parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
+  </processor>
+
+  <!--### the Hcal endcaps ###-->
+  <!-- digitisation -->
+  <processor name="MyHcalEndcapDigi" type="RealisticCaloDigiScinPpd">
+    <parameter name="inputHitCollections"> HCalEndcapCollection </parameter>
+    <parameter name="outputHitCollections"> HcalEndcapsCollectionDigi </parameter>
+    <parameter name="outputRelationCollections"> HcalEndcapsRelationsSimDigi </parameter>
+    <parameter name="threshold"> 0.002 </parameter>
+    <parameter name="thresholdUnit"> GeV </parameter>
+    <parameter name="timingCut"> 1  </parameter>
+    <parameter name="timingCorrectForPropagation"> 1  </parameter>
+    <parameter name="timingWindowMin"> -0.5  </parameter>
+    <parameter name="timingWindowMax"> 10  </parameter>
+    <parameter name="timingResolution"> 0  </parameter>
+    <!-- the ave energy deposition of a MIP in the scint -->
+    <parameter name="calibration_mip">0.0004825</parameter>
+    <parameter name="ppd_mipPe"> 15 </parameter>
+    <parameter name="ppd_npix"> 2000 </parameter>
+    <parameter name="ppd_npix_uncert"> 0 </parameter>
+    <parameter name="ppd_pix_spread"> 0 </parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
+  </processor>
+  <!-- reconstruction -->
+  <processor name="MyHcalEndcapReco" type="RealisticCaloRecoScinPpd">
+    <parameter name="inputHitCollections"> HcalEndcapsCollectionDigi </parameter>
+    <parameter name="inputRelationCollections"> HcalEndcapsRelationsSimDigi </parameter>
+    <parameter name="outputHitCollections"> HcalEndcapsCollectionRec </parameter>
+    <parameter name="outputRelationCollections"> HcalEndcapsRelationsSimRec </parameter>
+    <parameter name="ppd_mipPe"> 15 </parameter> 
+    <parameter name="ppd_npix"> 2000 </parameter> 
+    <parameter name="calibration_layergroups"> 100 </parameter>
+    <!-- factor to convert from MIP to GeV (including energy in absorber) -->
+    <parameter name="calibration_factorsMipGev">0.0231348530678</parameter>
+    <parameter name="CellIDLayerString"> layer </parameter>
+  </processor>
+
+  <!-- Calo BIB subtraction-->
+  <processor name="MyEcalBarrelSelector" type="CaloHitSelector">
+    <parameter name="CaloHitCollectionName"> EcalBarrelCollectionRec </parameter>
+    <parameter name="GoodHitCollection"> EcalBarrelCollectionSel </parameter>
+    <parameter name="CaloRelationCollectionName"> EcalBarrelRelationsSimRec </parameter>
+    <parameter name="GoodRelationCollection"> EcalBarrelRelationsSimSel </parameter>    
+    <parameter name="Nlayers"> 50 </parameter> 
+    <parameter name="Nsigma"> 3 </parameter> 
+  </processor>
+  <processor name="MyEcalEndcapSelector" type="CaloHitSelector">
+    <parameter name="CaloHitCollectionName"> EcalEndcapCollectionRec </parameter>
+    <parameter name="GoodHitCollection"> EcalEndcapCollectionSel </parameter>
+    <parameter name="CaloRelationCollectionName"> EcalEndcapRelationsSimRec </parameter>
+    <parameter name="GoodRelationCollection"> EcalEndcapRelationsSimSel </parameter>    
+    <parameter name="Nlayers"> 50 </parameter> 
+    <parameter name="Nsigma"> 3 </parameter> 
+  </processor>
+  <processor name="MyHcalBarrelSelector" type="CaloHitSelector">
+    <parameter name="CaloHitCollectionName"> HcalBarrelsCollectionRec </parameter>
+    <parameter name="GoodHitCollection"> HcalBarrelCollectionSel </parameter>
+    <parameter name="CaloRelationCollectionName"> HcalBarrelsRelationsSimRec </parameter>
+    <parameter name="GoodRelationCollection"> HcalBarrelRelationsSimSel </parameter>    
+    <parameter name="Nlayers"> 75 </parameter> 
+    <parameter name="Nsigma"> 3 </parameter> 
+  </processor>
+    <processor name="MyHcalEndcapSelector" type="CaloHitSelector">
+    <parameter name="CaloHitCollectionName"> HcalEndcapsCollectionRec </parameter>
+    <parameter name="GoodHitCollection"> HcalEndcapCollectionSel </parameter>
+    <parameter name="CaloRelationCollectionName"> HcalEndcapsRelationsSimRec </parameter>
+    <parameter name="GoodRelationCollection"> HcalEndcapRelationsSimSel </parameter>
+    <parameter name="Nlayers"> 75 </parameter> 
+    <parameter name="Nsigma"> 3 </parameter> 
+  </processor>
+
+
 
 <processor name="DDMarlinPandora" type="DDPandoraPFANewProcessor">
   <parameter name="PandoraSettingsXmlFile" type="String"> /code/SteeringMacros/Reco/PandoraSettings/PandoraSettingsDefault.xml </parameter>
@@ -640,11 +636,11 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
   <parameter name="MaxClusterEnergyToApplySoftComp" type="float">2000.</parameter>
   <!-- Collection names -->
   <parameter name="TrackCollections" type="StringVec"> SiTracks_Refitted </parameter>
-  <parameter name="ECalCaloHitCollections" type="StringVec">ECALBarrel ECALEndcap ECALOther</parameter>
-  <parameter name="HCalCaloHitCollections" type="StringVec">HCALBarrel HCALEndcap HCALOther</parameter>
+  <parameter name="ECalCaloHitCollections" type="StringVec">EcalBarrelCollectionSel EcalEndcapCollectionSel</parameter>
+  <parameter name="HCalCaloHitCollections" type="StringVec">HcalBarrelCollectionSel HcalEndcapCollectionSel</parameter>
   <parameter name="MuonCaloHitCollections" type="StringVec"></parameter>
   <parameter name="MCParticleCollections" type="StringVec">MCParticle</parameter>
-  <parameter name="RelCaloHitCollections" type="StringVec">RelationCaloHit</parameter>
+  <parameter name="RelCaloHitCollections" type="StringVec">EcalBarrelRelationsSimSel EcalEndcapRelationsSimSel HcalBarrelRelationsSimSel HcalEndcapRelationsSimSel</parameter>
   <parameter name="RelTrackCollections" type="StringVec"> SiTracks_Refitted_Relation </parameter>
   <parameter name="KinkVertexCollections" type="StringVec">KinkVertices</parameter>
   <parameter name="ProngVertexCollections" type="StringVec">ProngVertices</parameter>
@@ -818,271 +814,12 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
 
 </processor>
 
-
-<group name="PfoSelector">
-    <!--Selects Pfos from full PFO list using timing cuts-->
-    <!--ChargedPfoLooseTimingCut-->
-    <parameter name="ChargedPfoLooseTimingCut" type="float">3 </parameter>
-    <!--ChargedPfoNegativeLooseTimingCut-->
-    <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-1 </parameter>
-    <!--ChargedPfoNegativeTightTimingCut-->
-    <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-0.5 </parameter>
-    <!--ChargedPfoPtCut-->
-    <parameter name="ChargedPfoPtCut" type="float">0 </parameter>
-    <!--ChargedPfoPtCutForLooseTiming-->
-    <parameter name="ChargedPfoPtCutForLooseTiming" type="float">4 </parameter>
-    <!--ChargedPfoTightTimingCut-->
-    <parameter name="ChargedPfoTightTimingCut" type="float">1.5 </parameter>
-    <!--CheckKaonCorrection-->
-    <parameter name="CheckKaonCorrection" type="int">0 </parameter>
-    <!--CheckProtonCorrection-->
-    <parameter name="CheckProtonCorrection" type="int">0 </parameter>
-    <!--ClusterLessPfoTrackTimeCut-->
-    <parameter name="ClusterLessPfoTrackTimeCut" type="float">10 </parameter>
-    <!--CorrectHitTimesForTimeOfFlight-->
-    <parameter name="CorrectHitTimesForTimeOfFlight" type="int">0 </parameter>
-    <!--DisplayRejectedPfos-->
-    <parameter name="DisplayRejectedPfos" type="int">1 </parameter>
-    <!--DisplaySelectedPfos-->
-    <parameter name="DisplaySelectedPfos" type="int">1 </parameter>
-    <!--FarForwardCosTheta-->
-    <parameter name="FarForwardCosTheta" type="float">0.975 </parameter>
-    <!--ForwardCosThetaForHighEnergyNeutralHadrons-->
-    <parameter name="ForwardCosThetaForHighEnergyNeutralHadrons" type="float">0.95 </parameter>
-    <!--ForwardHighEnergyNeutralHadronsEnergy-->
-    <parameter name="ForwardHighEnergyNeutralHadronsEnergy" type="float">10 </parameter>
-    <!--HCalBarrelLooseTimingCut-->
-    <parameter name="HCalBarrelLooseTimingCut" type="float">20 </parameter>
-    <!--HCalBarrelTightTimingCut-->
-    <parameter name="HCalBarrelTightTimingCut" type="float">10 </parameter>
-    <!--HCalEndCapTimingFactor-->
-    <parameter name="HCalEndCapTimingFactor" type="float">1 </parameter>
-    <!--Input PFO Collection-->
-    <parameter name="InputPfoCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs </parameter>
-    <!--KeepKShorts-->
-    <parameter name="KeepKShorts" type="int">1 </parameter>
-    <!--MaxMomentumForClusterLessPfos-->
-    <parameter name="MaxMomentumForClusterLessPfos" type="float">2 </parameter>
-    <!--MinECalHitsForTiming-->
-    <parameter name="MinECalHitsForTiming" type="int">5 </parameter>
-    <!--MinHCalEndCapHitsForTiming-->
-    <parameter name="MinHCalEndCapHitsForTiming" type="int">5 </parameter>
-    <!--MinMomentumForClusterLessPfos-->
-    <parameter name="MinMomentumForClusterLessPfos" type="float">0.5 </parameter>
-    <!--MinPtForClusterLessPfos-->
-    <parameter name="MinPtForClusterLessPfos" type="float">0.5 </parameter>
-    <!--MinimumEnergyForNeutronTiming-->
-    <parameter name="MinimumEnergyForNeutronTiming" type="float">1 </parameter>
-    <!--Monitoring-->
-    <parameter name="Monitoring" type="int">0 </parameter>
-    <!--MonitoringPfoEnergyToDisplay-->
-    <parameter name="MonitoringPfoEnergyToDisplay" type="float">1 </parameter>
-    <!--NeutralFarForwardLooseTimingCut-->
-    <parameter name="NeutralFarForwardLooseTimingCut" type="float">2 </parameter>
-    <!--NeutralFarForwardTightTimingCut-->
-    <parameter name="NeutralFarForwardTightTimingCut" type="float">1 </parameter>
-    <!--NeutralHadronBarrelPtCutForLooseTiming-->
-    <parameter name="NeutralHadronBarrelPtCutForLooseTiming" type="float">3.5 </parameter>
-    <!--NeutralHadronLooseTimingCut-->
-    <parameter name="NeutralHadronLooseTimingCut" type="float">2.5 </parameter>
-    <!--NeutralHadronPtCut-->
-    <parameter name="NeutralHadronPtCut" type="float">0 </parameter>
-    <!--NeutralHadronPtCutForLooseTiming-->
-    <parameter name="NeutralHadronPtCutForLooseTiming" type="float">8 </parameter>
-    <!--NeutralHadronTightTimingCut-->
-    <parameter name="NeutralHadronTightTimingCut" type="float">1.5 </parameter>
-    <!--PhotonFarForwardLooseTimingCut-->
-    <parameter name="PhotonFarForwardLooseTimingCut" type="float">2 </parameter>
-    <!--PhotonFarForwardTightTimingCut-->
-    <parameter name="PhotonFarForwardTightTimingCut" type="float">1 </parameter>
-    <!--PhotonLooseTimingCut-->
-    <parameter name="PhotonLooseTimingCut" type="float">2 </parameter>
-    <!--PhotonPtCut-->
-    <parameter name="PhotonPtCut" type="float">0 </parameter>
-    <!--PhotonPtCutForLooseTiming-->
-    <parameter name="PhotonPtCutForLooseTiming" type="float">4 </parameter>
-    <!--PhotonTightTimingCut-->
-    <parameter name="PhotonTightTimingCut" type="float">1 </parameter>
-    <!--PtCutForTightTiming-->
-    <parameter name="PtCutForTightTiming" type="float">0.75 </parameter>
-    <!--Selected pfo collection name-->
-    <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">SelectedPandoraPFOs </parameter>
-    <!--UseClusterLessPfos-->
-    <parameter name="UseClusterLessPfos" type="int">1 </parameter>
-    <!--UseNeutronTiming-->
-    <parameter name="UseNeutronTiming" type="int">0 </parameter>
-    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-    <parameter name="Verbosity" type="string">MESSAGE </parameter>
-
-    <processor name="CLICPfoSelectorDefault_HE" type="CLICPfoSelector">
-      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOs </parameter>
-    </processor>
-
-    <processor name="CLICPfoSelectorLoose_HE" type="CLICPfoSelector">
-      <!--Selects Pfos from full PFO list using timing cuts-->
-      <!--ChargedPfoNegativeLooseTimingCut-->
-      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-2.0</parameter>
-      <!--ChargedPfoNegativeTightTimingCut-->
-      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-2.0</parameter>
-      <!-- ClusterLessPfoTrackTimeCut -->
-      <parameter name = "ClusterLessPfoTrackTimeCut" type="float">1000.</parameter>
-      <!--MinMomentumForClusterLessPfos-->
-      <parameter name="MinMomentumForClusterLessPfos" type="float">0.0 </parameter>
-      <!--MaxMomentumForClusterLessPfos-->
-      <parameter name="MinPtForClusterLessPfos" type="float">0.25 </parameter>
-      <!--MinimumEnergyForNeutronTiming-->
-      <!--NeutralFarForwardLooseTimingCut-->
-      <parameter name="NeutralFarForwardLooseTimingCut" type="float">2.5 </parameter>
-      <!--NeutralFarForwardTightTimingCut-->
-      <parameter name="NeutralFarForwardTightTimingCut" type="float">1.5 </parameter>
-      <!--PhotonLooseTimingCut-->
-      <parameter name="PhotonLooseTimingCut" type="float">2. </parameter>
-      <!--PhotonTightTimingCut-->
-      <parameter name="PhotonTightTimingCut" type="float">2. </parameter>
-      <!--Selected pfo collection name-->
-      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">LooseSelectedPandoraPFOs </parameter>
-      <parameter name="Monitoring" type="int">0</parameter>
-    </processor>
-
-    <processor name="CLICPfoSelectorTight_HE" type="CLICPfoSelector">
-      <!--Selects Pfos from full PFO list using timing cuts-->
-      <!--ChargedPfoLooseTimingCut-->
-      <parameter name="ChargedPfoLooseTimingCut" type="float">2.0 </parameter>
-      <!--ChargedPfoNegativeLooseTimingCut-->
-      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-0.5 </parameter>
-      <!--ChargedPfoNegativeTightTimingCut-->
-      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-0.25 </parameter>
-      <!--ChargedPfoTightTimingCut-->
-      <parameter name="ChargedPfoTightTimingCut" type="float">1.0 </parameter>
-      <!--FarForwardCosTheta-->
-      <parameter name="FarForwardCosTheta" type="float">0.95 </parameter>
-      <!--MaxMomentumForClusterLessPfos-->
-      <parameter name="MaxMomentumForClusterLessPfos" type="float">1.5 </parameter>
-      <!--MinPtForClusterLessPfos-->
-      <parameter name="MinPtForClusterLessPfos" type="float">1.0 </parameter>
-      <!--NeutralFarForwardLooseTimingCut-->
-      <parameter name="NeutralFarForwardLooseTimingCut" type="float">1.5 </parameter>
-      <!--NeutralHadronPtCut-->
-      <parameter name="NeutralHadronPtCut" type="float">0.5 </parameter>
-      <!--PhotonPtCut-->
-      <parameter name="PhotonPtCut" type="float">0.2 </parameter>
-      <!--PtCutForTightTiming-->
-      <parameter name="PtCutForTightTiming" type="float">1.0 </parameter>
-      <!--Selected pfo collection name-->
-      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">TightSelectedPandoraPFOs </parameter>
-      <!--UseClusterLessPfos-->
-      <parameter name="UseClusterLessPfos" type="int">0 </parameter>
-      <parameter name="Monitoring" type="int">0</parameter>
-    </processor>
-
-    <processor name="CLICPfoSelectorDefault_LE" type="CLICPfoSelector">
-      <!--Selects Pfos from full PFO list using timing cuts-->
-      <!--Selected pfo collection name-->
-      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">
-        LE_SelectedPandoraPFOs
-      </parameter>
-      <!-- <parameter name="ChargedPfoPtCutForTightTiming" type="float">1.0</parameter> -->
-      <!-- <parameter name="NeutralHadronPtCutForTightTiming" type="float">1.0</parameter> -->
-      <!-- <parameter name="PhotonPtCutForTightTiming" type="float">1.0</parameter> -->
-      <parameter name="NeutralHadronPtCut" type="float">0.0</parameter>
-      <parameter name="NeutralHadronPtCutForLooseTiming" type="float">2.0</parameter>
-      <parameter name="NeutralHadronLooseTimingCut" type="float">5.0</parameter>
-      <parameter name="NeutralHadronTightTimingCut" type="float">2.5</parameter>
-      <parameter name="PhotonPtCut" type="float">0.0</parameter>
-      <parameter name="PhotonPtCutForLooseTiming" type="float">2.0</parameter>
-      <parameter name="PhotonLooseTimingCut" type="float">5.0</parameter>
-      <parameter name="PhotonTightTimingCut" type="float">1.0</parameter>
-      <parameter name="ChargedPfoPtCut" type="float">0.0</parameter>
-      <parameter name="ChargedPfoPtCutForLooseTiming" type="float">4.0</parameter>
-      <parameter name="ChargedPfoLooseTimingCut" type="float">10.0</parameter>
-      <parameter name="ChargedPfoTightTimingCut" type="float">3.0</parameter>
-      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-5.0</parameter>
-      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-2.0</parameter>
-      <parameter name="ClusterLessPfoTrackTimeCut" type="float">10.</parameter>
-      <parameter name="MinMomentumForClusterLessPfos" type="float">0.0 </parameter>
-      <parameter name="MaxMomentumForClusterLessPfos" type="float">5.0 </parameter>
-      <parameter name="MinPtForClusterLessPfos" type="float">0.0 </parameter>
-      <parameter name="NeutralFarForwardLooseTimingCut" type="float">4.0 </parameter>
-      <parameter name="NeutralFarForwardTightTimingCut" type="float">2.0 </parameter>
-      <parameter name="HCalBarrelLooseTimingCut" type="float">5 </parameter>
-      <parameter name="HCalBarrelTightTimingCut" type="float">2.5 </parameter>
-    </processor>
-
-    <processor name="CLICPfoSelectorLoose_LE" type="CLICPfoSelector">
-      <!--Selects Pfos from full PFO list using timing cuts-->
-      <!--Input PFO Collection-->
-      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">
-        LE_LooseSelectedPandoraPFOs
-      </parameter>
-      <parameter name="NeutralHadronPtCut" type="float">0.0</parameter>
-      <!-- <parameter name="NeutralHadronPtCutForTightTiming" type="float">0.75</parameter> -->
-      <!-- <parameter name="PhotonPtCutForTightTiming" type="float">0.75</parameter> -->
-      <!-- <parameter name="ChargedPfoPtCutForTightTiming" type="float">1.0</parameter> -->
-      <parameter name="NeutralHadronPtCutForLooseTiming" type="float">2.0</parameter>
-      <parameter name="NeutralHadronLooseTimingCut" type="float">10.0</parameter>
-      <parameter name="NeutralHadronTightTimingCut" type="float">5.0</parameter>
-      <parameter name="PhotonPtCut" type="float">0.0</parameter>
-      <parameter name="PhotonPtCutForLooseTiming" type="float">2.0</parameter>
-      <parameter name="PhotonLooseTimingCut" type="float">10.0</parameter>
-      <parameter name="PhotonTightTimingCut" type="float">2.5</parameter>
-      <parameter name="ChargedPfoPtCut" type="float">0.0</parameter>
-      <parameter name="ChargedPfoPtCutForLooseTiming" type="float">4.0</parameter>
-      <parameter name="ChargedPfoLooseTimingCut" type="float">10.0</parameter>
-      <parameter name="ChargedPfoTightTimingCut" type="float">5.0</parameter>
-      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-20.0</parameter>
-      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-20.0</parameter>
-      <parameter name="ClusterLessPfoTrackTimeCut" type="float">50.</parameter>
-      <parameter name="MinMomentumForClusterLessPfos" type="float">0.0 </parameter>
-      <parameter name="MaxMomentumForClusterLessPfos" type="float">5.0 </parameter>
-      <parameter name="MinPtForClusterLessPfos" type="float">0.0 </parameter>
-      <parameter name="NeutralFarForwardLooseTimingCut" type="float">10.0 </parameter>
-      <parameter name="NeutralFarForwardTightTimingCut" type="float">5.0 </parameter>
-      <parameter name="HCalBarrelLooseTimingCut" type="float">10 </parameter>
-      <parameter name="HCalBarrelTightTimingCut" type="float">5 </parameter>
-    </processor>
-
-        <processor name="CLICPfoSelectorTight_LE" type="CLICPfoSelector">
-      <!--Selects Pfos from full PFO list using timing cuts-->
-      <!--Input PFO Collection-->
-      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">
-        LE_TightSelectedPandoraPFOs
-      </parameter>
-      <parameter name = "NeutralHadronPtCut" type="float">0.0</parameter>
-      <!-- <parameter name = "NeutralHadronPtCutForTightTiming" type="float">1.0</parameter> -->
-      <!-- <parameter name = "PhotonPtCutForTightTiming" type="float">1.0</parameter> -->
-      <!-- <parameter name = "ChargedPfoPtCutForTightTiming" type="float">1.5</parameter> -->
-      <parameter name="NeutralHadronPtCutForLooseTiming" type="float">3.0</parameter>
-      <parameter name="NeutralHadronLooseTimingCut" type="float">4.0</parameter>
-      <parameter name="NeutralHadronTightTimingCut" type="float">2.0</parameter>
-      <parameter name="PhotonPtCut" type="float">0.0</parameter>
-      <parameter name="PhotonPtCutForLooseTiming" type="float">2.0</parameter>
-      <parameter name="PhotonLooseTimingCut" type="float">1.0</parameter>
-      <parameter name="PhotonTightTimingCut" type="float">1.0</parameter>
-      <parameter name="ChargedPfoPtCut" type="float">0.0</parameter>
-      <parameter name="ChargedPfoPtCutForLooseTiming" type="float">3.0</parameter>
-      <parameter name="ChargedPfoLooseTimingCut" type="float">4.0</parameter>
-      <parameter name="ChargedPfoTightTimingCut" type="float">2.0</parameter>
-      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-2.0</parameter>
-      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-1.0</parameter>
-      <parameter name="ClusterLessPfoTrackTimeCut" type="float">10.</parameter>
-      <parameter name="MinMomentumForClusterLessPfos" type="float">0.0 </parameter>
-      <parameter name="MaxMomentumForClusterLessPfos" type="float">5.0 </parameter>
-      <parameter name="MinPtForClusterLessPfos" type="float">0.75 </parameter>
-      <parameter name="NeutralFarForwardLooseTimingCut" type="float">2.0 </parameter>
-      <parameter name="NeutralFarForwardTightTimingCut" type="float">2.0 </parameter>
-      <parameter name="HCalBarrelLooseTimingCut" type="float">4 </parameter>
-      <parameter name="HCalBarrelTightTimingCut" type="float">2 </parameter>
-    </processor>
-
-  </group>
-
 	<processor name="FastJetProcessor" type="FastJetProcessor">
-		<parameter name="algorithm" type="StringVec">kt_algorithm 0.7</parameter>
+		<parameter name="algorithm" type="StringVec">antikt_algorithm 0.4</parameter>
 		<parameter name="clusteringMode" type="StringVec"> Inclusive 5</parameter>
 		<parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle">JetOut </parameter>
-		<parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOs </parameter>
+		<parameter name="recParticleIn" type="string" lcioInType="CalorimeterHit"> PandoraPFOs</parameter>
 		<parameter name="recombinationScheme" type="string">E_scheme </parameter>
 	</processor>
-
 
 </marlin>
