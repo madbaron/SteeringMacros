@@ -47,7 +47,7 @@ InitDD4hep = MarlinProcessorWrapper("InitDD4hep")
 InitDD4hep.OutputLevel = INFO
 InitDD4hep.ProcessorType = "InitializeDD4hep"
 InitDD4hep.Parameters = {
-    "DD4hepXMLFile": ["../detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"],
+    "DD4hepXMLFile": ["/opt/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"],
     "EncodingStringParameterName": ["GlobalTrackerReadoutID"]
 }
 
@@ -167,7 +167,7 @@ CKFTracking.ProcessorType = "ACTSSeededCKFTrackingProc"
 CKFTracking.Parameters = {
     "CKF_Chi2CutOff": ["10"],
     "CKF_NumMeasurementsCutOff": ["1"],
-    "MatFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-vk7dd4tkm75atbkawti2mfozyujq6db2/share/ACTSTracking/data/material-maps.json"],
+    "MatFile": ["/opt/detector-simulation/geometries/MuColl_10TeV_v0A/material-maps.json"],
     "PropagateBackward": ["False"],
     "RunCKF": ["True"],
     "SeedFinding_CollisionRegion": ["1"],
@@ -179,7 +179,7 @@ CKFTracking.Parameters = {
     "SeedFinding_RadLengthPerSeed": ["0.1"],
     "SeedFinding_SigmaScattering": ["50"],
     "SeedingLayers": ["13", "2", "13", "6", "13", "10", "13", "14", "14", "2", "14", "6", "14", "10", "14", "14", "15", "2", "15", "6", "15", "10", "15", "14"],
-    "TGeoFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-vk7dd4tkm75atbkawti2mfozyujq6db2/share/ACTSTracking/data/MuColl_v1.root"],
+    "TGeoFile": ["/opt/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.root"],
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
 }
@@ -502,7 +502,7 @@ DDMarlinPandora.Parameters = {
     "NOuterSamplingLayers": ["3"],
     "OutputEnergyCorrectionPoints": [],
     "PFOCollectionName": ["PandoraPFOs"],
-    "PandoraSettingsXmlFile": ["PandoraSettings/PandoraSettingsDefault.xml"],
+    "PandoraSettingsXmlFile": ["/opt/SteeringMacros/Reco/PandoraSettings/PandoraSettingsDefault.xml"],
     "ProngVertexCollections": ["ProngVertices"],
     "ReachesECalBarrelTrackerOuterDistance": ["-100"],
     "ReachesECalBarrelTrackerZMaxDistance": ["-50"],

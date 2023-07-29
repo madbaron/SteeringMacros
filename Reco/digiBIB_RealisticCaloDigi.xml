@@ -40,6 +40,16 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <processor name="MyHcalEndcapDigi"/>
     <processor name="MyHcalEndcapReco"/>
     
+    <!-- ==========  Tracking  ========== -->
+    <processor name="CKFTracking"/>
+    <processor name="TrackDeduper"/>
+    <processor name="Refit" />
+
+    <!-- ===============  The more misterious processors  ================= -->
+    <processor name="DDMarlinPandora"/>
+    <group name="PfoSelector" />
+    <processor name="FastJetProcessor"/>
+
     <!-- ==========  Output  ========== -->
     <processor name="Output_REC"/>
 
@@ -428,5 +438,440 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <parameter name="calibration_factorsMipGev">0.0231348530678</parameter>
     <parameter name="CellIDLayerString"> layer </parameter>
   </processor>
+
+  
+  <!-- == TruthTrackFinder parameters == -->
+  <processor name="CKFTracking" type="ACTSSeededCKFTrackingProc">
+    <!-- Path to material description -->
+    <parameter name="MatFile" type="string">
+    /opt/ilcsoft/muonc/ACTSTracking/v1.0.0/data/material-maps.json
+    </parameter>
+    <!-- Path to tracking geometry -->
+    <parameter name="TGeoFile" type="string">
+    /opt/ilcsoft/muonc/ACTSTracking/v1.0.0/data/MuColl_v1.root
+    </parameter>
+    <!-- Vol Layer, use -1 for all, ACTS numbers -->
+    <parameter name="SeedingLayers" type="string">
+      13 2
+      13 6
+      13 10
+      13 14
+      14  2
+      14  6
+      14 10
+      14 14
+      15  2
+      15  6
+      15 10
+      15 14
+    </parameter>
+    <parameter name="SeedFinding_RMax" type="float">150</parameter>
+    <parameter name="SeedFinding_DeltaRMin" type="float">5</parameter>
+    <parameter name="SeedFinding_DeltaRMax" type="float">80</parameter>
+    <parameter name="SeedFinding_CollisionRegion" type="float">1</parameter>
+    <parameter name="SeedFinding_RadLengthPerSeed" type="float">0.1</parameter>
+    <parameter name="SeedFinding_SigmaScattering" type="float">50</parameter>
+    <parameter name="SeedFinding_MinPt" type="float">500</parameter>
+    <parameter name="SeedFinding_ImpactMax" type="int">3</parameter>
+    <!-- CKF Configuration -->
+    <parameter name="CKF_Chi2CutOff" type="float">10</parameter>
+    <parameter name="CKF_NumMeasurementsCutOff" type="int">1</parameter>
+    <!--Define input tracker hits and relations. NB. Order must be respected -->
+    <parameter name="TrackerHitCollectionNames" type="StringVec" lcioInType="TrackerHitPlane">
+      VBTrackerHits
+      IBTrackerHits
+      OBTrackerHits
+      VETrackerHits
+      IETrackerHits
+      OETrackerHits
+    </parameter>
+    <!--Track Collection Names-->
+    <parameter name="RunCKF" type="bool">True</parameter>
+    <parameter name="PropagateBackward" type="bool">False</parameter>
+    <parameter name="TrackCollectionName" type="string" lcioOutType="Track">AllTracks</parameter>
+  </processor>
+
+<processor name="TrackDeduper" type="ACTSDuplicateRemoval">
+  <parameter name="InputTrackCollectionName" type="string" lcioOutType="Track">AllTracks</parameter>
+  <parameter name="OutputTrackCollectionName" type="string" lcioOutType="Track">SiTracks</parameter>
+</processor>
+
+<processor name="Refit" type="RefitFinal">
+<!--Refit processor that calls finaliseLCIOTrack after taking the track state from the existing track. No re-sorting of hits is done-->
+<!--Use Energy Loss in Fit-->
+<parameter name="EnergyLossOn" type="bool"> true </parameter>
+<!--Add extra cuts on the reduced ChiSquare and Nhits -->
+<parameter name="DoCutsOnRedChi2Nhits" type="bool"> true </parameter>
+<!--Cut on the reduced chi square-->
+<parameter name="ReducedChi2Cut" type="double"> 3. </parameter>
+<!--Cuts on Nhits: <detID>,<detID>,... <lower threshold> -->
+<parameter name="NHitsCuts" type="StringVec">
+  1,2 1
+  3,4 1
+  5,6 0
+</parameter>
+<!--Name of the input track to MCParticle relation collection-->
+<parameter name="InputRelationCollectionName" type="string" lcioInType="LCRelation"> SiTrackRelations </parameter>
+<!--Name of the input track collection-->
+<parameter name="InputTrackCollectionName" type="string" lcioInType="Track"> SiTracks </parameter>
+<!--maximum allowable chi2 increment when moving from one site to another-->
+<parameter name="Max_Chi2_Incr" type="double"> 1.79769e+30 </parameter>
+<!--Use MultipleScattering in Fit-->
+<parameter name="MultipleScatteringOn" type="bool"> true </parameter>
+<!--Refit Track to MCParticle relation collection Name-->
+<parameter name="OutputRelationCollectionName" type="string" lcioOutType="LCRelation">
+  SiTracks_Refitted_Relation
+</parameter>
+<!--Name of the output track collection-->
+<parameter name="OutputTrackCollectionName" type="string" lcioOutType="Track">
+  SiTracks_Refitted
+</parameter>
+<!--Identifier of the reference point to use for the fit initialisation, -1 means at 0 0 0-->
+<parameter name="ReferencePoint" type="int"> -1 </parameter>
+<!--Smooth All Mesurement Sites in Fit-->
+<parameter name="SmoothOn" type="bool"> false </parameter>
+<!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+<parameter name="Verbosity" type="string"> MESSAGE </parameter>
+<!--if true extrapolation in the forward direction (in-out), otherwise backward (out-in)-->
+<parameter name="extrapolateForward" type="bool"> true </parameter>
+<!--Final minimum number of track clusters-->
+<parameter name="MinClustersOnTrackAfterFit" type="int">3 </parameter>
+</processor>
+  
+  <processor name="DDMarlinPandora" type="DDPandoraPFANewProcessor">
+    <!--Track cut on distance from BarrelTracker inner r to id whether track can form pfo-->
+    <parameter name="MaxBarrelTrackerInnerRDistance" type="float">105.0 </parameter>
+    <parameter name="PandoraSettingsXmlFile" type="String"> /code/SteeringMacros/Reco/PandoraSettings/PandoraSettingsDefault.xml </parameter>
+    <parameter name="UseDD4hepField" type="bool">false</parameter>
+    <!-- Collection names -->
+    <parameter name="TrackCollections" type="StringVec">SiTracks_Refitted</parameter>
+    <parameter name="ECalCaloHitCollections" type="StringVec">EcalBarrelCollectionRec EcalBarrelCollectionGapHits EcalEndcapsCollectionRec EcalEndcapsCollectionGapHits</parameter>
+    <parameter name="HCalCaloHitCollections" type="StringVec">HcalBarrelCollectionRec HcalEndcapsCollectionRec</parameter>
+    <!--parameter name="MuonCaloHitCollections" type="StringVec">MUON</parameter-->
+    <parameter name="MCParticleCollections" type="StringVec">MCParticle</parameter>
+    <parameter name="RelCaloHitCollections" type="StringVec">EcalBarrelRelationsSimRec EcalEndcapsRelationsSimRec HcalBarrelRelationsSimRec HcalEndcapsRelationsSimRec RelationMuonHit</parameter>
+    <parameter name="RelTrackCollections" type="StringVec">SiTracks_Refitted_Relation</parameter>
+    <parameter name="KinkVertexCollections" type="StringVec">KinkVertices</parameter>
+    <parameter name="ProngVertexCollections" type="StringVec">ProngVertices</parameter>
+    <parameter name="SplitVertexCollections" type="StringVec">SplitVertices</parameter>
+    <parameter name="V0VertexCollections" type="StringVec">V0Vertices</parameter>
+    <parameter name="StartVertexAlgorithmName" type="string">PandoraPFANew </parameter>
+    <parameter name="StartVertexCollectionName" type="string" lcioOutType="Vertex"> PandoraStartVertices </parameter>
+    <parameter name="ClusterCollectionName" type="String">PandoraClusters</parameter>
+    <parameter name="PFOCollectionName" type="String">PandoraPFOs</parameter>
+    <!-- Calibration constants -->
+    <parameter name="ECalToMipCalibration">181.818</parameter>
+    <parameter name="HCalToMipCalibration">40.8163</parameter>
+    <parameter name="MuonToMipCalibration">19607.8</parameter>
+    <parameter name="ECalMipThreshold" type="float">0.5</parameter>
+    <parameter name="HCalMipThreshold" type="float">0.3</parameter>
+    <parameter name="ECalToEMGeVCalibration">1.02373335516</parameter>
+    <parameter name="HCalToEMGeVCalibration">1.02373335516</parameter>
+    <parameter name="ECalToHadGeVCalibrationBarrel">1.24223718397</parameter>
+    <parameter name="ECalToHadGeVCalibrationEndCap">1.24223718397</parameter>
+    <parameter name="HCalToHadGeVCalibration">1.01799349172</parameter>
+    <parameter name="DigitalMuonHits" type="int">0</parameter>
+    <parameter name="MaxHCalHitHadronicEnergy" type="float">1000000.</parameter>
+    <parameter name="SoftwareCompensationWeights" type="FloatVec"> 1.61741 -0.00444385 2.29683e-05 -0.0731236 -0.00157099 -7.09546e-07 0.868443 1.0561 -0.0238574 </parameter>
+    <parameter name="SoftwareCompensationEnergyDensityBins" type="FloatVec">0 2. 5. 7.5 9.5 13. 16. 20. 23.5 28. 33. 40. 50. 75. 100.</parameter>
+    <parameter name="FinalEnergyDensityBin" type="float">110</parameter>
+    <parameter name="MaxClusterEnergyToApplySoftComp" type="float">2000</parameter>
+    <parameter name="MinCleanHitEnergy" type="float">0.5</parameter>
+    <parameter name="MinCleanHitEnergyFraction" type="float">0.01</parameter>
+    <parameter name="MinCleanCorrectedHitEnergy" type="float">0.1</parameter>
+
+    <!--Whether to calculate track states manually, rather than copy stored fitter values-->
+    <parameter name="UseOldTrackStateCalculation" type="int"> 0 </parameter> <!-- !!!FIXME, workaround for some missing TS AtCalo face - this should really be: 0 -->
+    <parameter name="NEventsToSkip" type="int">0</parameter>
+    <!--parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG0 </parameter-->
+    <!--The name of the Vertex Barrel detector-->
+    <parameter name="VertexBarrelDetectorName" type="string">VXD </parameter>
+    <!--Detector names of the Trackers in the Barrel starting from the innermost one-->
+    <parameter name="TrackerBarrelDetectorNames" type="StringVec">IT OT</parameter>
+    <!--Detector names of the Trackers in the Endcap starting from the innermost one-->
+    <parameter name="TrackerEndcapDetectorNames" type="StringVec">ITEndcap OTEndcap</parameter>
+    <parameter name="ECalBarrelDetectorName" type="string">EcalBarrel </parameter>
+    <parameter name="ECalEndcapDetectorName" type="string">EcalEndcap </parameter>
+    <parameter name="HCalEndcapDetectorName" type="string">HcalEndcap </parameter>
+    <parameter name="HCalBarrelDetectorName" type="string">HcalBarrel </parameter>
+    <parameter name="MuonBarrelDetectorName" type="string">YokeBarrel </parameter>
+    <parameter name="MuonEndcapDetectorName" type="string">YokeEndcap </parameter>
+    <!--Decides whether to create gaps in the geometry (ILD-specific)-->
+    <parameter name="CreateGaps" type="bool">false</parameter>
+
+    <!-- RE: Fix for driver Yoke05_Barrel in lcgeo. See PR #241 iLCSoft/lcgeo -->
+    <!-- The layers are oriented in (0,1,0) before placement in the stave/module -->
+    <parameter name="YokeBarrelNormalVector" type="FloatVec">0 1 0 </parameter>
+
+    <!--The name of the DDTrackCreator implementation-->
+    <parameter name="TrackCreatorName" type="string">DDTrackCreatorCLIC </parameter>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> WARNING </parameter>
+  </processor>
+
+<group name="PfoSelector">
+    <!--Selects Pfos from full PFO list using timing cuts-->
+    <!--ChargedPfoLooseTimingCut-->
+    <parameter name="ChargedPfoLooseTimingCut" type="float">3 </parameter>
+    <!--ChargedPfoNegativeLooseTimingCut-->
+    <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-1 </parameter>
+    <!--ChargedPfoNegativeTightTimingCut-->
+    <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-0.5 </parameter>
+    <!--ChargedPfoPtCut-->
+    <parameter name="ChargedPfoPtCut" type="float">0 </parameter>
+    <!--ChargedPfoPtCutForLooseTiming-->
+    <parameter name="ChargedPfoPtCutForLooseTiming" type="float">4 </parameter>
+    <!--ChargedPfoTightTimingCut-->
+    <parameter name="ChargedPfoTightTimingCut" type="float">1.5 </parameter>
+    <!--CheckKaonCorrection-->
+    <parameter name="CheckKaonCorrection" type="int">0 </parameter>
+    <!--CheckProtonCorrection-->
+    <parameter name="CheckProtonCorrection" type="int">0 </parameter>
+    <!--ClusterLessPfoTrackTimeCut-->
+    <parameter name="ClusterLessPfoTrackTimeCut" type="float">10 </parameter>
+    <!--CorrectHitTimesForTimeOfFlight-->
+    <parameter name="CorrectHitTimesForTimeOfFlight" type="int">0 </parameter>
+    <!--DisplayRejectedPfos-->
+    <parameter name="DisplayRejectedPfos" type="int">1 </parameter>
+    <!--DisplaySelectedPfos-->
+    <parameter name="DisplaySelectedPfos" type="int">1 </parameter>
+    <!--FarForwardCosTheta-->
+    <parameter name="FarForwardCosTheta" type="float">0.975 </parameter>
+    <!--ForwardCosThetaForHighEnergyNeutralHadrons-->
+    <parameter name="ForwardCosThetaForHighEnergyNeutralHadrons" type="float">0.95 </parameter>
+    <!--ForwardHighEnergyNeutralHadronsEnergy-->
+    <parameter name="ForwardHighEnergyNeutralHadronsEnergy" type="float">10 </parameter>
+    <!--HCalBarrelLooseTimingCut-->
+    <parameter name="HCalBarrelLooseTimingCut" type="float">20 </parameter>
+    <!--HCalBarrelTightTimingCut-->
+    <parameter name="HCalBarrelTightTimingCut" type="float">10 </parameter>
+    <!--HCalEndCapTimingFactor-->
+    <parameter name="HCalEndCapTimingFactor" type="float">1 </parameter>
+    <!--Input PFO Collection-->
+    <parameter name="InputPfoCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs </parameter>
+    <!--KeepKShorts-->
+    <parameter name="KeepKShorts" type="int">1 </parameter>
+    <!--MaxMomentumForClusterLessPfos-->
+    <parameter name="MaxMomentumForClusterLessPfos" type="float">2 </parameter>
+    <!--MinECalHitsForTiming-->
+    <parameter name="MinECalHitsForTiming" type="int">5 </parameter>
+    <!--MinHCalEndCapHitsForTiming-->
+    <parameter name="MinHCalEndCapHitsForTiming" type="int">5 </parameter>
+    <!--MinMomentumForClusterLessPfos-->
+    <parameter name="MinMomentumForClusterLessPfos" type="float">0.5 </parameter>
+    <!--MinPtForClusterLessPfos-->
+    <parameter name="MinPtForClusterLessPfos" type="float">0.5 </parameter>
+    <!--MinimumEnergyForNeutronTiming-->
+    <parameter name="MinimumEnergyForNeutronTiming" type="float">1 </parameter>
+    <!--Monitoring-->
+    <parameter name="Monitoring" type="int">0 </parameter>
+    <!--MonitoringPfoEnergyToDisplay-->
+    <parameter name="MonitoringPfoEnergyToDisplay" type="float">1 </parameter>
+    <!--NeutralFarForwardLooseTimingCut-->
+    <parameter name="NeutralFarForwardLooseTimingCut" type="float">2 </parameter>
+    <!--NeutralFarForwardTightTimingCut-->
+    <parameter name="NeutralFarForwardTightTimingCut" type="float">1 </parameter>
+    <!--NeutralHadronBarrelPtCutForLooseTiming-->
+    <parameter name="NeutralHadronBarrelPtCutForLooseTiming" type="float">3.5 </parameter>
+    <!--NeutralHadronLooseTimingCut-->
+    <parameter name="NeutralHadronLooseTimingCut" type="float">2.5 </parameter>
+    <!--NeutralHadronPtCut-->
+    <parameter name="NeutralHadronPtCut" type="float">0 </parameter>
+    <!--NeutralHadronPtCutForLooseTiming-->
+    <parameter name="NeutralHadronPtCutForLooseTiming" type="float">8 </parameter>
+    <!--NeutralHadronTightTimingCut-->
+    <parameter name="NeutralHadronTightTimingCut" type="float">1.5 </parameter>
+    <!--PhotonFarForwardLooseTimingCut-->
+    <parameter name="PhotonFarForwardLooseTimingCut" type="float">2 </parameter>
+    <!--PhotonFarForwardTightTimingCut-->
+    <parameter name="PhotonFarForwardTightTimingCut" type="float">1 </parameter>
+    <!--PhotonLooseTimingCut-->
+    <parameter name="PhotonLooseTimingCut" type="float">2 </parameter>
+    <!--PhotonPtCut-->
+    <parameter name="PhotonPtCut" type="float">0 </parameter>
+    <!--PhotonPtCutForLooseTiming-->
+    <parameter name="PhotonPtCutForLooseTiming" type="float">4 </parameter>
+    <!--PhotonTightTimingCut-->
+    <parameter name="PhotonTightTimingCut" type="float">1 </parameter>
+    <!--PtCutForTightTiming-->
+    <parameter name="PtCutForTightTiming" type="float">0.75 </parameter>
+    <!--Selected pfo collection name-->
+    <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">SelectedPandoraPFOs </parameter>
+    <!--UseClusterLessPfos-->
+    <parameter name="UseClusterLessPfos" type="int">1 </parameter>
+    <!--UseNeutronTiming-->
+    <parameter name="UseNeutronTiming" type="int">0 </parameter>
+    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+    <parameter name="Verbosity" type="string">MESSAGE </parameter>
+
+    <processor name="CLICPfoSelectorDefault_HE" type="CLICPfoSelector">
+      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle"> SelectedPandoraPFOs </parameter>
+    </processor>
+
+    <processor name="CLICPfoSelectorLoose_HE" type="CLICPfoSelector">
+      <!--Selects Pfos from full PFO list using timing cuts-->
+      <!--ChargedPfoNegativeLooseTimingCut-->
+      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-2.0</parameter>
+      <!--ChargedPfoNegativeTightTimingCut-->
+      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-2.0</parameter>
+      <!-- ClusterLessPfoTrackTimeCut -->
+      <parameter name = "ClusterLessPfoTrackTimeCut" type="float">1000.</parameter>
+      <!--MinMomentumForClusterLessPfos-->
+      <parameter name="MinMomentumForClusterLessPfos" type="float">0.0 </parameter>
+      <!--MaxMomentumForClusterLessPfos-->
+      <parameter name="MinPtForClusterLessPfos" type="float">0.25 </parameter>
+      <!--MinimumEnergyForNeutronTiming-->
+      <!--NeutralFarForwardLooseTimingCut-->
+      <parameter name="NeutralFarForwardLooseTimingCut" type="float">2.5 </parameter>
+      <!--NeutralFarForwardTightTimingCut-->
+      <parameter name="NeutralFarForwardTightTimingCut" type="float">1.5 </parameter>
+      <!--PhotonLooseTimingCut-->
+      <parameter name="PhotonLooseTimingCut" type="float">2. </parameter>
+      <!--PhotonTightTimingCut-->
+      <parameter name="PhotonTightTimingCut" type="float">2. </parameter>
+      <!--Selected pfo collection name-->
+      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">LooseSelectedPandoraPFOs </parameter>
+      <parameter name="Monitoring" type="int">0</parameter>
+    </processor>
+
+    <processor name="CLICPfoSelectorTight_HE" type="CLICPfoSelector">
+      <!--Selects Pfos from full PFO list using timing cuts-->
+      <!--ChargedPfoLooseTimingCut-->
+      <parameter name="ChargedPfoLooseTimingCut" type="float">2.0 </parameter>
+      <!--ChargedPfoNegativeLooseTimingCut-->
+      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-0.5 </parameter>
+      <!--ChargedPfoNegativeTightTimingCut-->
+      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-0.25 </parameter>
+      <!--ChargedPfoTightTimingCut-->
+      <parameter name="ChargedPfoTightTimingCut" type="float">1.0 </parameter>
+      <!--FarForwardCosTheta-->
+      <parameter name="FarForwardCosTheta" type="float">0.95 </parameter>
+      <!--MaxMomentumForClusterLessPfos-->
+      <parameter name="MaxMomentumForClusterLessPfos" type="float">1.5 </parameter>
+      <!--MinPtForClusterLessPfos-->
+      <parameter name="MinPtForClusterLessPfos" type="float">1.0 </parameter>
+      <!--NeutralFarForwardLooseTimingCut-->
+      <parameter name="NeutralFarForwardLooseTimingCut" type="float">1.5 </parameter>
+      <!--NeutralHadronPtCut-->
+      <parameter name="NeutralHadronPtCut" type="float">0.5 </parameter>
+      <!--PhotonPtCut-->
+      <parameter name="PhotonPtCut" type="float">0.2 </parameter>
+      <!--PtCutForTightTiming-->
+      <parameter name="PtCutForTightTiming" type="float">1.0 </parameter>
+      <!--Selected pfo collection name-->
+      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">TightSelectedPandoraPFOs </parameter>
+      <!--UseClusterLessPfos-->
+      <parameter name="UseClusterLessPfos" type="int">0 </parameter>
+      <parameter name="Monitoring" type="int">0</parameter>
+    </processor>
+
+    <processor name="CLICPfoSelectorDefault_LE" type="CLICPfoSelector">
+      <!--Selects Pfos from full PFO list using timing cuts-->
+      <!--Selected pfo collection name-->
+      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">
+        LE_SelectedPandoraPFOs
+      </parameter>
+      <!-- <parameter name="ChargedPfoPtCutForTightTiming" type="float">1.0</parameter> -->
+      <!-- <parameter name="NeutralHadronPtCutForTightTiming" type="float">1.0</parameter> -->
+      <!-- <parameter name="PhotonPtCutForTightTiming" type="float">1.0</parameter> -->
+      <parameter name="NeutralHadronPtCut" type="float">0.0</parameter>
+      <parameter name="NeutralHadronPtCutForLooseTiming" type="float">2.0</parameter>
+      <parameter name="NeutralHadronLooseTimingCut" type="float">5.0</parameter>
+      <parameter name="NeutralHadronTightTimingCut" type="float">2.5</parameter>
+      <parameter name="PhotonPtCut" type="float">0.0</parameter>
+      <parameter name="PhotonPtCutForLooseTiming" type="float">2.0</parameter>
+      <parameter name="PhotonLooseTimingCut" type="float">5.0</parameter>
+      <parameter name="PhotonTightTimingCut" type="float">1.0</parameter>
+      <parameter name="ChargedPfoPtCut" type="float">0.0</parameter>
+      <parameter name="ChargedPfoPtCutForLooseTiming" type="float">4.0</parameter>
+      <parameter name="ChargedPfoLooseTimingCut" type="float">10.0</parameter>
+      <parameter name="ChargedPfoTightTimingCut" type="float">3.0</parameter>
+      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-5.0</parameter>
+      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-2.0</parameter>
+      <parameter name="ClusterLessPfoTrackTimeCut" type="float">10.</parameter>
+      <parameter name="MinMomentumForClusterLessPfos" type="float">0.0 </parameter>
+      <parameter name="MaxMomentumForClusterLessPfos" type="float">5.0 </parameter>
+      <parameter name="MinPtForClusterLessPfos" type="float">0.0 </parameter>
+      <parameter name="NeutralFarForwardLooseTimingCut" type="float">4.0 </parameter>
+      <parameter name="NeutralFarForwardTightTimingCut" type="float">2.0 </parameter>
+      <parameter name="HCalBarrelLooseTimingCut" type="float">5 </parameter>
+      <parameter name="HCalBarrelTightTimingCut" type="float">2.5 </parameter>
+    </processor>
+
+    <processor name="CLICPfoSelectorLoose_LE" type="CLICPfoSelector">
+      <!--Selects Pfos from full PFO list using timing cuts-->
+      <!--Input PFO Collection-->
+      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">
+        LE_LooseSelectedPandoraPFOs
+      </parameter>
+      <parameter name="NeutralHadronPtCut" type="float">0.0</parameter>
+      <!-- <parameter name="NeutralHadronPtCutForTightTiming" type="float">0.75</parameter> -->
+      <!-- <parameter name="PhotonPtCutForTightTiming" type="float">0.75</parameter> -->
+      <!-- <parameter name="ChargedPfoPtCutForTightTiming" type="float">1.0</parameter> -->
+      <parameter name="NeutralHadronPtCutForLooseTiming" type="float">2.0</parameter>
+      <parameter name="NeutralHadronLooseTimingCut" type="float">10.0</parameter>
+      <parameter name="NeutralHadronTightTimingCut" type="float">5.0</parameter>
+      <parameter name="PhotonPtCut" type="float">0.0</parameter>
+      <parameter name="PhotonPtCutForLooseTiming" type="float">2.0</parameter>
+      <parameter name="PhotonLooseTimingCut" type="float">10.0</parameter>
+      <parameter name="PhotonTightTimingCut" type="float">2.5</parameter>
+      <parameter name="ChargedPfoPtCut" type="float">0.0</parameter>
+      <parameter name="ChargedPfoPtCutForLooseTiming" type="float">4.0</parameter>
+      <parameter name="ChargedPfoLooseTimingCut" type="float">10.0</parameter>
+      <parameter name="ChargedPfoTightTimingCut" type="float">5.0</parameter>
+      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-20.0</parameter>
+      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-20.0</parameter>
+      <parameter name="ClusterLessPfoTrackTimeCut" type="float">50.</parameter>
+      <parameter name="MinMomentumForClusterLessPfos" type="float">0.0 </parameter>
+      <parameter name="MaxMomentumForClusterLessPfos" type="float">5.0 </parameter>
+      <parameter name="MinPtForClusterLessPfos" type="float">0.0 </parameter>
+      <parameter name="NeutralFarForwardLooseTimingCut" type="float">10.0 </parameter>
+      <parameter name="NeutralFarForwardTightTimingCut" type="float">5.0 </parameter>
+      <parameter name="HCalBarrelLooseTimingCut" type="float">10 </parameter>
+      <parameter name="HCalBarrelTightTimingCut" type="float">5 </parameter>
+    </processor>
+
+        <processor name="CLICPfoSelectorTight_LE" type="CLICPfoSelector">
+      <!--Selects Pfos from full PFO list using timing cuts-->
+      <!--Input PFO Collection-->
+      <parameter name="SelectedPfoCollection" type="string" lcioOutType="ReconstructedParticle">
+        LE_TightSelectedPandoraPFOs
+      </parameter>
+      <parameter name = "NeutralHadronPtCut" type="float">0.0</parameter>
+      <!-- <parameter name = "NeutralHadronPtCutForTightTiming" type="float">1.0</parameter> -->
+      <!-- <parameter name = "PhotonPtCutForTightTiming" type="float">1.0</parameter> -->
+      <!-- <parameter name = "ChargedPfoPtCutForTightTiming" type="float">1.5</parameter> -->
+      <parameter name="NeutralHadronPtCutForLooseTiming" type="float">3.0</parameter>
+      <parameter name="NeutralHadronLooseTimingCut" type="float">4.0</parameter>
+      <parameter name="NeutralHadronTightTimingCut" type="float">2.0</parameter>
+      <parameter name="PhotonPtCut" type="float">0.0</parameter>
+      <parameter name="PhotonPtCutForLooseTiming" type="float">2.0</parameter>
+      <parameter name="PhotonLooseTimingCut" type="float">1.0</parameter>
+      <parameter name="PhotonTightTimingCut" type="float">1.0</parameter>
+      <parameter name="ChargedPfoPtCut" type="float">0.0</parameter>
+      <parameter name="ChargedPfoPtCutForLooseTiming" type="float">3.0</parameter>
+      <parameter name="ChargedPfoLooseTimingCut" type="float">4.0</parameter>
+      <parameter name="ChargedPfoTightTimingCut" type="float">2.0</parameter>
+      <parameter name="ChargedPfoNegativeLooseTimingCut" type="float">-2.0</parameter>
+      <parameter name="ChargedPfoNegativeTightTimingCut" type="float">-1.0</parameter>
+      <parameter name="ClusterLessPfoTrackTimeCut" type="float">10.</parameter>
+      <parameter name="MinMomentumForClusterLessPfos" type="float">0.0 </parameter>
+      <parameter name="MaxMomentumForClusterLessPfos" type="float">5.0 </parameter>
+      <parameter name="MinPtForClusterLessPfos" type="float">0.75 </parameter>
+      <parameter name="NeutralFarForwardLooseTimingCut" type="float">2.0 </parameter>
+      <parameter name="NeutralFarForwardTightTimingCut" type="float">2.0 </parameter>
+      <parameter name="HCalBarrelLooseTimingCut" type="float">4 </parameter>
+      <parameter name="HCalBarrelTightTimingCut" type="float">2 </parameter>
+    </processor>
+
+  </group>
+
+	<processor name="FastJetProcessor" type="FastJetProcessor">
+		<parameter name="algorithm" type="StringVec">kt_algorithm 0.7</parameter>
+		<parameter name="clusteringMode" type="StringVec"> Inclusive 5</parameter>
+		<parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle">JetOut </parameter>
+		<parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOs </parameter>
+		<parameter name="recombinationScheme" type="string">E_scheme </parameter>
+	</processor>
+
 
 </marlin>

@@ -5,7 +5,7 @@ from g4units import mm, GeV, MeV, m, deg
 SIM = DD4hepSimulation()
 
 # The compact XML file
-SIM.compactFile = "/opt/ilcsoft/muonc/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml"
+SIM.compactFile = "/opt/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"
 # Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 0.
 SIM.enableDetailedShowerMode = True
@@ -22,7 +22,7 @@ SIM.macroFile = []
 SIM.numberOfEvents = STEPSIZE
 # Outputfile from the simulation,only lcio output is supported
 # SIM.outputFile = "out/digi/sim_mod1_mumu2H2bb750.slcio"
-SIM.outputFile = OUTFILENAME 
+SIM.outputFile = OUTFILENAME
 # SIM.outputFile = "out/sim_mod1_mcparticles.slcio"
 # Verbosity use integers from 1(most) to 7(least) verbose
 # or strings: VERBOSE, DEBUG, INFO, WARNING, ERROR, FATAL, ALWAYS
@@ -71,7 +71,7 @@ SIM.action.tracker = "Geant4TrackerWeightedAction"
 SIM.action.calo = "Geant4ScintillatorCalorimeterAction"
 
 # create a map of patterns and actions to be applied to sensitive detectors
-##         example: SIM.action.mapActions['tpc'] = "TPCSDAction"
+# example: SIM.action.mapActions['tpc'] = "TPCSDAction"
 SIM.action.mapActions = {}
 
 
@@ -137,7 +137,7 @@ SIM.filter.tracker = "edep1kev"
 # Options for random distributions:
 ##
 # 'uniform' is the default distribution, flat in theta
-##     'cos(theta)' is flat in cos(theta)
+# 'cos(theta)' is flat in cos(theta)
 # 'eta', or 'pseudorapidity' is flat in pseudorapity
 # 'ffbar' is distributed according to 1+cos^2(theta)
 ##
@@ -215,7 +215,7 @@ SIM.physics.list = "QGSP_BERT"
 
 # location of particle.tbl file containing extra particles and their lifetime information
 ##
-#SIM.physics.pdgfile = os.path.join( os.environ.get("DD4HEP"), "DDG4/examples/particle.tbl" )
+# SIM.physics.pdgfile = os.path.join( os.environ.get("DD4HEP"), "DDG4/examples/particle.tbl" )
 SIM.physics.pdgfile = "/code/GeantExtraPart/x1x1.tbl"
 
 # The global geant4 rangecut for secondary production

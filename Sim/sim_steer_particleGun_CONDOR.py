@@ -5,8 +5,7 @@ from g4units import mm, GeV, MeV, m, deg
 SIM = DD4hepSimulation()
 
 # The compact XML file
-#SIM.compactFile = "/opt/ilcsoft/muonc/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml"
-SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"
+SIM.compactFile = "/opt/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"
 
 # Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 0.
@@ -69,7 +68,7 @@ SIM.action.tracker = "Geant4TrackerWeightedAction"
 SIM.action.calo = "Geant4ScintillatorCalorimeterAction"
 
 # create a map of patterns and actions to be applied to sensitive detectors
-##         example: SIM.action.mapActions['tpc'] = "TPCSDAction"
+# example: SIM.action.mapActions['tpc'] = "TPCSDAction"
 SIM.action.mapActions = {}
 
 
@@ -135,13 +134,13 @@ SIM.gun.direction = (0, 1, 0)
 # Options for random distributions:
 ##
 # 'uniform' is the default distribution, flat in theta
-##     'cos(theta)' is flat in cos(theta)
+# 'cos(theta)' is flat in cos(theta)
 # 'eta', or 'pseudorapidity' is flat in pseudorapity
 # 'ffbar' is distributed according to 1+cos^2(theta)
 ##
 # Setting a distribution will set isotrop = True
 ##
-#SIM.gun.distribution = "uniform"
+# SIM.gun.distribution = "uniform"
 SIM.gun.energy = GUN_ENERGY*GeV
 
 # isotropic distribution for the particle gun
