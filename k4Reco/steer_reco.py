@@ -167,7 +167,7 @@ CKFTracking.ProcessorType = "ACTSSeededCKFTrackingProc"
 CKFTracking.Parameters = {
     "CKF_Chi2CutOff": ["10"],
     "CKF_NumMeasurementsCutOff": ["1"],
-    "MatFile": ["/opt/detector-simulation/geometries/MuColl_10TeV_v0A/material-maps.json"],
+    "MatFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/material-maps.json"],
     "PropagateBackward": ["False"],
     "RunCKF": ["True"],
     "SeedFinding_CollisionRegion": ["1"],
@@ -179,7 +179,7 @@ CKFTracking.Parameters = {
     "SeedFinding_RadLengthPerSeed": ["0.1"],
     "SeedFinding_SigmaScattering": ["50"],
     "SeedingLayers": ["13", "2", "13", "6", "13", "10", "13", "14", "14", "2", "14", "6", "14", "10", "14", "14", "15", "2", "15", "6", "15", "10", "15", "14"],
-    "TGeoFile": ["/opt/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.root"],
+    "TGeoFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/MuColl_v1.root"],
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
 }
