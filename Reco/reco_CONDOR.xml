@@ -109,7 +109,7 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
 
   <global>
     <parameter name="LCIOInputFiles">
-      /data/TYPEEVENT/sim/TYPEEVENT_sim_INFILENAME.slcio
+      /data/TYPEEVENT/sim/TYPEEVENT_sim_INFILENAME.slcio 
     </parameter>
     <!-- parameter name="MaxRecordNumber" value="-1" /-->
     <parameter name="MaxRecordNumber" value="-1" />

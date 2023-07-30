@@ -19,7 +19,7 @@ from pyLCIO import UTIL, EVENT, IMPL, IO, IOIMPL
 #---- number of events ----------------------
 nevt = 10000
 
-outfile = "gen_electronGun.slcio"
+outfile = "electronGun_gen.slcio"
 
 #--------------------------------------------
 
@@ -38,8 +38,8 @@ npart = 1
 
 genstat  = 1
 
-pt_min = 0.5
-pt_max = 100.
+pt_min = 1000.
+pt_max = 5000.
 
 theta_min = 8./180.*math.pi
 theta_max = 172./180.*math.pi
@@ -73,6 +73,9 @@ for j in range( 0, nevt ):
 
         p = pt/math.sin( theta )
         energy   = math.sqrt( mass*mass  + p * p ) 
+
+        if energy > 5000:
+            continue
         
         px = pt * math.cos( phi )
         py = pt * math.sin( phi )
