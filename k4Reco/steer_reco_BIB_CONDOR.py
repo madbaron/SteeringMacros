@@ -35,11 +35,11 @@ Output_REC = MarlinProcessorWrapper("Output_REC")
 Output_REC.OutputLevel = INFO
 Output_REC.ProcessorType = "LCIOOutputProcessor"
 Output_REC.Parameters = {
-    "DropCollectionNames": [],
+    "DropCollectionNames": ["MCPhysicsParticles"],
     "DropCollectionTypes": [],
     "FullSubsetCollections": ["EfficientMCParticles", "InefficientMCParticles", "SiTracks"],
     "KeepCollectionNames": ["MCParticle_SiTracks_Refitted"],
-    "LCIOOutputFile": ["/data/reco/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
+    "LCIOOutputFile": ["/data/recoBIB/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
     "LCIOWriteMode": ["WRITE_NEW"]
 }
 
@@ -447,7 +447,7 @@ DDMarlinPandora.Parameters = {
     "D0UnmatchedVertexTrackCut": ["5"],
     "DigitalMuonHits": ["0"],
     "ECalBarrelNormalVector": ["0", "0", "1"],
-    "ECalCaloHitCollections": ["EcalBarrelCollectionRec", "EcalEndcapCollectionRec"],
+    "ECalCaloHitCollections": ["EcalBarrelCollectionSel", "EcalEndcapCollectionSel"],
     "ECalMipThreshold": ["0.5"],
     "ECalScMipThreshold": ["0"],
     "ECalScToEMGeVCalibration": ["1"],
@@ -467,7 +467,7 @@ DDMarlinPandora.Parameters = {
     "EMStochasticTerm": ["0.17"],
     "FinalEnergyDensityBin": ["110."],
     "HCalBarrelNormalVector": ["0", "0", "1"],
-    "HCalCaloHitCollections": ["HcalBarrelCollectionRec", "HcalEndcapCollectionRec"],
+    "HCalCaloHitCollections": ["HcalBarrelCollectionSel", "HcalEndcapCollectionSel"],
     "HCalMipThreshold": ["0.3"],
     "HCalToEMGeVCalibration": ["1.02373335516"],
     "HCalToHadGeVCalibration": ["1.01799349172"],
@@ -510,7 +510,7 @@ DDMarlinPandora.Parameters = {
     "ReachesECalMinFtdLayer": ["0"],
     "ReachesECalNBarrelTrackerHits": ["0"],
     "ReachesECalNFtdHits": ["0"],
-    "RelCaloHitCollections": ["EcalBarrelRelationsSimRec", "EcalEndcapRelationsSimRec", "HcalBarrelRelationsSimRec", "HcalEndcapRelationsSimRec", "RelationMuonHit"],
+    "RelCaloHitCollections": ["EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimSel", "HcalBarrelRelationsSimSel", "HcalEndcapRelationsSimSel", "RelationMuonHit"],
     "RelTrackCollections": ["SiTracks_Refitted_Relation"],
     "ShouldFormTrackRelationships": ["1"],
     "SoftwareCompensationEnergyDensityBins": ["0", "2.", "5.", "7.5", "9.5", "13.", "16.", "20.", "23.5", "28.", "33.", "40.", "50.", "75.", "100."],
@@ -583,7 +583,7 @@ OverlayBIB.OutputLevel = INFO
 OverlayBIB.ProcessorType = "OverlayTimingGeneric"
 OverlayBIB.Parameters = {
     "AllowReusingBackgroundFiles": ["true"],
-    "BackgroundFileNames": ["/data/MuCData/BIB10/MuColl_10TeV_v0A/BIB_sim_mm.slcio", "/data/MuCData/BIB10/MuColl_10TeV_v0A/BIB_sim_mp.slcio"],
+    "BackgroundFileNames": ["/data/BIB10TeV/BIB_sim_mm.slcio", "/data/BIB10TeV/BIB_sim_mp.slcio"],
     "Collection_IntegrationTimes": ["VertexBarrelCollection", "-0.36", "0.48", "VertexEndcapCollection", "-0.36", "0.48", "InnerTrackerBarrelCollection", "-0.36", "0.48", "InnerTrackerEndcapCollection", "-0.36", "0.48", "OuterTrackerBarrelCollection", "-0.36", "0.48", "OuterTrackerEndcapCollection", "-0.36", "0.48", "ECalBarrelCollection", "-0.25", "10.", "ECalEndcapCollection", "-0.25", "10.", "HCalBarrelCollection", "-0.25", "10.", "HCalEndcapCollection", "-0.25", "10.", "YokeBarrelCollection", "-0.25", "10.", "YokeEndcapCollection", "-0.25", "10."],
     "Delta_t": ["10000"],
     "IntegrationTimeMin": ["-0.36"],
@@ -602,8 +602,8 @@ OverlayBIB.Parameters = {
 algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
-# algList.append(OverlayBIB)  # Config.OverlayBIB
-algList.append(OverlayFalse)  # Config.OverlayFalse
+algList.append(OverlayBIB)  # Config.OverlayBIB
+# algList.append(OverlayFalse)  # Config.OverlayFalse
 algList.append(VXDBarrelDigitiser)
 algList.append(VXDEndcapDigitiser)
 algList.append(InnerPlanarDigiProcessor)
@@ -622,10 +622,10 @@ algList.append(MyHcalBarrelDigi)
 algList.append(MyHcalBarrelReco)
 algList.append(MyHcalEndcapDigi)
 algList.append(MyHcalEndcapReco)
-# algList.append(MyEcalBarrelSelector)
-# algList.append(MyEcalEndcapSelector)
-# algList.append(MyHcalBarrelSelector)
-# algList.append(MyHcalEndcapSelector)
+algList.append(MyEcalBarrelSelector)
+algList.append(MyEcalEndcapSelector)
+algList.append(MyHcalBarrelSelector)
+algList.append(MyHcalEndcapSelector)
 algList.append(MyDDSimpleMuonDigi)
 algList.append(DDMarlinPandora)
 algList.append(FastJetProcessor)
