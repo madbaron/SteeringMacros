@@ -35,10 +35,10 @@ Output_REC = MarlinProcessorWrapper("Output_REC")
 Output_REC.OutputLevel = INFO
 Output_REC.ProcessorType = "LCIOOutputProcessor"
 Output_REC.Parameters = {
-#    "DropCollectionNames": ["MCPhysicsParticles","EcalBarrelRelationsSimDigi","EcalBarrelRelationsSimRec","EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  "HcalEndcapRelationsSimDigi", "HcalEndcapRelationsSimRec", "HcalEndcapRelationsSimSel", "IBTrackerHitsRelations", "IETrackerHitsRelations",  "OBTrackerHitsRelations", "OETrackerHitsRelations",  "VBTrackerHitsRelations", "VETrackerHitsRelations"],
-#    "DropCollectionTypes": ["SimCalorimeterHit","SimTrackerHit"],
-    "DropCollectionNames": ["MCPhysicsParticles","EcalBarrelRelationsSimDigi","EcalBarrelRelationsSimRec","EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  "HcalEndcapRelationsSimDigi", "HcalEndcapRelationsSimRec", "HcalEndcapRelationsSimSel"],
-    "DropCollectionTypes": ["SimCalorimeterHit"],
+    "DropCollectionNames": ["MCPhysicsParticles", "EcalBarrelRelationsSimDigi", "EcalBarrelRelationsSimRec", "EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  "HcalEndcapRelationsSimDigi", "HcalEndcapRelationsSimRec", "HcalEndcapRelationsSimSel", "IBTrackerHitsRelations", "IETrackerHitsRelations",  "OBTrackerHitsRelations", "OETrackerHitsRelations",  "VBTrackerHitsRelations", "VETrackerHitsRelations"],
+    "DropCollectionTypes": ["SimCalorimeterHit", "SimTrackerHit"],
+    # "DropCollectionNames": ["MCPhysicsParticles", "EcalBarrelRelationsSimDigi", "EcalBarrelRelationsSimRec", "EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  "HcalEndcapRelationsSimDigi", "HcalEndcapRelationsSimRec", "HcalEndcapRelationsSimSel"],
+    # "DropCollectionTypes": ["SimCalorimeterHit"],
     "FullSubsetCollections": ["EfficientMCParticles", "InefficientMCParticles", "SiTracks"],
     "KeepCollectionNames": ["MCParticle_SiTracks_Refitted"],
     "LCIOOutputFile": ["/data/recoBIB/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
@@ -163,7 +163,6 @@ OuterEndcapPlanarDigiProcessor.Parameters = {
     "UseTimeWindow": ["true"]
 }
 
-'''
 CKFTracking = MarlinProcessorWrapper("CKFTracking")
 CKFTracking.OutputLevel = INFO
 CKFTracking.ProcessorType = "ACTSSeededCKFTrackingProc"
@@ -186,31 +185,6 @@ CKFTracking.Parameters = {
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
 }
-'''
-
-CKFTracking = MarlinProcessorWrapper("CKFTracking")
-CKFTracking.OutputLevel = INFO
-CKFTracking.ProcessorType = "ACTSSeededCKFTrackingProc"
-CKFTracking.Parameters = {
-    "CKF_Chi2CutOff": ["100"],
-    "CKF_NumMeasurementsCutOff": ["1"],
-    "MatFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/material-maps.json"],
-    "PropagateBackward": ["False"],
-    "RunCKF": ["True"],
-    "SeedFinding_CollisionRegion": ["1"],
-    "SeedFinding_DeltaRMax": ["80"],
-    "SeedFinding_DeltaRMin": ["5"],
-    "SeedFinding_ImpactMax": ["3"],
-    "SeedFinding_MinPt": ["2000"],
-    "SeedFinding_RMax": ["150"],
-    "SeedFinding_RadLengthPerSeed": ["0.1"],
-    "SeedFinding_SigmaScattering": ["50"],
-    "SeedingLayers": ["13", "2", "13", "4", "13", "6"],
-    "TGeoFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/MuColl_v1.root"],
-    "TrackCollectionName": ["AllTracks"],
-    "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
-}
-
 
 TrackDeduper = MarlinProcessorWrapper("TrackDeduper")
 TrackDeduper.OutputLevel = INFO
@@ -420,9 +394,8 @@ MyEcalBarrelSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalBarrelRelationsSimRec"],
     "GoodHitCollection": ["EcalBarrelCollectionSel"],
     "GoodRelationCollection": ["EcalBarrelRelationsSimSel"],
-    "Nlayers": ["50"],
-    "Nsigma": ["3"],
-    "SaveHistograms": ["false"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds.root"],
+    "Nsigma": ["5"]
 }
 
 MyEcalEndcapSelector = MarlinProcessorWrapper("MyEcalEndcapSelector")
@@ -433,9 +406,8 @@ MyEcalEndcapSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalEndcapRelationsSimRec"],
     "GoodHitCollection": ["EcalEndcapCollectionSel"],
     "GoodRelationCollection": ["EcalEndcapRelationsSimSel"],
-    "Nlayers": ["50"],
-    "Nsigma": ["3"],
-    "SaveHistograms": ["false"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds.root"],
+    "Nsigma": ["5"]
 }
 
 MyHcalBarrelSelector = MarlinProcessorWrapper("MyHcalBarrelSelector")
@@ -446,9 +418,8 @@ MyHcalBarrelSelector.Parameters = {
     "CaloRelationCollectionName": ["HcalBarrelsRelationsSimRec"],
     "GoodHitCollection": ["HcalBarrelCollectionSel"],
     "GoodRelationCollection": ["HcalBarrelRelationsSimSel"],
-    "Nlayers": ["75"],
-    "Nsigma": ["3"],
-    "SaveHistograms": ["false"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds.root"],
+    "Nsigma": ["5"]
 }
 
 MyHcalEndcapSelector = MarlinProcessorWrapper("MyHcalEndcapSelector")
@@ -459,9 +430,8 @@ MyHcalEndcapSelector.Parameters = {
     "CaloRelationCollectionName": ["HcalEndcapsRelationsSimRec"],
     "GoodHitCollection": ["HcalEndcapCollectionSel"],
     "GoodRelationCollection": ["HcalEndcapRelationsSimSel"],
-    "Nlayers": ["75"],
-    "Nsigma": ["3"],
-    "SaveHistograms": ["false"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds.root"],
+    "Nsigma": ["5"]
 }
 
 DDMarlinPandora = MarlinProcessorWrapper("DDMarlinPandora")

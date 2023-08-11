@@ -407,6 +407,7 @@ MyHcalEndcapReco.Parameters = {
     "ppd_npix": ["2000"]
 }
 
+
 MyEcalBarrelSelector = MarlinProcessorWrapper("MyEcalBarrelSelector")
 MyEcalBarrelSelector.OutputLevel = INFO
 MyEcalBarrelSelector.ProcessorType = "CaloHitSelector"
@@ -415,9 +416,8 @@ MyEcalBarrelSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalBarrelRelationsSimRec"],
     "GoodHitCollection": ["EcalBarrelCollectionSel"],
     "GoodRelationCollection": ["EcalBarrelRelationsSimSel"],
-    "Nlayers": ["50"],
-    "Nsigma": ["3"],
-    "SaveHistograms": ["false"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds.root"],
+    "Nsigma": ["5"]
 }
 
 MyEcalEndcapSelector = MarlinProcessorWrapper("MyEcalEndcapSelector")
@@ -428,9 +428,8 @@ MyEcalEndcapSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalEndcapRelationsSimRec"],
     "GoodHitCollection": ["EcalEndcapCollectionSel"],
     "GoodRelationCollection": ["EcalEndcapRelationsSimSel"],
-    "Nlayers": ["50"],
-    "Nsigma": ["3"],
-    "SaveHistograms": ["false"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds.root"],
+    "Nsigma": ["5"]
 }
 
 MyHcalBarrelSelector = MarlinProcessorWrapper("MyHcalBarrelSelector")
@@ -441,9 +440,8 @@ MyHcalBarrelSelector.Parameters = {
     "CaloRelationCollectionName": ["HcalBarrelsRelationsSimRec"],
     "GoodHitCollection": ["HcalBarrelCollectionSel"],
     "GoodRelationCollection": ["HcalBarrelRelationsSimSel"],
-    "Nlayers": ["75"],
-    "Nsigma": ["3"],
-    "SaveHistograms": ["false"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds.root"],
+    "Nsigma": ["5"]
 }
 
 MyHcalEndcapSelector = MarlinProcessorWrapper("MyHcalEndcapSelector")
@@ -454,10 +452,10 @@ MyHcalEndcapSelector.Parameters = {
     "CaloRelationCollectionName": ["HcalEndcapsRelationsSimRec"],
     "GoodHitCollection": ["HcalEndcapCollectionSel"],
     "GoodRelationCollection": ["HcalEndcapRelationsSimSel"],
-    "Nlayers": ["75"],
-    "Nsigma": ["3"],
-    "SaveHistograms": ["false"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds.root"],
+    "Nsigma": ["5"]
 }
+
 
 DDMarlinPandora = MarlinProcessorWrapper("DDMarlinPandora")
 DDMarlinPandora.OutputLevel = INFO
@@ -470,7 +468,7 @@ DDMarlinPandora.Parameters = {
     "D0UnmatchedVertexTrackCut": ["5"],
     "DigitalMuonHits": ["0"],
     "ECalBarrelNormalVector": ["0", "0", "1"],
-    "ECalCaloHitCollections": ["EcalBarrelCollectionRec", "EcalEndcapCollectionRec"],
+    "ECalCaloHitCollections": ["EcalBarrelCollectionSel", "EcalEndcapCollectionSel"],
     "ECalMipThreshold": ["0.5"],
     "ECalScMipThreshold": ["0"],
     "ECalScToEMGeVCalibration": ["1"],
@@ -490,7 +488,7 @@ DDMarlinPandora.Parameters = {
     "EMStochasticTerm": ["0.17"],
     "FinalEnergyDensityBin": ["110."],
     "HCalBarrelNormalVector": ["0", "0", "1"],
-    "HCalCaloHitCollections": ["HcalBarrelCollectionRec", "HcalEndcapCollectionRec"],
+    "HCalCaloHitCollections": ["HcalBarrelCollectionSel", "HcalEndcapCollectionSel"],
     "HCalMipThreshold": ["0.3"],
     "HCalToEMGeVCalibration": ["1.02373335516"],
     "HCalToHadGeVCalibration": ["1.01799349172"],
@@ -533,7 +531,7 @@ DDMarlinPandora.Parameters = {
     "ReachesECalMinFtdLayer": ["0"],
     "ReachesECalNBarrelTrackerHits": ["0"],
     "ReachesECalNFtdHits": ["0"],
-    "RelCaloHitCollections": ["EcalBarrelRelationsSimRec", "EcalEndcapRelationsSimRec", "HcalBarrelRelationsSimRec", "HcalEndcapRelationsSimRec", "RelationMuonHit"],
+    "RelCaloHitCollections": ["EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimSel", "HcalBarrelRelationsSimSel", "HcalEndcapRelationsSimSel", "RelationMuonHit"],
     "RelTrackCollections": ["SiTracks_Refitted_Relation"],
     "ShouldFormTrackRelationships": ["1"],
     "SoftwareCompensationEnergyDensityBins": ["0", "2.", "5.", "7.5", "9.5", "13.", "16.", "20.", "23.5", "28.", "33.", "40.", "50.", "75.", "100."],
@@ -645,10 +643,10 @@ algList.append(MyHcalBarrelDigi)
 algList.append(MyHcalBarrelReco)
 algList.append(MyHcalEndcapDigi)
 algList.append(MyHcalEndcapReco)
-# algList.append(MyEcalBarrelSelector)
-# algList.append(MyEcalEndcapSelector)
-# algList.append(MyHcalBarrelSelector)
-# algList.append(MyHcalEndcapSelector)
+algList.append(MyEcalBarrelSelector)
+algList.append(MyEcalEndcapSelector)
+algList.append(MyHcalBarrelSelector)
+algList.append(MyHcalEndcapSelector)
 algList.append(MyDDSimpleMuonDigi)
 algList.append(DDMarlinPandora)
 algList.append(FastJetProcessor)
