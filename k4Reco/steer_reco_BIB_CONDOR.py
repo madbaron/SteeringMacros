@@ -35,8 +35,10 @@ Output_REC = MarlinProcessorWrapper("Output_REC")
 Output_REC.OutputLevel = INFO
 Output_REC.ProcessorType = "LCIOOutputProcessor"
 Output_REC.Parameters = {
-    "DropCollectionNames": ["MCPhysicsParticles"],
-    "DropCollectionTypes": [],
+#    "DropCollectionNames": ["MCPhysicsParticles","EcalBarrelRelationsSimDigi","EcalBarrelRelationsSimRec","EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  "HcalEndcapRelationsSimDigi", "HcalEndcapRelationsSimRec", "HcalEndcapRelationsSimSel", "IBTrackerHitsRelations", "IETrackerHitsRelations",  "OBTrackerHitsRelations", "OETrackerHitsRelations",  "VBTrackerHitsRelations", "VETrackerHitsRelations"],
+#    "DropCollectionTypes": ["SimCalorimeterHit","SimTrackerHit"],
+    "DropCollectionNames": ["MCPhysicsParticles","EcalBarrelRelationsSimDigi","EcalBarrelRelationsSimRec","EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  "HcalEndcapRelationsSimDigi", "HcalEndcapRelationsSimRec", "HcalEndcapRelationsSimSel"],
+    "DropCollectionTypes": ["SimCalorimeterHit"],
     "FullSubsetCollections": ["EfficientMCParticles", "InefficientMCParticles", "SiTracks"],
     "KeepCollectionNames": ["MCParticle_SiTracks_Refitted"],
     "LCIOOutputFile": ["/data/recoBIB/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
@@ -161,6 +163,7 @@ OuterEndcapPlanarDigiProcessor.Parameters = {
     "UseTimeWindow": ["true"]
 }
 
+'''
 CKFTracking = MarlinProcessorWrapper("CKFTracking")
 CKFTracking.OutputLevel = INFO
 CKFTracking.ProcessorType = "ACTSSeededCKFTrackingProc"
@@ -183,6 +186,31 @@ CKFTracking.Parameters = {
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
 }
+'''
+
+CKFTracking = MarlinProcessorWrapper("CKFTracking")
+CKFTracking.OutputLevel = INFO
+CKFTracking.ProcessorType = "ACTSSeededCKFTrackingProc"
+CKFTracking.Parameters = {
+    "CKF_Chi2CutOff": ["100"],
+    "CKF_NumMeasurementsCutOff": ["1"],
+    "MatFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/material-maps.json"],
+    "PropagateBackward": ["False"],
+    "RunCKF": ["True"],
+    "SeedFinding_CollisionRegion": ["1"],
+    "SeedFinding_DeltaRMax": ["80"],
+    "SeedFinding_DeltaRMin": ["5"],
+    "SeedFinding_ImpactMax": ["3"],
+    "SeedFinding_MinPt": ["2000"],
+    "SeedFinding_RMax": ["150"],
+    "SeedFinding_RadLengthPerSeed": ["0.1"],
+    "SeedFinding_SigmaScattering": ["50"],
+    "SeedingLayers": ["13", "2", "13", "4", "13", "6"],
+    "TGeoFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/MuColl_v1.root"],
+    "TrackCollectionName": ["AllTracks"],
+    "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
+}
+
 
 TrackDeduper = MarlinProcessorWrapper("TrackDeduper")
 TrackDeduper.OutputLevel = INFO
@@ -442,7 +470,7 @@ DDMarlinPandora.ProcessorType = "DDPandoraPFANewProcessor"
 DDMarlinPandora.Parameters = {
     "ClusterCollectionName": ["PandoraClusters"],
     "CreateGaps": ["false"],
-    "CurvatureToMomentumFactor": ["0.00015"],
+    "CurvatureToMomentumFactor": ["0.000006"],
     "D0TrackCut": ["200"],
     "D0UnmatchedVertexTrackCut": ["5"],
     "DigitalMuonHits": ["0"],
@@ -481,7 +509,7 @@ DDMarlinPandora.Parameters = {
     "MaxBarrelTrackerInnerRDistance": ["200"],
     "MaxClusterEnergyToApplySoftComp": ["2000."],
     "MaxHCalHitHadronicEnergy": ["1000000"],
-    "MaxTrackHits": ["5000"],
+    "MaxTrackHits": ["500"],
     "MaxTrackSigmaPOverP": ["0.15"],
     "MinBarrelTrackerHitFractionOfExpected": ["0"],
     "MinCleanCorrectedHitEnergy": ["0.1"],
@@ -523,7 +551,7 @@ DDMarlinPandora.Parameters = {
     "TrackCreatorName": ["DDTrackCreatorCLIC"],
     "TrackStateTolerance": ["0"],
     "TrackSystemName": ["DDKalTest"],
-    "UnmatchedVertexTrackMaxEnergy": ["5"],
+    "UnmatchedVertexTrackMaxEnergy": ["500"],
     "UseEcalScLayers": ["0"],
     "UseNonVertexTracks": ["1"],
     "UseOldTrackStateCalculation": ["0"],
