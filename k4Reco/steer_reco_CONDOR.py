@@ -160,7 +160,7 @@ OuterEndcapPlanarDigiProcessor.Parameters = {
     "TrackerHitCollectionName": ["OETrackerHits"],
     "UseTimeWindow": ["true"]
 }
-'''
+
 CKFTracking = MarlinProcessorWrapper("CKFTracking")
 CKFTracking.OutputLevel = INFO
 CKFTracking.ProcessorType = "ACTSSeededCKFTrackingProc"
@@ -179,29 +179,6 @@ CKFTracking.Parameters = {
     "SeedFinding_RadLengthPerSeed": ["0.1"],
     "SeedFinding_SigmaScattering": ["50"],
     "SeedingLayers": ["13", "2", "13", "6", "13", "10", "13", "14", "14", "2", "14", "6", "14", "10", "14", "14", "15", "2", "15", "6", "15", "10", "15", "14"],
-    "TGeoFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/MuColl_v1.root"],
-    "TrackCollectionName": ["AllTracks"],
-    "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
-}
-'''
-CKFTracking = MarlinProcessorWrapper("CKFTracking")
-CKFTracking.OutputLevel = INFO
-CKFTracking.ProcessorType = "ACTSSeededCKFTrackingProc"
-CKFTracking.Parameters = {
-    "CKF_Chi2CutOff": ["100"],
-    "CKF_NumMeasurementsCutOff": ["1"],
-    "MatFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/material-maps.json"],
-    "PropagateBackward": ["False"],
-    "RunCKF": ["True"],
-    "SeedFinding_CollisionRegion": ["1"],
-    "SeedFinding_DeltaRMax": ["80"],
-    "SeedFinding_DeltaRMin": ["5"],
-    "SeedFinding_ImpactMax": ["3"],
-    "SeedFinding_MinPt": ["2000"],
-    "SeedFinding_RMax": ["150"],
-    "SeedFinding_RadLengthPerSeed": ["0.1"],
-    "SeedFinding_SigmaScattering": ["50"],
-    "SeedingLayers": ["13", "2", "13", "4", "13", "6"],
     "TGeoFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/MuColl_v1.root"],
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
