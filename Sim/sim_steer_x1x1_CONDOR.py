@@ -5,7 +5,7 @@ from g4units import mm, GeV, MeV, m, deg
 SIM = DD4hepSimulation()
 
 # The compact XML file
-SIM.compactFile = "/opt/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"
+SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A_noToroid.xml"
 # Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 0.
 SIM.enableDetailedShowerMode = True
@@ -13,9 +13,9 @@ SIM.enableG4GPS = False
 SIM.enableG4Gun = False
 SIM.enableGun = False
 # InputFiles for simulation .stdhep, .slcio, .HEPEvt, .hepevt, .hepmc files are supported
-SIM.inputFiles = ["/data/hepmc_sbottom/tag_1_pythia8_events.hepmc"]
+SIM.inputFiles = []
 # HepMC reader v3 is not supported
-SIM.hepmc3.useHepMC3 = True
+SIM.hepmc3.useHepMC3 = False
 # Macro file to execute for runType 'run' or 'vis'
 SIM.macroFile = []
 # number of events to simulate, used in batch mode
@@ -215,7 +215,6 @@ SIM.physics.list = "QGSP_BERT"
 
 # location of particle.tbl file containing extra particles and their lifetime information
 ##
-#SIM.physics.pdgfile = os.path.join( os.environ.get("DD4HEP"), "DDG4/examples/particle.tbl" )
 SIM.physics.pdgfile = "/code/GeantExtraPart/x1x1.tbl"
 
 # The global geant4 rangecut for secondary production
