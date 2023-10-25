@@ -19,9 +19,9 @@ from ROOT import TF1, TLorentzVector
 from pyLCIO import UTIL, EVENT, IMPL, IO, IOIMPL
 
 # ---- number of events ----------------------
-nevt = 100000
+nevt = 10000
 
-outfile = "tauGun_pT_0_50_gen.slcio"
+outfile = "tauGun_gen.slcio"
 
 # --------------------------------------------
 
@@ -40,8 +40,11 @@ npart = 1
 
 genstat = 1
 
-pt_min = 0.5
-pt_max = 50.
+which_slice = 3
+pt_vec= [0.1, 50., 250., 1000., 5000.]
+
+pt_min = pt_vec[which_slice]
+pt_max = pt_vec[which_slice+1]
 
 theta_min = 8./180.*math.pi
 theta_max = 172./180.*math.pi
@@ -145,5 +148,6 @@ for j in range(0, nevt):
 
     wrt.writeEvent(evt)
 
+print("Generated ", pt_min, pt_max, " slice")
 
 wrt.close()

@@ -38,8 +38,11 @@ npart = 1
 
 genstat  = 1
 
-pt_min = 1000.
-pt_max = 5000.
+which_slice = 3
+pt_vec= [0.1, 50., 250., 1000., 5000.]
+
+pt_min = pt_vec[which_slice]
+pt_max = pt_vec[which_slice+1]
 
 theta_min = 8./180.*math.pi
 theta_max = 172./180.*math.pi
@@ -50,6 +53,8 @@ mass =  0.0005109988851472735
 charge = -1.
 
 decayLen = 1.e32
+
+beamspot_sigma = 1.5 #mm
 
 #=================================================
 
@@ -97,7 +102,7 @@ for j in range( 0, nevt ):
 
         vpx = 0.
         vpy = 0.
-        vpz = 0.
+        vpz = random.gauss(0., beamspot_sigma)
 
         vertex = array('d',[ vpx, vpy, vpz ] )
 
@@ -138,5 +143,6 @@ for j in range( 0, nevt ):
         
     wrt.writeEvent( evt ) 
 
+print("Generated ", pt_min, pt_max, " slice")
 
 wrt.close() 

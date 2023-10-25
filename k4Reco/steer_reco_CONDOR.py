@@ -47,7 +47,7 @@ InitDD4hep = MarlinProcessorWrapper("InitDD4hep")
 InitDD4hep.OutputLevel = INFO
 InitDD4hep.ProcessorType = "InitializeDD4hep"
 InitDD4hep.Parameters = {
-    "DD4hepXMLFile": ["/opt/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"],
+    "DD4hepXMLFile": ["/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"],
     "EncodingStringParameterName": ["GlobalTrackerReadoutID"]
 }
 
@@ -170,7 +170,7 @@ CKFTracking.Parameters = {
     "MatFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/material-maps.json"],
     "PropagateBackward": ["False"],
     "RunCKF": ["True"],
-    "SeedFinding_CollisionRegion": ["1"],
+    "SeedFinding_CollisionRegion": ["5"],
     "SeedFinding_DeltaRMax": ["80"],
     "SeedFinding_DeltaRMin": ["5"],
     "SeedFinding_ImpactMax": ["3"],
@@ -178,7 +178,9 @@ CKFTracking.Parameters = {
     "SeedFinding_RMax": ["150"],
     "SeedFinding_RadLengthPerSeed": ["0.1"],
     "SeedFinding_SigmaScattering": ["50"],
-    "SeedingLayers": ["13", "2", "13", "6", "13", "10", "13", "14", "14", "2", "14", "6", "14", "10", "14", "14", "15", "2", "15", "6", "15", "10", "15", "14"],
+    "SeedingLayers": ["13", "2", "13", "6", "13", "10", "13", "14", 
+                      "14", "2", "14", "6", "14", "8", "14", "10", 
+                      "15", "2", "15", "6", "15", "10", "15", "14"],
     "TGeoFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/MuColl_v1.root"],
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
@@ -203,7 +205,7 @@ Refit.Parameters = {
     "Max_Chi2_Incr": ["1.79769e+30"],
     "MinClustersOnTrackAfterFit": ["3"],
     "MultipleScatteringOn": ["true"],
-    "NHitsCuts": ["1,2", "1", "3,4", "1", "5,6", "0"],
+    #"NHitsCuts": ["1,2", "1", "3,4", "1", "5,6", "0"],
     "OutputRelationCollectionName": ["SiTracks_Refitted_Relation"],
     "OutputTrackCollectionName": ["SiTracks_Refitted"],
     "ReducedChi2Cut": ["3."],
@@ -491,16 +493,18 @@ DDMarlinPandora.Parameters = {
     "MinTpcHitFractionOfExpected": ["0"],
     "MinTrackECalDistanceFromIp": ["0"],
     "MinTrackHits": ["0"],
-    "MuonBarrelBField": ["5.0"],
+#    "MuonBarrelBField": ["5.0"],
+    "MuonBarrelBField": ["0.0001"],
     "MuonCaloHitCollections": ["MUON"],
-    "MuonEndCapBField": ["5.0"],
+#    "MuonEndCapBField": ["5.0"],
+    "MuonEndCapBField": ["0.0001"],
     "MuonHitEnergy": ["0.5"],
     "MuonToMipCalibration": ["19607.8"],
     "NEventsToSkip": ["0"],
     "NOuterSamplingLayers": ["3"],
     "OutputEnergyCorrectionPoints": [],
     "PFOCollectionName": ["PandoraPFOs"],
-    "PandoraSettingsXmlFile": ["/opt/SteeringMacros/Reco/PandoraSettings/PandoraSettingsDefault.xml"],
+    "PandoraSettingsXmlFile": ["/code/SteeringMacros/PandoraSettings/PandoraSettingsDefault.xml"],
     "ProngVertexCollections": ["ProngVertices"],
     "ReachesECalBarrelTrackerOuterDistance": ["-100"],
     "ReachesECalBarrelTrackerZMaxDistance": ["-50"],
@@ -576,32 +580,10 @@ OverlayFalse.Parameters = {
     "TPCDriftvelocity": ["0.05"]
 }
 
-OverlayBIB = MarlinProcessorWrapper("OverlayBIB")
-OverlayBIB.OutputLevel = INFO
-OverlayBIB.ProcessorType = "OverlayTimingGeneric"
-OverlayBIB.Parameters = {
-    "AllowReusingBackgroundFiles": ["true"],
-    "BackgroundFileNames": ["/data/MuCData/BIB10/MuColl_10TeV_v0A/BIB_sim_mm.slcio", "/data/MuCData/BIB10/MuColl_10TeV_v0A/BIB_sim_mp.slcio"],
-    "Collection_IntegrationTimes": ["VertexBarrelCollection", "-0.36", "0.48", "VertexEndcapCollection", "-0.36", "0.48", "InnerTrackerBarrelCollection", "-0.36", "0.48", "InnerTrackerEndcapCollection", "-0.36", "0.48", "OuterTrackerBarrelCollection", "-0.36", "0.48", "OuterTrackerEndcapCollection", "-0.36", "0.48", "ECalBarrelCollection", "-0.25", "10.", "ECalEndcapCollection", "-0.25", "10.", "HCalBarrelCollection", "-0.25", "10.", "HCalEndcapCollection", "-0.25", "10.", "YokeBarrelCollection", "-0.25", "10.", "YokeEndcapCollection", "-0.25", "10."],
-    "Delta_t": ["10000"],
-    "IntegrationTimeMin": ["-0.36"],
-    "MCParticleCollectionName": ["MCParticle"],
-    "MCPhysicsParticleCollectionName": ["MCPhysicsParticles"],
-    "MergeMCParticles": ["false"],
-    "NBunchtrain": ["1"],
-    "NumberBackground": ["1060"],
-    "PhysicsBX": ["1"],
-    "Poisson_random_NOverlay": ["false"],
-    "RandomBx": ["false"],
-    "StartBackgroundFileIndex": ["0"],
-    "TPCDriftvelocity": ["0.05"]
-}
-
 algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
-# algList.append(OverlayBIB)  # Config.OverlayBIB
-algList.append(OverlayFalse)  # Config.OverlayFalse
+#algList.append(OverlayFalse)  # Config.OverlayFalse
 algList.append(VXDBarrelDigitiser)
 algList.append(VXDEndcapDigitiser)
 algList.append(InnerPlanarDigiProcessor)

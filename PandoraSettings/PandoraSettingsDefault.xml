@@ -420,6 +420,7 @@
         <PfoTrackListName>PfoCreation</PfoTrackListName>
         <trackClusterAssociationAlgorithms>
             <algorithm type = "TrackClusterAssociation"/>
+            <MaxTrackClusterDistance> 50. </MaxTrackClusterDistance>
             <algorithm type = "LoopingTrackAssociation"/>
             <algorithm type = "TrackRecovery"/>
             <algorithm type = "TrackRecoveryHelix"/>

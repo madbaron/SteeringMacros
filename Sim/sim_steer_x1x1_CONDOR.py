@@ -5,7 +5,8 @@ from g4units import mm, GeV, MeV, m, deg
 SIM = DD4hepSimulation()
 
 # The compact XML file
-SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A_noToroid.xml"
+SIM.compactFile = "/code/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml" # 3 TeV
+#SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"
 # Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 0.
 SIM.enableDetailedShowerMode = True
@@ -40,7 +41,8 @@ SIM.steeringFile = None
 # FourVector of translation for the Smearing of the Vertex position: x y z t
 SIM.vertexOffset = [0.0, 0.0, 0.0, 0.0]
 # FourVector of the Sigma for the Smearing of the Vertex position: x y z t
-SIM.vertexSigma = [0.0, 0.0, 0.0, 0.0]
+#SIM.vertexSigma = [0.0, 0.0, 1.5, 0.0]
+SIM.vertexSigma = [0.0, 0.0, 5, 0.0]
 
 
 ################################################################################
