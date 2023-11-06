@@ -392,8 +392,9 @@ MyEcalBarrelSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalBarrelRelationsSimRec"],
     "GoodHitCollection": ["EcalBarrelCollectionSel"],
     "GoodRelationCollection": ["EcalBarrelRelationsSimSel"],
-    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds.root"],
-    "Nsigma": ["5"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds_10TeV.root"],
+    "Nsigma": ["5"],
+    "DoBIBsubtraction": ["true"]
 }
 
 MyEcalEndcapSelector = MarlinProcessorWrapper("MyEcalEndcapSelector")
@@ -404,8 +405,9 @@ MyEcalEndcapSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalEndcapRelationsSimRec"],
     "GoodHitCollection": ["EcalEndcapCollectionSel"],
     "GoodRelationCollection": ["EcalEndcapRelationsSimSel"],
-    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds.root"],
-    "Nsigma": ["5"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds_10TeV.root"],
+    "Nsigma": ["5"],
+    "DoBIBsubtraction": ["true"]
 }
 
 MyHcalBarrelSelector = MarlinProcessorWrapper("MyHcalBarrelSelector")
@@ -416,8 +418,9 @@ MyHcalBarrelSelector.Parameters = {
     "CaloRelationCollectionName": ["HcalBarrelsRelationsSimRec"],
     "GoodHitCollection": ["HcalBarrelCollectionSel"],
     "GoodRelationCollection": ["HcalBarrelRelationsSimSel"],
-    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds.root"],
-    "Nsigma": ["5"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds_10TeV.root"],
+    "Nsigma": ["5"],
+    "DoBIBsubtraction": ["true"]
 }
 
 MyHcalEndcapSelector = MarlinProcessorWrapper("MyHcalEndcapSelector")
@@ -428,8 +431,9 @@ MyHcalEndcapSelector.Parameters = {
     "CaloRelationCollectionName": ["HcalEndcapsRelationsSimRec"],
     "GoodHitCollection": ["HcalEndcapCollectionSel"],
     "GoodRelationCollection": ["HcalEndcapRelationsSimSel"],
-    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds.root"],
-    "Nsigma": ["5"]
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds_10TeV.root"],
+    "Nsigma": ["5"],
+    "DoBIBsubtraction": ["true"]
 }
 
 DDMarlinPandora = MarlinProcessorWrapper("DDMarlinPandora")
@@ -555,51 +559,36 @@ MyDDSimpleMuonDigi.Parameters = {
     "RelationOutputCollection": ["RelationMuonHit"]
 }
 
-OverlayFalse = MarlinProcessorWrapper("OverlayFalse")
-OverlayFalse.OutputLevel = INFO
-OverlayFalse.ProcessorType = "OverlayTimingGeneric"
-OverlayFalse.Parameters = {
-    "BackgroundFileNames": ["/dev/null"],
-    "Collection_IntegrationTimes": ["VertexBarrelCollection", "-0.36", "0.48", "VertexEndcapCollection", "-0.36", "0.48", "InnerTrackerBarrelCollection", "-0.36", "0.48", "InnerTrackerEndcapCollection", "-0.36", "0.48", "OuterTrackerBarrelCollection", "-0.36", "0.48", "OuterTrackerEndcapCollection", "-0.36", "0.48", "ECalBarrelCollection", "-0.25", "10.", "ECalEndcapCollection", "-0.25", "10.", "HCalBarrelCollection", "-0.25", "10.", "HCalEndcapCollection", "-0.25", "10.", "YokeBarrelCollection", "-0.25", "10.", "YokeEndcapCollection", "-0.25", "10."],
-    "Delta_t": ["10000"],
-    "IntegrationTimeMin": ["-0.36"],
+OverlayMIX = MarlinProcessorWrapper("OverlayMIX")
+OverlayMIX.OutputLevel = INFO
+OverlayMIX.ProcessorType = "OverlayTimingRandomMix"
+OverlayMIX.Parameters = {
+    "PathToMuPlus": ["/data/BIB10TeV/sim_mm_pruned/"],
+    "PathToMuMinus": ["/data/BIB10TeV/sim_mp_pruned/"],
+    "Collection_IntegrationTimes": [
+        "VertexBarrelCollection", "-0.5", "15.",
+        "VertexEndcapCollection", "-0.5", "15.",
+        "InnerTrackerBarrelCollection", "-0.5", "15.",
+        "InnerTrackerEndcapCollection", "-0.5", "15.",
+        "OuterTrackerBarrelCollection", "-0.5", "15.",
+        "OuterTrackerEndcapCollection", "-0.5", "15.",
+        "ECalBarrelCollection", "-0.5", "15.",
+        "ECalEndcapCollection", "-0.5", "15.",
+        "HCalBarrelCollection", "-0.5", "15.",
+        "HCalEndcapCollection", "-0.5", "15.",
+        "YokeBarrelCollection", "-0.5", "15.",
+        "YokeEndcapCollection", "-0.5", "15."
+    ],
+    "IntegrationTimeMin": ["-0.5"],
     "MCParticleCollectionName": ["MCParticle"],
-    "MCPhysicsParticleCollectionName": ["MCPhysicsParticles"],
     "MergeMCParticles": ["false"],
-    "NBunchtrain": ["0"],
-    "NumberBackground": ["0."],
-    "PhysicsBX": ["1"],
-    "Poisson_random_NOverlay": ["false"],
-    "RandomBx": ["false"],
-    "TPCDriftvelocity": ["0.05"]
-}
-
-OverlayBIB = MarlinProcessorWrapper("OverlayBIB")
-OverlayBIB.OutputLevel = INFO
-OverlayBIB.ProcessorType = "OverlayTimingGeneric"
-OverlayBIB.Parameters = {
-    "AllowReusingBackgroundFiles": ["true"],
-    "BackgroundFileNames": ["/data/MuCData/BIB10/MuColl_10TeV_v0A/BIB_sim_mm.slcio", "/data/MuCData/BIB10/MuColl_10TeV_v0A/BIB_sim_mp.slcio"],
-    "Collection_IntegrationTimes": ["VertexBarrelCollection", "-0.36", "0.48", "VertexEndcapCollection", "-0.36", "0.48", "InnerTrackerBarrelCollection", "-0.36", "0.48", "InnerTrackerEndcapCollection", "-0.36", "0.48", "OuterTrackerBarrelCollection", "-0.36", "0.48", "OuterTrackerEndcapCollection", "-0.36", "0.48", "ECalBarrelCollection", "-0.25", "10.", "ECalEndcapCollection", "-0.25", "10.", "HCalBarrelCollection", "-0.25", "10.", "HCalEndcapCollection", "-0.25", "10.", "YokeBarrelCollection", "-0.25", "10.", "YokeEndcapCollection", "-0.25", "10."],
-    "Delta_t": ["10000"],
-    "IntegrationTimeMin": ["-0.36"],
-    "MCParticleCollectionName": ["MCParticle"],
-    "MCPhysicsParticleCollectionName": ["MCPhysicsParticles"],
-    "MergeMCParticles": ["false"],
-    "NBunchtrain": ["1"],
-    "NumberBackground": ["1060"],
-    "PhysicsBX": ["1"],
-    "Poisson_random_NOverlay": ["false"],
-    "RandomBx": ["false"],
-    "StartBackgroundFileIndex": ["0"],
-    "TPCDriftvelocity": ["0.05"]
+    "NumberBackground": ["192"]
 }
 
 algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
-# algList.append(OverlayBIB)  # Config.OverlayBIB
-algList.append(OverlayFalse)  # Config.OverlayFalse
+algList.append(OverlayMIX) #comment this out if you don't want BIB
 algList.append(VXDBarrelDigitiser)
 algList.append(VXDEndcapDigitiser)
 algList.append(InnerPlanarDigiProcessor)
