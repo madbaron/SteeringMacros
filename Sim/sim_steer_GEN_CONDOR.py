@@ -5,7 +5,8 @@ from g4units import mm, GeV, MeV, m, deg
 SIM = DD4hepSimulation()
 
 # The compact XML file
-SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_test/MuColl_10TeV_v0A.xml"
+SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"
+#SIM.compactFile = "/code/detector-simulation/geometries/MuColl_10TeV_test/MuColl_10TeV_v0A.xml"
 # Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 0.
 SIM.enableDetailedShowerMode = True
