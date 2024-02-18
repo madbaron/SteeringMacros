@@ -35,13 +35,11 @@ Output_REC = MarlinProcessorWrapper("Output_REC")
 Output_REC.OutputLevel = INFO
 Output_REC.ProcessorType = "LCIOOutputProcessor"
 Output_REC.Parameters = {
-    #"DropCollectionNames": ["PandoraStartVertices", "MCPhysicsParticles", "AllTracks", "SeedTracks", "IBTrackerHitsRelations", "IETrackerHitsRelations", "OBTrackerHitsRelations", "OETrackerHitsRelations", "VBTrackerHitsRelations", "VETrackerHitsRelations"],
-    "DropCollectionTypes": ["SimCalorimeterHit", "SimTrackerHit", "CalorimeterHit", "LCRelation", "TrackerHitPlane"],
-    "DropCollectionNames": ["MCPhysicsParticles", "EcalBarrelRelationsSimDigi", "EcalBarrelRelationsSimRec", "EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  "HcalEndcapRelationsSimDigi", "HcalEndcapRelationsSimRec", "HcalEndcapRelationsSimSel"],
-    # "DropCollectionTypes": ["SimCalorimeterHit"],
+    "DropCollectionNames": [],
+    "DropCollectionTypes": [],
     "FullSubsetCollections": ["EfficientMCParticles", "InefficientMCParticles", "SiTracks"],
     "KeepCollectionNames": ["MCParticle_SiTracks_Refitted"],
-    "LCIOOutputFile": ["/data/recoBIB/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
+    "LCIOOutputFile": ["/data/reco/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
     "LCIOWriteMode": ["WRITE_NEW"]
 }
 
@@ -49,7 +47,7 @@ InitDD4hep = MarlinProcessorWrapper("InitDD4hep")
 InitDD4hep.OutputLevel = INFO
 InitDD4hep.ProcessorType = "InitializeDD4hep"
 InitDD4hep.Parameters = {
-    "DD4hepXMLFile": ["/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"],
+    "DD4hepXMLFile": ["/code/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml"],
     "EncodingStringParameterName": ["GlobalTrackerReadoutID"]
 }
 
@@ -180,12 +178,9 @@ CKFTracking.Parameters = {
     "SeedFinding_RMax": ["150"],
     "SeedFinding_RadLengthPerSeed": ["0.1"],
     "SeedFinding_SigmaScattering": ["50"],
-    "SeedingLayers": ["13", "2", "13", "6", "13", "10", "13", "14",
+    "SeedingLayers": ["13", "2", "13", "6", "13", "10", "13", "14", 
                       "14", "2", "14", "6", "14", "10", "14", "14", 
-                      "15", "2", "15", "6", "15", "10", "15", "14",
-                      "8", "2",
-                      "17", "2",
-                      "18", "2"],
+                      "15", "2", "15", "6", "15", "10", "15", "14"],
     "TGeoFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/MuColl_v1.root"],
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
@@ -208,9 +203,9 @@ Refit.Parameters = {
     "InputRelationCollectionName": ["SiTrackRelations"],
     "InputTrackCollectionName": ["SiTracks"],
     "Max_Chi2_Incr": ["1.79769e+30"],
-    "MinClustersOnTrackAfterFit": ["6"],
+    "MinClustersOnTrackAfterFit": ["3"],
     "MultipleScatteringOn": ["true"],
-    # "NHitsCuts": ["1,2", "1", "3,4", "1", "5,6", "0"],
+    "NHitsCuts": ["1,2", "1", "3,4", "1", "5,6", "0"],
     "OutputRelationCollectionName": ["SiTracks_Refitted_Relation"],
     "OutputTrackCollectionName": ["SiTracks_Refitted"],
     "ReducedChi2Cut": ["3."],
@@ -238,7 +233,7 @@ MyEcalBarrelDigi.Parameters = {
     "inputHitCollections": ["ECalBarrelCollection"],
     "outputHitCollections": ["EcalBarrelCollectionDigi"],
     "outputRelationCollections": ["EcalBarrelRelationsSimDigi"],
-    "threshold": ["0.002"],
+    "threshold": ["5e-05"],
     "thresholdUnit": ["GeV"],
     "timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
@@ -261,19 +256,6 @@ MyEcalBarrelReco.Parameters = {
     "outputRelationCollections": ["EcalBarrelRelationsSimRec"]
 }
 
-MyEcalBarrelGapFiller = MarlinProcessorWrapper("MyEcalBarrelGapFiller")
-MyEcalBarrelGapFiller.OutputLevel = INFO
-MyEcalBarrelGapFiller.ProcessorType = "BruteForceEcalGapFiller"
-MyEcalBarrelGapFiller.Parameters = {
-    "CellIDLayerString": ["layer"],
-    "CellIDModuleString": ["module"],
-    "CellIDStaveString": ["stave"],
-    "applyInterModuleCorrection": ["false"],
-    "expectedInterModuleDistance": ["7.0"],
-    "inputHitCollection": ["EcalBarrelCollectionRec"],
-    "outputHitCollection": ["EcalBarrelCollectionGapHits"]
-}
-
 MyEcalEndcapDigi = MarlinProcessorWrapper("MyEcalEndcapDigi")
 MyEcalEndcapDigi.OutputLevel = INFO
 MyEcalEndcapDigi.ProcessorType = "RealisticCaloDigiSilicon"
@@ -283,7 +265,7 @@ MyEcalEndcapDigi.Parameters = {
     "inputHitCollections": ["ECalEndcapCollection"],
     "outputHitCollections": ["EcalEndcapCollectionDigi"],
     "outputRelationCollections": ["EcalEndcapRelationsSimDigi"],
-    "threshold": ["0.002"],
+    "threshold": ["5e-05"],
     "thresholdUnit": ["GeV"],
     "timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
@@ -306,25 +288,12 @@ MyEcalEndcapReco.Parameters = {
     "outputRelationCollections": ["EcalEndcapRelationsSimRec"]
 }
 
-MyEcalEndcapGapFiller = MarlinProcessorWrapper("MyEcalEndcapGapFiller")
-MyEcalEndcapGapFiller.OutputLevel = INFO
-MyEcalEndcapGapFiller.ProcessorType = "BruteForceEcalGapFiller"
-MyEcalEndcapGapFiller.Parameters = {
-    "CellIDLayerString": ["layer"],
-    "CellIDModuleString": ["module"],
-    "CellIDStaveString": ["stave"],
-    "applyInterModuleCorrection": ["false"],
-    "expectedInterModuleDistance": ["7.0"],
-    "inputHitCollection": ["EcalEndcapCollectionRec"],
-    "outputHitCollection": ["EcalEndcapCollectionGapHits"]
-}
-
 MyHcalBarrelDigi = MarlinProcessorWrapper("MyHcalBarrelDigi")
 MyHcalBarrelDigi.OutputLevel = INFO
 MyHcalBarrelDigi.ProcessorType = "RealisticCaloDigiScinPpd"
 MyHcalBarrelDigi.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_mip": ["0.0004825"],
+    "calibration_mip": ["0.0004925"],
     "inputHitCollections": ["HCalBarrelCollection"],
     "outputHitCollections": ["HcalBarrelsCollectionDigi"],
     "outputRelationCollections": ["HcalBarrelsRelationsSimDigi"],
@@ -332,13 +301,13 @@ MyHcalBarrelDigi.Parameters = {
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
     "ppd_pix_spread": ["0"],
-    "threshold": ["0.001"],
-    "thresholdUnit": ["GeV"],
-    "timingCorrectForPropagation": ["1"],
+    "threshold": ["0.5"],
+    "thresholdUnit": ["MIP"],
+    #"timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
-    "timingResolution": ["0"],
-    "timingWindowMax": ["10"],
-    "timingWindowMin": ["-0.5"]
+    #"timingResolution": ["0"],
+    #"timingWindowMax": ["10"],
+    #"timingWindowMin": ["-0.5"]
 }
 
 MyHcalBarrelReco = MarlinProcessorWrapper("MyHcalBarrelReco")
@@ -346,7 +315,7 @@ MyHcalBarrelReco.OutputLevel = INFO
 MyHcalBarrelReco.ProcessorType = "RealisticCaloRecoScinPpd"
 MyHcalBarrelReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.0231348530678"],
+    "calibration_factorsMipGev": ["0.0287783798145"],
     "calibration_layergroups": ["100"],
     "inputHitCollections": ["HcalBarrelsCollectionDigi"],
     "inputRelationCollections": ["HcalBarrelsRelationsSimDigi"],
@@ -361,7 +330,7 @@ MyHcalEndcapDigi.OutputLevel = INFO
 MyHcalEndcapDigi.ProcessorType = "RealisticCaloDigiScinPpd"
 MyHcalEndcapDigi.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_mip": ["0.0004825"],
+    "calibration_mip": ["0.0004725"],
     "inputHitCollections": ["HCalEndcapCollection"],
     "outputHitCollections": ["HcalEndcapsCollectionDigi"],
     "outputRelationCollections": ["HcalEndcapsRelationsSimDigi"],
@@ -369,13 +338,13 @@ MyHcalEndcapDigi.Parameters = {
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
     "ppd_pix_spread": ["0"],
-    "threshold": ["0.001"],
-    "thresholdUnit": ["GeV"],
-    "timingCorrectForPropagation": ["1"],
+    "threshold": ["0.5"],
+    "thresholdUnit": ["MIP"],
+    #"timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
-    "timingResolution": ["0"],
-    "timingWindowMax": ["10"],
-    "timingWindowMin": ["-0.5"]
+    #"timingResolution": ["0"],
+    #"timingWindowMax": ["10"],
+    #"timingWindowMin": ["-0.5"]
 }
 
 MyHcalEndcapReco = MarlinProcessorWrapper("MyHcalEndcapReco")
@@ -383,7 +352,7 @@ MyHcalEndcapReco.OutputLevel = INFO
 MyHcalEndcapReco.ProcessorType = "RealisticCaloRecoScinPpd"
 MyHcalEndcapReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.0231348530678"],
+    "calibration_factorsMipGev": ["0.0285819096797"],
     "calibration_layergroups": ["100"],
     "inputHitCollections": ["HcalEndcapsCollectionDigi"],
     "inputRelationCollections": ["HcalEndcapsRelationsSimDigi"],
@@ -401,8 +370,8 @@ MyEcalBarrelSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalBarrelRelationsSimRec"],
     "GoodHitCollection": ["EcalBarrelCollectionSel"],
     "GoodRelationCollection": ["EcalBarrelRelationsSimSel"],
-    "ThresholdsFilePath": ["/code/CaloSelector/ECAL_Thresholds_10TeV.root"],
-    "Nsigma": ["0"],
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds_10TeV.root"],
+    "Nsigma": ["5"],
     "DoBIBsubtraction": ["true"]
 }
 
@@ -414,8 +383,34 @@ MyEcalEndcapSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalEndcapRelationsSimRec"],
     "GoodHitCollection": ["EcalEndcapCollectionSel"],
     "GoodRelationCollection": ["EcalEndcapRelationsSimSel"],
-    "ThresholdsFilePath": ["/code/CaloSelector/ECAL_Thresholds_10TeV.root"],
-    "Nsigma": ["0"],
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds_10TeV.root"],
+    "Nsigma": ["5"],
+    "DoBIBsubtraction": ["true"]
+}
+
+MyHcalBarrelSelector = MarlinProcessorWrapper("MyHcalBarrelSelector")
+MyHcalBarrelSelector.OutputLevel = INFO
+MyHcalBarrelSelector.ProcessorType = "CaloHitSelector"
+MyHcalBarrelSelector.Parameters = {
+    "CaloHitCollectionName": ["HcalBarrelsCollectionRec"],
+    "CaloRelationCollectionName": ["HcalBarrelsRelationsSimRec"],
+    "GoodHitCollection": ["HcalBarrelCollectionSel"],
+    "GoodRelationCollection": ["HcalBarrelRelationsSimSel"],
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds_10TeV.root"],
+    "Nsigma": ["5"],
+    "DoBIBsubtraction": ["true"]
+}
+
+MyHcalEndcapSelector = MarlinProcessorWrapper("MyHcalEndcapSelector")
+MyHcalEndcapSelector.OutputLevel = INFO
+MyHcalEndcapSelector.ProcessorType = "CaloHitSelector"
+MyHcalEndcapSelector.Parameters = {
+    "CaloHitCollectionName": ["HcalEndcapsCollectionRec"],
+    "CaloRelationCollectionName": ["HcalEndcapsRelationsSimRec"],
+    "GoodHitCollection": ["HcalEndcapCollectionSel"],
+    "GoodRelationCollection": ["HcalEndcapRelationsSimSel"],
+    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds_10TeV.root"],
+    "Nsigma": ["5"],
     "DoBIBsubtraction": ["true"]
 }
 
@@ -430,7 +425,7 @@ DDMarlinPandora.Parameters = {
     "D0UnmatchedVertexTrackCut": ["5"],
     "DigitalMuonHits": ["0"],
     "ECalBarrelNormalVector": ["0", "0", "1"],
-    "ECalCaloHitCollections": ["EcalBarrelCollectionSel", "EcalEndcapCollectionSel"],
+    "ECalCaloHitCollections": ["EcalBarrelCollectionRec", "EcalEndcapCollectionRec"],
     "ECalMipThreshold": ["0.5"],
     "ECalScMipThreshold": ["0"],
     "ECalScToEMGeVCalibration": ["1"],
@@ -443,24 +438,20 @@ DDMarlinPandora.Parameters = {
     "ECalSiToHadGeVCalibrationEndCap": ["1"],
     "ECalSiToMipCalibration": ["1"],
     "ECalToEMGeVCalibration": ["1.02373335516"],
-    "ECalToHadGeVCalibrationBarrel": ["1.24223718397"],
-    "ECalToHadGeVCalibrationEndCap": ["1.24223718397"],
+    "ECalToHadGeVCalibrationBarrel": ["1.17344504717"],
+    "ECalToHadGeVCalibrationEndCap": ["1.17344504717"],
     "ECalToMipCalibration": ["181.818"],
-    "EMConstantTerm": ["0.01"], 
+    "EMConstantTerm": ["0.01"],
     "EMStochasticTerm": ["0.17"],
     "FinalEnergyDensityBin": ["110."],
     "HCalBarrelNormalVector": ["0", "0", "1"],
     "HCalCaloHitCollections": ["HcalBarrelCollectionRec", "HcalEndcapCollectionRec"],
     "HCalMipThreshold": ["0.3"],
-    "HCalToEMGeVCalibration": ["1.02373335516"],
-    "HCalToHadGeVCalibration": ["1.01799349172"],
-    "HCalToMipCalibration": ["40.8163"],
+    "HCalToEMGeVCalibration": ["1.0"],
+    "HCalToHadGeVCalibration": ["1.02821419758"],
+    "HCalToMipCalibration": ["37.1747"],
     "HadConstantTerm": ["0.03"],
     "HadStochasticTerm": ["0.6"],
-    "InputEnergyCorrectionPoints": [],
-    "OutputEnergyCorrectionPoints": [],
-    #"InputEnergyCorrectionPoints": ["1.166", "1.772", "1.468", "1.844", "2.384", "2.737", "3.085", "3.886", "3.97", "4.999", "5.64", "6.328", "6.909", "7.352", "7.893", "9.211", "8.783", "10.494", "9.644", "10.263", "10.754", "10.283", "12.955", "14.203", "15.32", "15.285", "17.759", "24.1", "34.602", "45.971", "66.333", "85.715", "100.868", "121.045", "141.793", "160.122", "190.229", "236.062", "272.852", "324.34", "367.599", "456.216", "508.0", "591.241", "677.222", "864.469", "1110.301", "1378.305", "1763.056", "2135.02", "2372.24"],
-    #"OutputEnergyCorrectionPoints": ["5.0", "11.0", "13.0", "15.0", "17.0", "19.0", "22.5", "27.5", "32.5", "37.5", "42.5", "47.5", "52.5", "57.5", "62.5", "67.5", "72.5", "77.5", "82.5", "87.5", "92.5", "97.5", "105.0", "115.0", "125.0", "135.0", "145.0", "175.0", "225.0", "275.0", "325.0", "375.0", "425.0", "475.0", "525.0", "575.0", "650.0", "750.0", "850.0", "950.0", "1050.0", "1150.0", "1250.0", "1350.0", "1450.0", "1750.0", "2250.0", "2750.0", "3500.0", "4500.0", "5000."],
     "KinkVertexCollections": ["KinkVertices"],
     "LayersFromEdgeMaxRearDistance": ["250"],
     "MCParticleCollections": ["MCParticle"],
@@ -479,11 +470,9 @@ DDMarlinPandora.Parameters = {
     "MinTpcHitFractionOfExpected": ["0"],
     "MinTrackECalDistanceFromIp": ["0"],
     "MinTrackHits": ["0"],
-#    "MuonBarrelBField": ["5.0"],
-    "MuonBarrelBField": ["0.0001"],
+    "MuonBarrelBField": ["5.0"],
     "MuonCaloHitCollections": ["MUON"],
-#    "MuonEndCapBField": ["5.0"],
-    "MuonEndCapBField": ["0.0001"],
+    "MuonEndCapBField": ["5.0"],
     "MuonHitEnergy": ["0.5"],
     "MuonToMipCalibration": ["19607.8"],
     "NEventsToSkip": ["0"],
@@ -497,37 +486,17 @@ DDMarlinPandora.Parameters = {
     "ReachesECalMinFtdLayer": ["0"],
     "ReachesECalNBarrelTrackerHits": ["0"],
     "ReachesECalNFtdHits": ["0"],
-    "RelCaloHitCollections": ["EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimSel", "HcalBarrelRelationsSimRec", "HcalEndcapRelationsSimRec", "RelationMuonHit"],
+    "RelCaloHitCollections": ["EcalBarrelRelationsSimRec", "EcalEndcapRelationsSimRec", "HcalBarrelRelationsSimRec", "HcalEndcapRelationsSimRec", "RelationMuonHit"],
     "RelTrackCollections": ["SiTracks_Refitted_Relation"],
     "ShouldFormTrackRelationships": ["1"],
     "SoftwareCompensationEnergyDensityBins": ["0", "2.", "5.", "7.5", "9.5", "13.", "16.", "20.", "23.5", "28.", "33.", "40.", "50.", "75.", "100."],
     "SoftwareCompensationWeights": ["1.61741", "-0.00444385", "2.29683e-05", "-0.0731236", "-0.00157099", "-7.09546e-07", "0.868443", "1.0561", "-0.0238574"],
-    # ECAL corrections w/ BIB w/ cell selection
-    #"ECALInputEnergyCorrectionPoints": ["0.1", "11.894", "12.971", "13.166", "14.926", "15.26", "17.133", "20.106", "23.174", "25.777", 
-    #                                    "29.132", "32.219", "34.876", "36.577", "39.751", "42.48", "46.22", "49.708", "53.274", "56.89", 
-    #                                    "59.071", "62.913", "67.952", "75.322", "82.061", "89.277", "96.304", "116.911", "153.542", "189.536", 
-    #                                    "227.668", "267.495", "308.292", "348.397", "386.6", "428.067", "488.265", "571.82", "655.051", "741.878", 
-    #                                    "821.348", "913.81", "1000.185", "1089.007", "1169.009", "1415.481", "1859.895", "2315.64", "2941.297", "3851.56", 
-    #                                    "4279.5"],
-    #"ECALOutputEnergyCorrectionPoints": ["0.1", "11.0", "13.0", "15.0", "17.0", "19.0", "22.5", "27.5", "32.5", "37.5", 
-    #                                     "42.5", "47.5", "52.5", "57.5", "62.5", "67.5", "72.5", "77.5", "82.5", "87.5", 
-    #                                     "92.5", "97.5", "105.0", "115.0", "125.0", "135.0", "145.0", "175.0", "225.0", "275.0", 
-    #                                     "325.0", "375.0", "425.0", "475.0", "525.0", "575.0", "650.0", "750.0", "850.0", "950.0", 
-    #                                     "1050.0", "1150.0", "1250.0", "1350.0", "1450.0", "1750.0", "2250.0", "2750.0", "3500.0", "4500.0", 
-    #                                     "5000."],
     # ECAL corrections w/o BIB w/cell selection
-    #"ECALInputEnergyCorrectionPoints": ["0.1", 
-    #                                    "35.871", "38.327", "41.386", "45.812", "50.01", "53.71", "58.548", "63.903", "66.884", "68.92", 
-    #                                    "75.776", "79.581", "85.142", "91.092", "97.439", "103.42", "108.42", "112.653", "121.198", "133.57", 
-    #                                    "142.56", "152.919", "163.913", "192.116", "242.636", "292.002", "342.592", "392.635", "446.347", 
-    #                                    "495.021", "544.526", "597.864", "671.43", "774.283", "874.801", "983.224", "1082.058", "1186.351", 
-    #                                    "1288.68", "1412.564", "1528.811", "1834.117", "2298.427", "2820.119", "3588.558", "4565.85", "5073.16"],
-    #"ECALOutputEnergyCorrectionPoints": ["0.1",  
-    #                                     "16.0", "18.5", "22.5", "27.5", "32.5", "37.5", "42.5", "47.5", "52.5", "57.5", "62.5", "67.5", 
-    #                                     "72.5", "77.5", "82.5", "87.5", "92.5", "97.5", "105.0", "115.0", "125.0", "135.0", "145.0", 
-    #                                     "175.0", "225.0", "275.0", "325.0", "375.0", "425.0", "475.0", "525.0", "575.0", "650.0", "750.0", 
-    #                                     "850.0", "950.0", "1050.0", "1150.0", "1250.0", "1350.0", "1450.0", "1750.0", "2250.0", "2750.0", 
-    #                                     "3500.0", "4500.0", "5000."],
+    "ECALInputEnergyCorrectionPoints": [],
+    "ECALOutputEnergyCorrectionPoints": [],
+    # HCAL corrections w/o BIB w/cell selection
+    "InputEnergyCorrectionPoints": [],
+    "OutputEnergyCorrectionPoints": [],
     "SplitVertexCollections": ["SplitVertices"],
     "StartVertexAlgorithmName": ["PandoraPFANew"],
     "StartVertexCollectionName": ["PandoraStartVertices"],
@@ -560,17 +529,6 @@ FastJetProcessor.Parameters = {
     "recombinationScheme": ["E_scheme"]
 }
 
-FastJetProcessor = MarlinProcessorWrapper("FastJetProcessor")
-FastJetProcessor.OutputLevel = INFO
-FastJetProcessor.ProcessorType = "FastJetProcessor"
-FastJetProcessor.Parameters = {
-    "algorithm": ["antikt_algorithm", "0.4"],
-    "clusteringMode": ["Inclusive", "5"],
-    "jetOut": ["JetOut"],
-    "recParticleIn": ["PandoraPFOs"],
-    "recombinationScheme": ["E_scheme"]
-}
-
 MyDDSimpleMuonDigi = MarlinProcessorWrapper("MyDDSimpleMuonDigi")
 MyDDSimpleMuonDigi.OutputLevel = INFO
 MyDDSimpleMuonDigi.ProcessorType = "DDSimpleMuonDigi"
@@ -583,39 +541,9 @@ MyDDSimpleMuonDigi.Parameters = {
     "RelationOutputCollection": ["RelationMuonHit"]
 }
 
-
-OverlayMIX = MarlinProcessorWrapper("OverlayMIX")
-OverlayMIX.OutputLevel = INFO
-OverlayMIX.ProcessorType = "OverlayTimingRandomMix"
-OverlayMIX.Parameters = {
-    "PathToMuPlus": ["/data/BIB10TeV/sim_mm_pruned/"],
-    "PathToMuMinus": ["/data/BIB10TeV/sim_mp_pruned/"],
-    "Collection_IntegrationTimes": [
-#        "VertexBarrelCollection", "-0.36", "0.48",
-#        "VertexEndcapCollection", "-0.36", "0.48",
-#        "InnerTrackerBarrelCollection", "-0.36", "0.48",
-#        "InnerTrackerEndcapCollection", "-0.36", "0.48",
-#        "OuterTrackerBarrelCollection", "-0.36", "0.48",
-#        "OuterTrackerEndcapCollection", "-0.36", "0.48",
-        "ECalBarrelCollection", "-0.25", "10.",
-        "ECalEndcapCollection", "-0.25", "10.",
-        "HCalBarrelCollection", "-0.25", "10.",
-        "HCalEndcapCollection", "-0.25", "10.",
-#        "YokeBarrelCollection", "-0.25", "10.",
-#        "YokeEndcapCollection", "-0.25", "10."
-    ],
-    "IntegrationTimeMin": ["-0.5"],
-    "MCParticleCollectionName": ["MCParticle"],
-    "MergeMCParticles": ["false"],
-    "NumberBackground": ["192"]
-}
-
 algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
-algList.append(OverlayMIX)  # Config.OverlayBIB
-# algList.append(OverlayBIB)  # Config.OverlayBIB
-# algList.append(OverlayFalse)  # Config.OverlayFalse
 algList.append(VXDBarrelDigitiser)
 algList.append(VXDEndcapDigitiser)
 algList.append(InnerPlanarDigiProcessor)
@@ -634,8 +562,10 @@ algList.append(MyHcalBarrelDigi)
 algList.append(MyHcalBarrelReco)
 algList.append(MyHcalEndcapDigi)
 algList.append(MyHcalEndcapReco)
-algList.append(MyEcalBarrelSelector)
-algList.append(MyEcalEndcapSelector)
+#algList.append(MyEcalBarrelSelector)
+#algList.append(MyEcalEndcapSelector)
+#algList.append(MyHcalBarrelSelector)
+#algList.append(MyHcalEndcapSelector)
 algList.append(MyDDSimpleMuonDigi)
 algList.append(DDMarlinPandora)
 algList.append(FastJetProcessor)

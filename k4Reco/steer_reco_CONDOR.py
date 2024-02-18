@@ -38,7 +38,7 @@ Output_REC.Parameters = {
     "DropCollectionNames": [],
     "DropCollectionTypes": [],
     "FullSubsetCollections": ["EfficientMCParticles", "InefficientMCParticles", "SiTracks"],
-    "KeepCollectionNames": ["MCParticle_SiTracks_Refitted"],
+    "KeepCollectionNames": ["MCParticle_SiTracks", "MCParticle_SiTracks_Refitted"],
     "LCIOOutputFile": ["/data/reco/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
     "LCIOWriteMode": ["WRITE_NEW"]
 }
@@ -227,6 +227,16 @@ MyTrackTruth.Parameters = {
     "TrackerHit2SimTrackerHitRelationName": ["VBTrackerHitsRelations", "IBTrackerHitsRelations", "OBTrackerHitsRelations", "VETrackerHitsRelations", "IETrackerHitsRelations", "OETrackerHitsRelations"]
 }
 
+MyTrackTruthSiTracks = MarlinProcessorWrapper("MyTrackTruthSiTracks")
+MyTrackTruthSiTracks.OutputLevel = INFO
+MyTrackTruthSiTracks.ProcessorType = "TrackTruthProc"
+MyTrackTruthSiTracks.Parameters = {
+    "MCParticleCollection": ["MCParticle"],
+    "Particle2TrackRelationName": ["MCParticle_SiTracks"],
+    "TrackCollection": ["SiTracks"],
+    "TrackerHit2SimTrackerHitRelationName": ["VBTrackerHitsRelations", "IBTrackerHitsRelations", "OBTrackerHitsRelations", "VETrackerHitsRelations", "IETrackerHitsRelations", "OETrackerHitsRelations"]
+}
+
 MyEcalBarrelDigi = MarlinProcessorWrapper("MyEcalBarrelDigi")
 MyEcalBarrelDigi.OutputLevel = INFO
 MyEcalBarrelDigi.ProcessorType = "RealisticCaloDigiSilicon"
@@ -257,19 +267,6 @@ MyEcalBarrelReco.Parameters = {
     "inputRelationCollections": ["EcalBarrelRelationsSimDigi"],
     "outputHitCollections": ["EcalBarrelCollectionRec"],
     "outputRelationCollections": ["EcalBarrelRelationsSimRec"]
-}
-
-MyEcalBarrelGapFiller = MarlinProcessorWrapper("MyEcalBarrelGapFiller")
-MyEcalBarrelGapFiller.OutputLevel = INFO
-MyEcalBarrelGapFiller.ProcessorType = "BruteForceEcalGapFiller"
-MyEcalBarrelGapFiller.Parameters = {
-    "CellIDLayerString": ["layer"],
-    "CellIDModuleString": ["module"],
-    "CellIDStaveString": ["stave"],
-    "applyInterModuleCorrection": ["false"],
-    "expectedInterModuleDistance": ["7.0"],
-    "inputHitCollection": ["EcalBarrelCollectionRec"],
-    "outputHitCollection": ["EcalBarrelCollectionGapHits"]
 }
 
 MyEcalEndcapDigi = MarlinProcessorWrapper("MyEcalEndcapDigi")
@@ -304,25 +301,12 @@ MyEcalEndcapReco.Parameters = {
     "outputRelationCollections": ["EcalEndcapRelationsSimRec"]
 }
 
-MyEcalEndcapGapFiller = MarlinProcessorWrapper("MyEcalEndcapGapFiller")
-MyEcalEndcapGapFiller.OutputLevel = INFO
-MyEcalEndcapGapFiller.ProcessorType = "BruteForceEcalGapFiller"
-MyEcalEndcapGapFiller.Parameters = {
-    "CellIDLayerString": ["layer"],
-    "CellIDModuleString": ["module"],
-    "CellIDStaveString": ["stave"],
-    "applyInterModuleCorrection": ["false"],
-    "expectedInterModuleDistance": ["7.0"],
-    "inputHitCollection": ["EcalEndcapCollectionRec"],
-    "outputHitCollection": ["EcalEndcapCollectionGapHits"]
-}
-
 MyHcalBarrelDigi = MarlinProcessorWrapper("MyHcalBarrelDigi")
 MyHcalBarrelDigi.OutputLevel = INFO
 MyHcalBarrelDigi.ProcessorType = "RealisticCaloDigiScinPpd"
 MyHcalBarrelDigi.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_mip": ["0.0004825"],
+    "calibration_mip": ["0.0004925"],
     "inputHitCollections": ["HCalBarrelCollection"],
     "outputHitCollections": ["HcalBarrelsCollectionDigi"],
     "outputRelationCollections": ["HcalBarrelsRelationsSimDigi"],
@@ -330,13 +314,13 @@ MyHcalBarrelDigi.Parameters = {
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
     "ppd_pix_spread": ["0"],
-    "threshold": ["0.00025"],
-    "thresholdUnit": ["GeV"],
-    "timingCorrectForPropagation": ["1"],
+    "threshold": ["0.5"],
+    "thresholdUnit": ["MIP"],
+    #"timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
-    "timingResolution": ["0"],
-    "timingWindowMax": ["10"],
-    "timingWindowMin": ["-0.5"]
+    #"timingResolution": ["0"],
+    #"timingWindowMax": ["10"],
+    #"timingWindowMin": ["-0.5"]
 }
 
 MyHcalBarrelReco = MarlinProcessorWrapper("MyHcalBarrelReco")
@@ -344,7 +328,7 @@ MyHcalBarrelReco.OutputLevel = INFO
 MyHcalBarrelReco.ProcessorType = "RealisticCaloRecoScinPpd"
 MyHcalBarrelReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.0231348530678"],
+    "calibration_factorsMipGev": ["0.0287783798145"],
     "calibration_layergroups": ["100"],
     "inputHitCollections": ["HcalBarrelsCollectionDigi"],
     "inputRelationCollections": ["HcalBarrelsRelationsSimDigi"],
@@ -359,7 +343,7 @@ MyHcalEndcapDigi.OutputLevel = INFO
 MyHcalEndcapDigi.ProcessorType = "RealisticCaloDigiScinPpd"
 MyHcalEndcapDigi.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_mip": ["0.0004825"],
+    "calibration_mip": ["0.0004725"],
     "inputHitCollections": ["HCalEndcapCollection"],
     "outputHitCollections": ["HcalEndcapsCollectionDigi"],
     "outputRelationCollections": ["HcalEndcapsRelationsSimDigi"],
@@ -367,13 +351,13 @@ MyHcalEndcapDigi.Parameters = {
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
     "ppd_pix_spread": ["0"],
-    "threshold": ["0.00025"],
-    "thresholdUnit": ["GeV"],
-    "timingCorrectForPropagation": ["1"],
+    "threshold": ["0.5"],
+    "thresholdUnit": ["MIP"],
+    #"timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
-    "timingResolution": ["0"],
-    "timingWindowMax": ["10"],
-    "timingWindowMin": ["-0.5"]
+    #"timingResolution": ["0"],
+    #"timingWindowMax": ["10"],
+    #"timingWindowMin": ["-0.5"]
 }
 
 MyHcalEndcapReco = MarlinProcessorWrapper("MyHcalEndcapReco")
@@ -381,7 +365,7 @@ MyHcalEndcapReco.OutputLevel = INFO
 MyHcalEndcapReco.ProcessorType = "RealisticCaloRecoScinPpd"
 MyHcalEndcapReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.0231348530678"],
+    "calibration_factorsMipGev": ["0.0285819096797"],
     "calibration_layergroups": ["100"],
     "inputHitCollections": ["HcalEndcapsCollectionDigi"],
     "inputRelationCollections": ["HcalEndcapsRelationsSimDigi"],
@@ -454,7 +438,7 @@ DDMarlinPandora.Parameters = {
     "D0UnmatchedVertexTrackCut": ["5"],
     "DigitalMuonHits": ["0"],
     "ECalBarrelNormalVector": ["0", "0", "1"],
-    "ECalCaloHitCollections": ["EcalBarrelCollectionSel", "EcalEndcapCollectionSel"],
+    "ECalCaloHitCollections": ["EcalBarrelCollectionRec", "EcalEndcapCollectionRec"],
     "ECalMipThreshold": ["0.5"],
     "ECalScMipThreshold": ["0"],
     "ECalScToEMGeVCalibration": ["1"],
@@ -467,21 +451,20 @@ DDMarlinPandora.Parameters = {
     "ECalSiToHadGeVCalibrationEndCap": ["1"],
     "ECalSiToMipCalibration": ["1"],
     "ECalToEMGeVCalibration": ["1.02373335516"],
-    "ECalToHadGeVCalibrationBarrel": ["1.24223718397"],
-    "ECalToHadGeVCalibrationEndCap": ["1.24223718397"],
+    "ECalToHadGeVCalibrationBarrel": ["1.17344504717"],
+    "ECalToHadGeVCalibrationEndCap": ["1.17344504717"],
     "ECalToMipCalibration": ["181.818"],
     "EMConstantTerm": ["0.01"],
     "EMStochasticTerm": ["0.17"],
     "FinalEnergyDensityBin": ["110."],
     "HCalBarrelNormalVector": ["0", "0", "1"],
-    "HCalCaloHitCollections": ["HcalBarrelCollectionSel", "HcalEndcapCollectionSel"],
+    "HCalCaloHitCollections": ["HcalBarrelCollectionRec", "HcalEndcapCollectionRec"],
     "HCalMipThreshold": ["0.3"],
-    "HCalToEMGeVCalibration": ["1.02373335516"],
-    "HCalToHadGeVCalibration": ["1.01799349172"],
-    "HCalToMipCalibration": ["40.8163"],
+    "HCalToEMGeVCalibration": ["1.0"],
+    "HCalToHadGeVCalibration": ["1.02821419758"],
+    "HCalToMipCalibration": ["37.1747"],
     "HadConstantTerm": ["0.03"],
     "HadStochasticTerm": ["0.6"],
-    "InputEnergyCorrectionPoints": [],
     "KinkVertexCollections": ["KinkVertices"],
     "LayersFromEdgeMaxRearDistance": ["250"],
     "MCParticleCollections": ["MCParticle"],
@@ -509,7 +492,6 @@ DDMarlinPandora.Parameters = {
     "MuonToMipCalibration": ["19607.8"],
     "NEventsToSkip": ["0"],
     "NOuterSamplingLayers": ["3"],
-    "OutputEnergyCorrectionPoints": [],
     "PFOCollectionName": ["PandoraPFOs"],
     "PandoraSettingsXmlFile": ["/code/SteeringMacros/PandoraSettings/PandoraSettingsDefault.xml"],
     "ProngVertexCollections": ["ProngVertices"],
@@ -519,7 +501,7 @@ DDMarlinPandora.Parameters = {
     "ReachesECalMinFtdLayer": ["0"],
     "ReachesECalNBarrelTrackerHits": ["0"],
     "ReachesECalNFtdHits": ["0"],
-    "RelCaloHitCollections": ["EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimSel", "HcalBarrelRelationsSimSel", "HcalEndcapRelationsSimSel", "RelationMuonHit"],
+    "RelCaloHitCollections": ["EcalBarrelRelationsSimRec", "EcalEndcapRelationsSimRec", "HcalBarrelRelationsSimRec", "HcalEndcapRelationsSimRec", "RelationMuonHit"],
     "RelTrackCollections": ["SiTracks_Refitted_Relation"],
     "ShouldFormTrackRelationships": ["1"],
     "SoftwareCompensationEnergyDensityBins": ["0", "2.", "5.", "7.5", "9.5", "13.", "16.", "20.", "23.5", "28.", "33.", "40.", "50.", "75.", "100."],
@@ -537,6 +519,27 @@ DDMarlinPandora.Parameters = {
                                          "175.0", "225.0", "275.0", "325.0", "375.0", "425.0", "475.0", "525.0", "575.0", "650.0", "750.0", 
                                          "850.0", "950.0", "1050.0", "1150.0", "1250.0", "1350.0", "1450.0", "1750.0", "2250.0", "2750.0", 
                                          "3500.0", "4500.0", "5000."],
+    # HCAL corrections w/o BIB w/cell selection
+    #"InputEnergyCorrectionPoints": ["1.166", "1.772", "1.468", "1.844", "2.384", "2.737", "3.085", "3.886", "3.97", "4.999",
+    #                                 "5.64", "6.328", "6.909", "7.352", "7.893", "9.211", "8.783", "10.494", "9.644", "10.263", 
+    #                                 "10.754", "10.283", "12.955", "14.203", "15.32", "15.285", "17.759", "24.1", "34.602", "45.971", 
+    #                                 "66.333", "85.715", "100.868", "121.045", "141.793", "160.122", "190.229", "236.062", "272.852", 
+    #                                 "324.34", "367.599", "456.216", "508.0", "591.241", "677.222", "864.469", "1110.301", "1378.305", 
+    #                                 "1763.056", "2135.02", "2372.24"],
+    #"OutputEnergyCorrectionPoints": ["5.0", "11.0", "13.0", "15.0", "17.0", "19.0", "22.5", "27.5", "32.5", "37.5", 
+    #                                 "42.5", "47.5", "52.5", "57.5", "62.5", "67.5", "72.5", "77.5", "82.5", "87.5", 
+    #                                 "92.5", "97.5", "105.0", "115.0", "125.0", "135.0", "145.0", "175.0", "225.0", 
+    #                                 "275.0", "325.0", "375.0", "425.0", "475.0", "525.0", "575.0", "650.0", "750.0", 
+    #                                 "850.0", "950.0", "1050.0", "1150.0", "1250.0", "1350.0", "1450.0", "1750.0", "2250.0", "2750.0", 
+    #                                 "3500.0", "4500.0", "5000."],
+    #"OutputEnergyCorrectionPoints": ["5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.0", "5000.0", "5000."],
+    "InputEnergyCorrectionPoints": [],
+    "OutputEnergyCorrectionPoints": [],
     "SplitVertexCollections": ["SplitVertices"],
     "StartVertexAlgorithmName": ["PandoraPFANew"],
     "StartVertexCollectionName": ["PandoraStartVertices"],
@@ -594,6 +597,7 @@ algList.append(CKFTracking)
 algList.append(TrackDeduper)
 algList.append(Refit)
 algList.append(MyTrackTruth)
+algList.append(MyTrackTruthSiTracks)
 algList.append(MyEcalBarrelDigi)
 algList.append(MyEcalBarrelReco)
 algList.append(MyEcalEndcapDigi)
@@ -602,10 +606,10 @@ algList.append(MyHcalBarrelDigi)
 algList.append(MyHcalBarrelReco)
 algList.append(MyHcalEndcapDigi)
 algList.append(MyHcalEndcapReco)
-algList.append(MyEcalBarrelSelector)
-algList.append(MyEcalEndcapSelector)
-algList.append(MyHcalBarrelSelector)
-algList.append(MyHcalEndcapSelector)
+#algList.append(MyEcalBarrelSelector)
+#algList.append(MyEcalEndcapSelector)
+#algList.append(MyHcalBarrelSelector)
+#algList.append(MyHcalEndcapSelector)
 algList.append(MyDDSimpleMuonDigi)
 algList.append(DDMarlinPandora)
 algList.append(FastJetProcessor)

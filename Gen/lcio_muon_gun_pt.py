@@ -90,7 +90,6 @@ for j in range( 0, nevt ):
 
         
         # --- endpoint
-        
         epx = decayLen * math.cos( phi ) * math.sin( theta ) 
         epy = decayLen * math.sin( phi ) * math.sin( theta )
         epz = decayLen * math.cos( theta ) 
