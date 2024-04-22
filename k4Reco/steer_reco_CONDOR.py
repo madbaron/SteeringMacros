@@ -261,7 +261,8 @@ MyEcalBarrelReco.OutputLevel = INFO
 MyEcalBarrelReco.ProcessorType = "RealisticCaloRecoSilicon"
 MyEcalBarrelReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.00641222630095"],
+    #    "calibration_factorsMipGev": ["0.00641222630095"],
+    "calibration_factorsMipGev": ["0.0066150"],
     "calibration_layergroups": ["50"],
     "inputHitCollections": ["EcalBarrelCollectionDigi"],
     "inputRelationCollections": ["EcalBarrelRelationsSimDigi"],
@@ -293,7 +294,8 @@ MyEcalEndcapReco.OutputLevel = INFO
 MyEcalEndcapReco.ProcessorType = "RealisticCaloRecoSilicon"
 MyEcalEndcapReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.00641222630095"],
+    #    "calibration_factorsMipGev": ["0.00641222630095"],
+    "calibration_factorsMipGev": ["0.0066150"],
     "calibration_layergroups": ["50"],
     "inputHitCollections": ["EcalEndcapCollectionDigi"],
     "inputRelationCollections": ["EcalEndcapRelationsSimDigi"],
@@ -328,7 +330,8 @@ MyHcalBarrelReco.OutputLevel = INFO
 MyHcalBarrelReco.ProcessorType = "RealisticCaloRecoScinPpd"
 MyHcalBarrelReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.0287783798145"],
+    #    "calibration_factorsMipGev": ["0.0287783798145"],
+    "calibration_factorsMipGev": ["0.024625"],
     "calibration_layergroups": ["100"],
     "inputHitCollections": ["HcalBarrelCollectionDigi"],
     "inputRelationCollections": ["HcalBarrelRelationsSimDigi"],
@@ -365,7 +368,8 @@ MyHcalEndcapReco.OutputLevel = INFO
 MyHcalEndcapReco.ProcessorType = "RealisticCaloRecoScinPpd"
 MyHcalEndcapReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.0285819096797"],
+    #   "calibration_factorsMipGev": ["0.0285819096797"],
+    "calibration_factorsMipGev": ["0.024625"],
     "calibration_layergroups": ["100"],
     "inputHitCollections": ["HcalEndcapCollectionDigi"],
     "inputRelationCollections": ["HcalEndcapRelationsSimDigi"],
