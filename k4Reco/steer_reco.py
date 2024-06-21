@@ -317,8 +317,8 @@ MyHcalBarrelDigi.Parameters = {
     "CellIDLayerString": ["layer"],
     "calibration_mip": ["0.0004825"],
     "inputHitCollections": ["HCalBarrelCollection"],
-    "outputHitCollections": ["HcalBarrelsCollectionDigi"],
-    "outputRelationCollections": ["HcalBarrelsRelationsSimDigi"],
+    "outputHitCollections": ["HcalBarrelCollectionDigi"],
+    "outputRelationCollections": ["HcalBarrelRelationsSimDigi"],
     "ppd_mipPe": ["15"],
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
@@ -339,10 +339,10 @@ MyHcalBarrelReco.Parameters = {
     "CellIDLayerString": ["layer"],
     "calibration_factorsMipGev": ["0.0231348530678"],
     "calibration_layergroups": ["100"],
-    "inputHitCollections": ["HcalBarrelsCollectionDigi"],
-    "inputRelationCollections": ["HcalBarrelsRelationsSimDigi"],
-    "outputHitCollections": ["HcalBarrelsCollectionRec"],
-    "outputRelationCollections": ["HcalBarrelsRelationsSimRec"],
+    "inputHitCollections": ["HcalBarrelCollectionDigi"],
+    "inputRelationCollections": ["HcalBarrelRelationsSimDigi"],
+    "outputHitCollections": ["HcalBarrelCollectionRec"],
+    "outputRelationCollections": ["HcalBarrelRelationsSimRec"],
     "ppd_mipPe": ["15"],
     "ppd_npix": ["2000"]
 }
@@ -354,8 +354,8 @@ MyHcalEndcapDigi.Parameters = {
     "CellIDLayerString": ["layer"],
     "calibration_mip": ["0.0004825"],
     "inputHitCollections": ["HCalEndcapCollection"],
-    "outputHitCollections": ["HcalEndcapsCollectionDigi"],
-    "outputRelationCollections": ["HcalEndcapsRelationsSimDigi"],
+    "outputHitCollections": ["HcalEndcapCollectionDigi"],
+    "outputRelationCollections": ["HcalEndcapRelationsSimDigi"],
     "ppd_mipPe": ["15"],
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
@@ -376,10 +376,10 @@ MyHcalEndcapReco.Parameters = {
     "CellIDLayerString": ["layer"],
     "calibration_factorsMipGev": ["0.0231348530678"],
     "calibration_layergroups": ["100"],
-    "inputHitCollections": ["HcalEndcapsCollectionDigi"],
-    "inputRelationCollections": ["HcalEndcapsRelationsSimDigi"],
-    "outputHitCollections": ["HcalEndcapsCollectionRec"],
-    "outputRelationCollections": ["HcalEndcapsRelationsSimRec"],
+    "inputHitCollections": ["HcalEndcapCollectionDigi"],
+    "inputRelationCollections": ["HcalEndcapRelationsSimDigi"],
+    "outputHitCollections": ["HcalEndcapCollectionRec"],
+    "outputRelationCollections": ["HcalEndcapRelationsSimRec"],
     "ppd_mipPe": ["15"],
     "ppd_npix": ["2000"]
 }
@@ -414,8 +414,8 @@ MyHcalBarrelSelector = MarlinProcessorWrapper("MyHcalBarrelSelector")
 MyHcalBarrelSelector.OutputLevel = INFO
 MyHcalBarrelSelector.ProcessorType = "CaloHitSelector"
 MyHcalBarrelSelector.Parameters = {
-    "CaloHitCollectionName": ["HcalBarrelsCollectionRec"],
-    "CaloRelationCollectionName": ["HcalBarrelsRelationsSimRec"],
+    "CaloHitCollectionName": ["HcalBarrelCollectionRec"],
+    "CaloRelationCollectionName": ["HcalBarrelRelationsSimRec"],
     "GoodHitCollection": ["HcalBarrelCollectionSel"],
     "GoodRelationCollection": ["HcalBarrelRelationsSimSel"],
     "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds_10TeV.root"],
@@ -427,8 +427,8 @@ MyHcalEndcapSelector = MarlinProcessorWrapper("MyHcalEndcapSelector")
 MyHcalEndcapSelector.OutputLevel = INFO
 MyHcalEndcapSelector.ProcessorType = "CaloHitSelector"
 MyHcalEndcapSelector.Parameters = {
-    "CaloHitCollectionName": ["HcalEndcapsCollectionRec"],
-    "CaloRelationCollectionName": ["HcalEndcapsRelationsSimRec"],
+    "CaloHitCollectionName": ["HcalEndcapCollectionRec"],
+    "CaloRelationCollectionName": ["HcalEndcapRelationsSimRec"],
     "GoodHitCollection": ["HcalEndcapCollectionSel"],
     "GoodRelationCollection": ["HcalEndcapRelationsSimSel"],
     "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds_10TeV.root"],

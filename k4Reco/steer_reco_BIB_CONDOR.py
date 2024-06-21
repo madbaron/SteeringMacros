@@ -253,25 +253,13 @@ MyEcalBarrelReco.OutputLevel = INFO
 MyEcalBarrelReco.ProcessorType = "RealisticCaloRecoSilicon"
 MyEcalBarrelReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.00641222630095"],
+    #    "calibration_factorsMipGev": ["0.00641222630095"],
+    "calibration_factorsMipGev": ["0.0066150"],
     "calibration_layergroups": ["50"],
     "inputHitCollections": ["EcalBarrelCollectionDigi"],
     "inputRelationCollections": ["EcalBarrelRelationsSimDigi"],
     "outputHitCollections": ["EcalBarrelCollectionRec"],
     "outputRelationCollections": ["EcalBarrelRelationsSimRec"]
-}
-
-MyEcalBarrelGapFiller = MarlinProcessorWrapper("MyEcalBarrelGapFiller")
-MyEcalBarrelGapFiller.OutputLevel = INFO
-MyEcalBarrelGapFiller.ProcessorType = "BruteForceEcalGapFiller"
-MyEcalBarrelGapFiller.Parameters = {
-    "CellIDLayerString": ["layer"],
-    "CellIDModuleString": ["module"],
-    "CellIDStaveString": ["stave"],
-    "applyInterModuleCorrection": ["false"],
-    "expectedInterModuleDistance": ["7.0"],
-    "inputHitCollection": ["EcalBarrelCollectionRec"],
-    "outputHitCollection": ["EcalBarrelCollectionGapHits"]
 }
 
 MyEcalEndcapDigi = MarlinProcessorWrapper("MyEcalEndcapDigi")
@@ -298,7 +286,8 @@ MyEcalEndcapReco.OutputLevel = INFO
 MyEcalEndcapReco.ProcessorType = "RealisticCaloRecoSilicon"
 MyEcalEndcapReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.00641222630095"],
+    #    "calibration_factorsMipGev": ["0.00641222630095"],
+    "calibration_factorsMipGev": ["0.0066150"],
     "calibration_layergroups": ["50"],
     "inputHitCollections": ["EcalEndcapCollectionDigi"],
     "inputRelationCollections": ["EcalEndcapRelationsSimDigi"],
@@ -306,28 +295,15 @@ MyEcalEndcapReco.Parameters = {
     "outputRelationCollections": ["EcalEndcapRelationsSimRec"]
 }
 
-MyEcalEndcapGapFiller = MarlinProcessorWrapper("MyEcalEndcapGapFiller")
-MyEcalEndcapGapFiller.OutputLevel = INFO
-MyEcalEndcapGapFiller.ProcessorType = "BruteForceEcalGapFiller"
-MyEcalEndcapGapFiller.Parameters = {
-    "CellIDLayerString": ["layer"],
-    "CellIDModuleString": ["module"],
-    "CellIDStaveString": ["stave"],
-    "applyInterModuleCorrection": ["false"],
-    "expectedInterModuleDistance": ["7.0"],
-    "inputHitCollection": ["EcalEndcapCollectionRec"],
-    "outputHitCollection": ["EcalEndcapCollectionGapHits"]
-}
-
 MyHcalBarrelDigi = MarlinProcessorWrapper("MyHcalBarrelDigi")
 MyHcalBarrelDigi.OutputLevel = INFO
 MyHcalBarrelDigi.ProcessorType = "RealisticCaloDigiScinPpd"
 MyHcalBarrelDigi.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_mip": ["0.0004825"],
+    "calibration_mip": ["0.0004925"],
     "inputHitCollections": ["HCalBarrelCollection"],
-    "outputHitCollections": ["HcalBarrelsCollectionDigi"],
-    "outputRelationCollections": ["HcalBarrelsRelationsSimDigi"],
+    "outputHitCollections": ["HcalBarrelCollectionDigi"],
+    "outputRelationCollections": ["HcalBarrelRelationsSimDigi"],
     "ppd_mipPe": ["15"],
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
@@ -336,9 +312,9 @@ MyHcalBarrelDigi.Parameters = {
     "thresholdUnit": ["GeV"],
     "timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
-    "timingResolution": ["0"],
-    "timingWindowMax": ["10"],
-    "timingWindowMin": ["-0.5"]
+    #"timingResolution": ["0"],
+    #"timingWindowMax": ["10"],
+    #"timingWindowMin": ["-0.5"]
 }
 
 MyHcalBarrelReco = MarlinProcessorWrapper("MyHcalBarrelReco")
@@ -346,12 +322,13 @@ MyHcalBarrelReco.OutputLevel = INFO
 MyHcalBarrelReco.ProcessorType = "RealisticCaloRecoScinPpd"
 MyHcalBarrelReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.0231348530678"],
+    #    "calibration_factorsMipGev": ["0.0287783798145"],
+    "calibration_factorsMipGev": ["0.024625"],
     "calibration_layergroups": ["100"],
-    "inputHitCollections": ["HcalBarrelsCollectionDigi"],
-    "inputRelationCollections": ["HcalBarrelsRelationsSimDigi"],
-    "outputHitCollections": ["HcalBarrelsCollectionRec"],
-    "outputRelationCollections": ["HcalBarrelsRelationsSimRec"],
+    "inputHitCollections": ["HcalBarrelCollectionDigi"],
+    "inputRelationCollections": ["HcalBarrelRelationsSimDigi"],
+    "outputHitCollections": ["HcalBarrelCollectionRec"],
+    "outputRelationCollections": ["HcalBarrelRelationsSimRec"],
     "ppd_mipPe": ["15"],
     "ppd_npix": ["2000"]
 }
@@ -361,10 +338,10 @@ MyHcalEndcapDigi.OutputLevel = INFO
 MyHcalEndcapDigi.ProcessorType = "RealisticCaloDigiScinPpd"
 MyHcalEndcapDigi.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_mip": ["0.0004825"],
+    "calibration_mip": ["0.0004725"],
     "inputHitCollections": ["HCalEndcapCollection"],
-    "outputHitCollections": ["HcalEndcapsCollectionDigi"],
-    "outputRelationCollections": ["HcalEndcapsRelationsSimDigi"],
+    "outputHitCollections": ["HcalEndcapCollectionDigi"],
+    "outputRelationCollections": ["HcalEndcapRelationsSimDigi"],
     "ppd_mipPe": ["15"],
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
@@ -373,9 +350,9 @@ MyHcalEndcapDigi.Parameters = {
     "thresholdUnit": ["GeV"],
     "timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
-    "timingResolution": ["0"],
-    "timingWindowMax": ["10"],
-    "timingWindowMin": ["-0.5"]
+    #"timingResolution": ["0"],
+    #"timingWindowMax": ["10"],
+    #"timingWindowMin": ["-0.5"]
 }
 
 MyHcalEndcapReco = MarlinProcessorWrapper("MyHcalEndcapReco")
@@ -383,12 +360,13 @@ MyHcalEndcapReco.OutputLevel = INFO
 MyHcalEndcapReco.ProcessorType = "RealisticCaloRecoScinPpd"
 MyHcalEndcapReco.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_factorsMipGev": ["0.0231348530678"],
+    #   "calibration_factorsMipGev": ["0.0285819096797"],
+    "calibration_factorsMipGev": ["0.024625"],
     "calibration_layergroups": ["100"],
-    "inputHitCollections": ["HcalEndcapsCollectionDigi"],
-    "inputRelationCollections": ["HcalEndcapsRelationsSimDigi"],
-    "outputHitCollections": ["HcalEndcapsCollectionRec"],
-    "outputRelationCollections": ["HcalEndcapsRelationsSimRec"],
+    "inputHitCollections": ["HcalEndcapCollectionDigi"],
+    "inputRelationCollections": ["HcalEndcapRelationsSimDigi"],
+    "outputHitCollections": ["HcalEndcapCollectionRec"],
+    "outputRelationCollections": ["HcalEndcapRelationsSimRec"],
     "ppd_mipPe": ["15"],
     "ppd_npix": ["2000"]
 }
