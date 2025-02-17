@@ -13,7 +13,7 @@ parseConstants(CONSTANTS)
 
 read = LcioEvent()
 read.OutputLevel = INFO
-read.Files = ["/data/sim/TYPEEVENT/TYPEEVENT_sim_INFILENAME.slcio"]
+read.Files = ["/dataMuC/sim/TYPEEVENT/TYPEEVENT_sim_INFILENAME.slcio"]
 algList.append(read)
 
 EventNumber = MarlinProcessorWrapper("EventNumber")
@@ -39,7 +39,7 @@ Output_REC.Parameters = {
     "DropCollectionTypes": [],
     "FullSubsetCollections": ["EfficientMCParticles", "InefficientMCParticles", "SiTracks"],
     "KeepCollectionNames": ["MCParticle_SiTracks", "MCParticle_SiTracks_Refitted"],
-    "LCIOOutputFile": ["/data/reco/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
+    "LCIOOutputFile": ["/dataMuC/reco/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
     "LCIOWriteMode": ["WRITE_NEW"]
 }
 
@@ -167,7 +167,7 @@ CKFTracking.ProcessorType = "ACTSSeededCKFTrackingProc"
 CKFTracking.Parameters = {
     "CKF_Chi2CutOff": ["10"],
     "CKF_NumMeasurementsCutOff": ["1"],
-    "MatFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/material-maps.json"],
+    "MatFile": ["/opt/spack/opt/spack/linux-almalinux9-x86_64/gcc-11.5.0/actstracking-1.3.1-klkmpye5nmu4ep6z5fh66nz3x3zgvf5e/share/ACTSTracking/data/material-maps.json"],
     "PropagateBackward": ["False"],
     "RunCKF": ["True"],
     "SeedFinding_CollisionRegion": ["5"],
@@ -184,7 +184,7 @@ CKFTracking.Parameters = {
                       "8", "2",
                       "17", "2",
                       "18", "2"],
-    "TGeoFile": ["/opt/spack/opt/spack/linux-ubuntu22.04-x86_64/gcc-11.3.0/actstracking-1.1.0-cffpaztpv3yiqxvgiregpm6jrfxaa2ij/share/ACTSTracking/data/MuColl_v1.root"],
+    "TGeoFile": ["/opt/spack/opt/spack/linux-almalinux9-x86_64/gcc-11.5.0/actstracking-1.3.1-klkmpye5nmu4ep6z5fh66nz3x3zgvf5e/share/ACTSTracking/data/MuColl_v1.root"],
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHits", "IBTrackerHits", "OBTrackerHits", "VETrackerHits", "IETrackerHits", "OETrackerHits"]
 }
@@ -379,58 +379,216 @@ MyHcalEndcapReco.Parameters = {
     "ppd_npix": ["2000"]
 }
 
+MyEcalBarrelConer = MarlinProcessorWrapper("MyEcalBarrelConer")
+MyEcalBarrelConer.OutputLevel = INFO
+MyEcalBarrelConer.ProcessorType = "CaloConer"
+MyEcalBarrelConer.Parameters = {
+    "MCParticleCollectionName": ["MCParticle"],
+    "CaloHitCollectionName": ["EcalBarrelCollectionRec"],
+    "CaloRelationCollectionName": ["EcalBarrelRelationsSimRec"],
+    "GoodHitCollection": ["EcalBarrelCollectionConed"],
+    "GoodRelationCollection": ["EcalBarrelRelationsSimConed"],
+    "ConeWidth": ["0.02"]
+}
+
+MyEcalEndcapConer = MarlinProcessorWrapper("MyEcalEndcapConer")
+MyEcalEndcapConer.OutputLevel = INFO
+MyEcalEndcapConer.ProcessorType = "CaloConer"
+MyEcalEndcapConer.Parameters = {
+    "MCParticleCollectionName": ["MCParticle"],
+    "CaloHitCollectionName": ["EcalEndcapCollectionRec"],
+    "CaloRelationCollectionName": ["EcalEndcapRelationsSimRec"],
+    "GoodHitCollection": ["EcalEndcapCollectionConed"],
+    "GoodRelationCollection": ["EcalEndcapRelationsSimConed"],
+    "ConeWidth": ["0.02"]
+}
+
+MyHcalBarrelConer = MarlinProcessorWrapper("MyHcalBarrelConer")
+MyHcalBarrelConer.OutputLevel = INFO
+MyHcalBarrelConer.ProcessorType = "CaloConer"
+MyHcalBarrelConer.Parameters = {
+    "MCParticleCollectionName": ["MCParticle"],
+    "CaloHitCollectionName": ["HcalBarrelCollectionRec"],
+    "CaloRelationCollectionName": ["HcalBarrelRelationsSimRec"],
+    "GoodHitCollection": ["HcalBarrelCollectionConed"],
+    "GoodRelationCollection": ["HcalBarrelRelationsSimConed"],
+    "ConeWidth": ["0.02"]
+}
+
+MyHcalEndcapConer = MarlinProcessorWrapper("MyHcalEndcapConer")
+MyHcalEndcapConer.OutputLevel = INFO
+MyHcalEndcapConer.ProcessorType = "CaloConer"
+MyHcalEndcapConer.Parameters = {
+    "MCParticleCollectionName": ["MCParticle"],
+    "CaloHitCollectionName": ["HcalEndcapCollectionRec"],
+    "CaloRelationCollectionName": ["HcalEndcapRelationsSimRec"],
+    "GoodHitCollection": ["HcalEndcapCollectionConed"],
+    "GoodRelationCollection": ["HcalEndcapRelationsSimConed"],
+    "ConeWidth": ["0.02"]
+}
+
+
 MyEcalBarrelSelector = MarlinProcessorWrapper("MyEcalBarrelSelector")
 MyEcalBarrelSelector.OutputLevel = INFO
 MyEcalBarrelSelector.ProcessorType = "CaloHitSelector"
 MyEcalBarrelSelector.Parameters = {
-    "CaloHitCollectionName": ["EcalBarrelCollectionRec"],
-    "CaloRelationCollectionName": ["EcalBarrelRelationsSimRec"],
+    "CaloHitCollectionName": ["EcalBarrelCollectionConed"],
+    "CaloRelationCollectionName": ["EcalBarrelRelationsSimConed"],
     "GoodHitCollection": ["EcalBarrelCollectionSel"],
     "GoodRelationCollection": ["EcalBarrelRelationsSimSel"],
-    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds_10TeV.root"],
-    "Nsigma": ["5"],
-    "DoBIBsubtraction": ["true"]
+    "ThresholdsFilePath": ["/code/CaloSelector/ECAL_Thresholds_10TeV.root"],
+    "Nsigma": ["0"],
+    "DoBIBsubtraction": ["false"]
 }
 
 MyEcalEndcapSelector = MarlinProcessorWrapper("MyEcalEndcapSelector")
 MyEcalEndcapSelector.OutputLevel = INFO
 MyEcalEndcapSelector.ProcessorType = "CaloHitSelector"
 MyEcalEndcapSelector.Parameters = {
-    "CaloHitCollectionName": ["EcalEndcapCollectionRec"],
-    "CaloRelationCollectionName": ["EcalEndcapRelationsSimRec"],
+    "CaloHitCollectionName": ["EcalEndcapCollectionConed"],
+    "CaloRelationCollectionName": ["EcalEndcapRelationsSimConed"],
     "GoodHitCollection": ["EcalEndcapCollectionSel"],
     "GoodRelationCollection": ["EcalEndcapRelationsSimSel"],
-    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/ECAL_Thresholds_10TeV.root"],
-    "Nsigma": ["5"],
-    "DoBIBsubtraction": ["true"]
+    "ThresholdsFilePath": ["/code/CaloSelector/ECAL_Thresholds_10TeV.root"],
+    "Nsigma": ["0"],
+    "DoBIBsubtraction": ["false"]
 }
 
-MyHcalBarrelSelector = MarlinProcessorWrapper("MyHcalBarrelSelector")
-MyHcalBarrelSelector.OutputLevel = INFO
-MyHcalBarrelSelector.ProcessorType = "CaloHitSelector"
-MyHcalBarrelSelector.Parameters = {
-    "CaloHitCollectionName": ["HcalBarrelCollectionRec"],
-    "CaloRelationCollectionName": ["HcalBarrelRelationsSimRec"],
-    "GoodHitCollection": ["HcalBarrelCollectionSel"],
-    "GoodRelationCollection": ["HcalBarrelRelationsSimSel"],
-    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds_10TeV.root"],
-    "Nsigma": ["5"],
-    "DoBIBsubtraction": ["true"]
+DDMarlinPandora = MarlinProcessorWrapper("DDMarlinPandora")
+DDMarlinPandora.OutputLevel = INFO
+DDMarlinPandora.ProcessorType = "DDPandoraPFANewProcessor"
+DDMarlinPandora.Parameters = {
+    "ClusterCollectionName": ["PandoraClusters"],
+    "CreateGaps": ["false"],
+    "CurvatureToMomentumFactor": ["0.00015"],
+    "D0TrackCut": ["200"],
+    "D0UnmatchedVertexTrackCut": ["5"],
+    "DigitalMuonHits": ["0"],
+    "ECalBarrelNormalVector": ["0", "0", "1"],
+    "ECalCaloHitCollections": ["EcalBarrelCollectionSel", "EcalEndcapCollectionSel"],
+    "ECalMipThreshold": ["0.5"],
+    "ECalScMipThreshold": ["0"],
+    "ECalScToEMGeVCalibration": ["1"],
+    "ECalScToHadGeVCalibrationBarrel": ["1"],
+    "ECalScToHadGeVCalibrationEndCap": ["1"],
+    "ECalScToMipCalibration": ["1"],
+    "ECalSiMipThreshold": ["0"],
+    "ECalSiToEMGeVCalibration": ["1"],
+    "ECalSiToHadGeVCalibrationBarrel": ["1"],
+    "ECalSiToHadGeVCalibrationEndCap": ["1"],
+    "ECalSiToMipCalibration": ["1"],
+    "ECalToEMGeVCalibration": ["1.02373335516"],
+    "ECalToHadGeVCalibrationBarrel": ["1.17344504717"],
+    "ECalToHadGeVCalibrationEndCap": ["1.17344504717"],
+    "ECalToMipCalibration": ["181.818"],
+    "EMConstantTerm": ["0.01"],
+    "EMStochasticTerm": ["0.17"],
+    "FinalEnergyDensityBin": ["110."],
+    "HCalBarrelNormalVector": ["0", "0", "1"],
+    "HCalCaloHitCollections": ["HcalBarrelCollectionConed", "HcalEndcapCollectionConed"],
+    "HCalMipThreshold": ["0.3"],
+    "HCalToEMGeVCalibration": ["1.0"],
+    "HCalToHadGeVCalibration": ["1.02821419758"],
+    "HCalToMipCalibration": ["37.1747"],
+    "HadConstantTerm": ["0.03"],
+    "HadStochasticTerm": ["0.6"],
+    "KinkVertexCollections": ["KinkVertices"],
+    "LayersFromEdgeMaxRearDistance": ["250"],
+    "MCParticleCollections": ["MCParticle"],
+    "MaxBarrelTrackerInnerRDistance": ["200"],
+    "MaxClusterEnergyToApplySoftComp": ["2000."],
+    "MaxHCalHitHadronicEnergy": ["1000000"],
+    "MaxTrackHits": ["5000"],
+    "MaxTrackSigmaPOverP": ["0.15"],
+    "MinBarrelTrackerHitFractionOfExpected": ["0"],
+    "MinCleanCorrectedHitEnergy": ["0.1"],
+    "MinCleanHitEnergy": ["0.5"],
+    "MinCleanHitEnergyFraction": ["0.01"],
+    "MinFtdHitsForBarrelTrackerHitFraction": ["0"],
+    "MinFtdTrackHits": ["0"],
+    "MinMomentumForTrackHitChecks": ["0"],
+    "MinTpcHitFractionOfExpected": ["0"],
+    "MinTrackECalDistanceFromIp": ["0"],
+    "MinTrackHits": ["0"],
+#    "MuonBarrelBField": ["5.0"],
+    "MuonBarrelBField": ["0.0001"],
+    "MuonCaloHitCollections": ["MUON"],
+#    "MuonEndCapBField": ["5.0"],
+    "MuonEndCapBField": ["0.0001"],
+    "MuonHitEnergy": ["0.5"],
+    "MuonToMipCalibration": ["19607.8"],
+    "NEventsToSkip": ["0"],
+    "NOuterSamplingLayers": ["3"],
+    "PFOCollectionName": ["PandoraPFOs"],
+    "PandoraSettingsXmlFile": ["/code/SteeringMacros/PandoraSettings/PandoraSettingsDefault.xml"],
+    "ProngVertexCollections": ["ProngVertices"],
+    "ReachesECalBarrelTrackerOuterDistance": ["-100"],
+    "ReachesECalBarrelTrackerZMaxDistance": ["-50"],
+    "ReachesECalFtdZMaxDistance": ["1"],
+    "ReachesECalMinFtdLayer": ["0"],
+    "ReachesECalNBarrelTrackerHits": ["0"],
+    "ReachesECalNFtdHits": ["0"],
+    "RelCaloHitCollections": ["EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimSel", "HcalBarrelRelationsSimConed", "HcalEndcapRelationsSimConed", "RelationMuonHit"],
+    "RelTrackCollections": ["SiTracks_Refitted_Relation"],
+    "ShouldFormTrackRelationships": ["1"],
+    "SoftwareCompensationEnergyDensityBins": ["0", "2.", "5.", "7.5", "9.5", "13.", "16.", "20.", "23.5", "28.", "33.", "40.", "50.", "75.", "100."],
+    "SoftwareCompensationWeights": ["1.61741", "-0.00444385", "2.29683e-05", "-0.0731236", "-0.00157099", "-7.09546e-07", "0.868443", "1.0561", "-0.0238574"],
+    # ECAL corrections w/o BIB w/cell selection
+    #"ECALInputEnergyCorrectionPoints": ["0.1", 
+    #                                    "35.871", "38.327", "41.386", "45.812", "50.01", "53.71", "58.548", "63.903", "66.884", "68.92", 
+    #                                    "75.776", "79.581", "85.142", "91.092", "97.439", "103.42", "108.42", "112.653", "121.198", "133.57", 
+    #                                    "142.56", "152.919", "163.913", "192.116", "242.636", "292.002", "342.592", "392.635", "446.347", 
+    #                                    "495.021", "544.526", "597.864", "671.43", "774.283", "874.801", "983.224", "1082.058", "1186.351", 
+    #                                    "1288.68", "1412.564", "1528.811", "1834.117", "2298.427", "2820.119", "3588.558", "4565.85", "5073.16"],
+    #"ECALOutputEnergyCorrectionPoints": ["0.1",  
+    #                                     "16.0", "18.5", "22.5", "27.5", "32.5", "37.5", "42.5", "47.5", "52.5", "57.5", "62.5", "67.5", 
+    #                                     "72.5", "77.5", "82.5", "87.5", "92.5", "97.5", "105.0", "115.0", "125.0", "135.0", "145.0", 
+    #                                     "175.0", "225.0", "275.0", "325.0", "375.0", "425.0", "475.0", "525.0", "575.0", "650.0", "750.0", 
+    #                                     "850.0", "950.0", "1050.0", "1150.0", "1250.0", "1350.0", "1450.0", "1750.0", "2250.0", "2750.0", 
+    #                                     "3500.0", "4500.0", "5000."],
+    # HCAL corrections w/o BIB w/cell selection
+    #"InputEnergyCorrectionPoints": ["1.166", "1.772", "1.468", "1.844", "2.384", "2.737", "3.085", "3.886", "3.97", "4.999",
+    #                                 "5.64", "6.328", "6.909", "7.352", "7.893", "9.211", "8.783", "10.494", "9.644", "10.263", 
+    #                                 "10.754", "10.283", "12.955", "14.203", "15.32", "15.285", "17.759", "24.1", "34.602", "45.971", 
+    #                                 "66.333", "85.715", "100.868", "121.045", "141.793", "160.122", "190.229", "236.062", "272.852", 
+    #                                 "324.34", "367.599", "456.216", "508.0", "591.241", "677.222", "864.469", "1110.301", "1378.305", 
+    #                                 "1763.056", "2135.02", "2372.24"],
+    #"OutputEnergyCorrectionPoints": ["5.0", "11.0", "13.0", "15.0", "17.0", "19.0", "22.5", "27.5", "32.5", "37.5", 
+    #                                 "42.5", "47.5", "52.5", "57.5", "62.5", "67.5", "72.5", "77.5", "82.5", "87.5", 
+    #                                 "92.5", "97.5", "105.0", "115.0", "125.0", "135.0", "145.0", "175.0", "225.0", 
+    #                                 "275.0", "325.0", "375.0", "425.0", "475.0", "525.0", "575.0", "650.0", "750.0", 
+    #                                 "850.0", "950.0", "1050.0", "1150.0", "1250.0", "1350.0", "1450.0", "1750.0", "2250.0", "2750.0", 
+    #                                 "3500.0", "4500.0", "5000."],
+    #"OutputEnergyCorrectionPoints": ["5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", "5000.", 
+    #                                 "5000.0", "5000.0", "5000."],
+    "InputEnergyCorrectionPoints": [],
+    "OutputEnergyCorrectionPoints": [],
+    "SplitVertexCollections": ["SplitVertices"],
+    "StartVertexAlgorithmName": ["PandoraPFANew"],
+    "StartVertexCollectionName": ["PandoraStartVertices"],
+    "StripSplittingOn": ["0"],
+    "TrackCollections": ["SiTracks_Refitted"],
+    "TrackCreatorName": ["DDTrackCreatorCLIC"],
+    "TrackStateTolerance": ["0"],
+    "TrackSystemName": ["DDKalTest"],
+    "UnmatchedVertexTrackMaxEnergy": ["5"],
+    "UseEcalScLayers": ["0"],
+    "UseNonVertexTracks": ["1"],
+    "UseOldTrackStateCalculation": ["0"],
+    "UseUnmatchedNonVertexTracks": ["0"],
+    "UseUnmatchedVertexTracks": ["1"],
+    "V0VertexCollections": ["V0Vertices"],
+    "YokeBarrelNormalVector": ["0", "0", "1"],
+    "Z0TrackCut": ["200"],
+    "Z0UnmatchedVertexTrackCut": ["5"],
+    "ZCutForNonVertexTracks": ["250"]
 }
 
-MyHcalEndcapSelector = MarlinProcessorWrapper("MyHcalEndcapSelector")
-MyHcalEndcapSelector.OutputLevel = INFO
-MyHcalEndcapSelector.ProcessorType = "CaloHitSelector"
-MyHcalEndcapSelector.Parameters = {
-    "CaloHitCollectionName": ["HcalEndcapCollectionRec"],
-    "CaloRelationCollectionName": ["HcalEndcapRelationsSimRec"],
-    "GoodHitCollection": ["HcalEndcapCollectionSel"],
-    "GoodRelationCollection": ["HcalEndcapRelationsSimSel"],
-    "ThresholdsFilePath": ["/opt/MyBIBUtils/share/MyBIBUtils/data/HCAL_Thresholds_10TeV.root"],
-    "Nsigma": ["5"],
-    "DoBIBsubtraction": ["true"]
-}
-
+'''
 DDMarlinPandora = MarlinProcessorWrapper("DDMarlinPandora")
 DDMarlinPandora.OutputLevel = INFO
 DDMarlinPandora.ProcessorType = "DDPandoraPFANewProcessor"
@@ -564,6 +722,7 @@ DDMarlinPandora.Parameters = {
     "Z0UnmatchedVertexTrackCut": ["5"],
     "ZCutForNonVertexTracks": ["250"]
 }
+'''
 
 FastJetProcessor = MarlinProcessorWrapper("FastJetProcessor")
 FastJetProcessor.OutputLevel = INFO
@@ -572,6 +731,17 @@ FastJetProcessor.Parameters = {
     "algorithm": ["antikt_algorithm", "0.4"],
     "clusteringMode": ["Inclusive", "5"],
     "jetOut": ["JetOut"],
+    "recParticleIn": ["PandoraPFOs"],
+    "recombinationScheme": ["E_scheme"]
+}
+
+ValenciaJetProcessor = MarlinProcessorWrapper("ValenciaJetProcessor")
+ValenciaJetProcessor.OutputLevel = INFO
+ValenciaJetProcessor.ProcessorType = "FastJetProcessor"
+ValenciaJetProcessor.Parameters = {
+    "algorithm": ["ValenciaPlugin", "1.2", "1.0", "0.7"],
+    "clusteringMode": ["ExclusiveNJets", "2"],
+    "jetOut": ["ValenciaJetOut"],
     "recParticleIn": ["PandoraPFOs"],
     "recombinationScheme": ["E_scheme"]
 }
@@ -610,14 +780,17 @@ algList.append(MyHcalBarrelDigi)
 algList.append(MyHcalBarrelReco)
 algList.append(MyHcalEndcapDigi)
 algList.append(MyHcalEndcapReco)
-#algList.append(MyEcalBarrelSelector)
-#algList.append(MyEcalEndcapSelector)
-#algList.append(MyHcalBarrelSelector)
-#algList.append(MyHcalEndcapSelector)
+algList.append(MyEcalBarrelConer)
+algList.append(MyEcalEndcapConer)
+algList.append(MyHcalBarrelConer)
+algList.append(MyHcalEndcapConer)
+algList.append(MyEcalBarrelSelector)
+algList.append(MyEcalEndcapSelector)
 algList.append(MyDDSimpleMuonDigi)
 algList.append(DDMarlinPandora)
 algList.append(FastJetProcessor)
-algList.append(Output_REC)
+algList.append(ValenciaJetProcessor)
+algList.append(Output_REC) 
 
 ApplicationMgr(TopAlg=algList,
                EvtSel='NONE',

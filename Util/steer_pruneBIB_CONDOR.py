@@ -13,7 +13,7 @@ parseConstants(CONSTANTS)
 
 read = LcioEvent()
 read.OutputLevel = INFO
-read.Files = ["/data/BIB10TeV/sim_TYPEEVENT/BIB_sim_INFILENAME.slcio"]
+read.Files = ["/nfs/dust/atlas/user/fmeloni/DataMuC/BIB10TeV/sim_TYPEEVENT/BIB_sim_INFILENAME.slcio"]
 algList.append(read)
 
 EventNumber = MarlinProcessorWrapper("EventNumber")
@@ -31,7 +31,7 @@ Output_LCIO.Parameters = {
     "DropCollectionTypes": [],
     "FullSubsetCollections": [],
     "KeepCollectionNames": [],
-    "LCIOOutputFile": ["/data/BIB10TeV/sim_TYPEEVENT_pruned/BIB_sim_INFILENAME.slcio"],
+    "LCIOOutputFile": ["/nfs/dust/atlas/user/fmeloni/DataMuC/BIB10TeV/sim_TYPEEVENT_pruned/BIB_sim_INFILENAME.slcio"],
     "LCIOWriteMode": ["WRITE_NEW"]
 }
 
