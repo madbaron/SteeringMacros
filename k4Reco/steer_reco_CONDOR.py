@@ -3,6 +3,9 @@ from Gaudi.Configuration import *
 
 from Configurables import LcioEvent, EventDataSvc, MarlinProcessorWrapper
 from k4MarlinWrapper.parseConstants import *
+
+import os
+
 algList = []
 evtsvc = EventDataSvc()
 
@@ -37,7 +40,7 @@ Output_REC.ProcessorType = "LCIOOutputProcessor"
 Output_REC.Parameters = {
     "DropCollectionTypes": [],
     "DropCollectionNames": [],
-    "FullSubsetCollections": [],
+    "FullSubsetCollections": ["SiTracks"],
     "KeepCollectionNames": ["MCParticle_SiTracks"],
     "LCIOOutputFile": ["/dataMuC/reco/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
     "LCIOWriteMode": ["WRITE_NEW"]
@@ -293,7 +296,7 @@ CKFTracking.Parameters = {
     "CKF_NumMeasurementsCutOff": ["1"],
     "CaloFace_Radius": ["1857"],
     "CaloFace_Z": ["2307"],
-    "MatFile": ["/opt/spack/opt/spack/linux-almalinux9-x86_64/gcc-11.5.0/actstracking-1.3.1-3ilxe7pljxeg7erqrncbr3tceqefpym3/share/ACTSTracking/data/MAIA_v0_material.json"],
+    "MatFile": ["/code/detector-simulation/geometries/MAIA_v0/MAIA_v0_material.json"],
     "PropagateBackward": ["False"],
     "DetectorSchema": ["MAIA_v0"],
     "RunCKF": ["True"],
@@ -324,8 +327,8 @@ CKFTracking.Parameters = {
                       "8", "2",
                       "17", "2",
                       "18", "2"],
-    "TGeoFile": ["/opt/spack/opt/spack/linux-almalinux9-x86_64/gcc-11.5.0/actstracking-1.3.1-3ilxe7pljxeg7erqrncbr3tceqefpym3/share/ACTSTracking/data/MAIA_v0.root"],
-    "TGeoDescFile": ["/opt/spack/opt/spack/linux-almalinux9-x86_64/gcc-11.5.0/actstracking-1.3.1-3ilxe7pljxeg7erqrncbr3tceqefpym3/share/ACTSTracking/data/MAIA_v0.json"],
+    "TGeoFile": ["/code/detector-simulation/geometries/MAIA_v0/MAIA_v0.root"],
+    "TGeoDescFile": [os.environ['ACTSTRACKING_DATA']+"/MAIA_v0.json"],
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHitsConed", "IBTrackerHitsConed", "OBTrackerHitsConed", "VETrackerHitsConed", "IETrackerHitsConed", "OETrackerHitsConed"]
 }
@@ -391,7 +394,8 @@ MyEcalBarrelReco.ProcessorType = "RealisticCaloRecoSilicon"
 MyEcalBarrelReco.Parameters = {
     "CellIDLayerString": ["layer"],
     #    "calibration_factorsMipGev": ["0.00641222630095"],
-    "calibration_factorsMipGev": ["0.0066150"],
+    #"calibration_factorsMipGev": ["0.0066150"], #used for v3
+    "calibration_factorsMipGev": ["0.008015282876"],
     "calibration_layergroups": ["50"],
     "inputHitCollections": ["EcalBarrelCollectionDigi"],
     "inputRelationCollections": ["EcalBarrelRelationsSimDigi"],
@@ -425,7 +429,8 @@ MyEcalEndcapReco.ProcessorType = "RealisticCaloRecoSilicon"
 MyEcalEndcapReco.Parameters = {
     "CellIDLayerString": ["layer"],
     #    "calibration_factorsMipGev": ["0.00641222630095"],
-    "calibration_factorsMipGev": ["0.0066150"],
+    #"calibration_factorsMipGev": ["0.0066150"], #used for v3
+    "calibration_factorsMipGev": ["0.008015282876"],
     "calibration_layergroups": ["50"],
     "inputHitCollections": ["EcalEndcapCollectionDigi"],
     "inputRelationCollections": ["EcalEndcapRelationsSimDigi"],
@@ -446,8 +451,8 @@ MyHcalBarrelDigi.Parameters = {
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
     "ppd_pix_spread": ["0"],
-    "threshold": ["0.001"],
-    "thresholdUnit": ["GeV"],
+    "threshold": ["0.5"],
+    "thresholdUnit": ["MIP"],
     "timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
     "timingResolution": ["0"],
@@ -484,8 +489,8 @@ MyHcalEndcapDigi.Parameters = {
     "ppd_npix": ["2000"],
     "ppd_npix_uncert": ["0"],
     "ppd_pix_spread": ["0"],
-    "threshold": ["0.001"],
-    "thresholdUnit": ["GeV"],
+    "threshold": ["0.5"],
+    "thresholdUnit": ["MIP"],
     "timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
     "timingResolution": ["0"],
@@ -697,7 +702,7 @@ DDMarlinPandora.Parameters = {
     "StartVertexAlgorithmName": ["PandoraPFANew"],
     "StartVertexCollectionName": ["PandoraStartVertices"],
     "StripSplittingOn": ["0"],
-    "TrackCollections": ["SelectedTracks"],
+    "TrackCollections": ["SiTracks"],
     "TrackCreatorName": ["DDTrackCreatorCLIC"],
     "TrackStateTolerance": ["0"],
     "TrackSystemName": ["DDKalTest"],
@@ -749,38 +754,9 @@ MyDDSimpleMuonDigi.Parameters = {
 }
 
 
-OverlayMIX = MarlinProcessorWrapper("OverlayMIX")
-OverlayMIX.OutputLevel = INFO
-OverlayMIX.ProcessorType = "OverlayTimingRandomMix"
-OverlayMIX.Parameters = {
-    "PathToMuPlus": ["/dataMuC/BIB10TeV/sim_mm_pruned/"],
-    "PathToMuMinus": ["/dataMuC/BIB10TeV/sim_mp_pruned/"],
-    "Collection_IntegrationTimes": [
-        "VertexBarrelCollection", "-0.18", "0.18",
-        "VertexEndcapCollection", "-0.18", "0.18",
-        "InnerTrackerBarrelCollection", "-0.36", "0.36",
-        "InnerTrackerEndcapCollection", "-0.36", "0.36",
-        "OuterTrackerBarrelCollection", "-0.36", "0.36",
-        "OuterTrackerEndcapCollection", "-0.36", "0.36",
-    #    "ECalBarrelCollection", "-0.5", "15.",
-    #    "ECalEndcapCollection", "-0.5", "15.",
-    #    "HCalBarrelCollection", "-0.5", "15.",
-    #    "HCalEndcapCollection", "-0.5", "15.",
-    #    "YokeBarrelCollection", "-0.5", "12.",
-    #    "YokeEndcapCollection", "-0.5", "12."
-    ],
-    "IntegrationTimeMin": ["-0.5"],
-    "MCParticleCollectionName": ["MCParticle"],
-    "MergeMCParticles": ["false"],
-    "NumberBackground": ["1666"]
-}
-
 algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
-#algList.append(OverlayMIX)  # Config.OverlayBIB
-# algList.append(OverlayBIB)  # Config.OverlayBIB
-# algList.append(OverlayFalse)  # Config.OverlayFalse
 algList.append(VXDBarrelDigitiser)
 algList.append(VXDEndcapDigitiser)
 algList.append(InnerPlanarDigiProcessor)

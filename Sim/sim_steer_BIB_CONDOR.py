@@ -5,7 +5,7 @@ from g4units import mm, GeV, MeV, m, deg
 SIM = DD4hepSimulation()
 
 # The compact XML file
-SIM.compactFile = "/nfs/dust/atlas/user/fmeloni/MuonCollider/detector-simulation/geometries/MAIA_v0/MAIA_v0.xml"
+SIM.compactFile = "/code/detector-simulation/geometries/MAIA_v0/MAIA_v0.xml"
 #SIM.compactFile = "/nfs/dust/atlas/user/fmeloni/MuonCollider/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml"
 # Lorentz boost for the crossing angle, in radian!
 SIM.crossingAngleBoost = 0.
@@ -208,7 +208,7 @@ SIM.part.saveProcesses = ['Decay']
 # Configuration for the PhysicsList
 ################################################################################
 SIM.physics.decays = False
-SIM.physics.list = "QGSP_BERT"
+SIM.physics.list = "QGSP_BERT_HP"
 
 # location of particle.tbl file containing extra particles and their lifetime information
 ##
