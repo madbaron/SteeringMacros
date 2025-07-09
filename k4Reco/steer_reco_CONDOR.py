@@ -6,6 +6,10 @@ from k4MarlinWrapper.parseConstants import *
 
 import os
 
+from k4FWCore.parseArgs import parser
+parser.add_argument("--enableBIB", action="store_true", default=False, help="Enable BIB overlay")
+parser.add_argument("--enableIP", action="store_true", default=False, help="Enable IP overlay")
+
 algList = []
 evtsvc = EventDataSvc()
 
@@ -377,8 +381,8 @@ MyEcalBarrelDigi.Parameters = {
     "inputHitCollections": ["ECalBarrelCollection"],
     "outputHitCollections": ["EcalBarrelCollectionDigi"],
     "outputRelationCollections": ["EcalBarrelRelationsSimDigi"],
-    "threshold": ["0.002"],
-    #"threshold": ["5e-05"],
+    #"threshold": ["0.002"],
+    "threshold": ["5e-05"],
     "thresholdUnit": ["GeV"],
     "timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
@@ -394,8 +398,8 @@ MyEcalBarrelReco.ProcessorType = "RealisticCaloRecoSilicon"
 MyEcalBarrelReco.Parameters = {
     "CellIDLayerString": ["layer"],
     #    "calibration_factorsMipGev": ["0.00641222630095"],
-    #"calibration_factorsMipGev": ["0.0066150"], #used for v3
-    "calibration_factorsMipGev": ["0.008015282876"],
+    "calibration_factorsMipGev": ["0.0066150"], #used for v3
+    #"calibration_factorsMipGev": ["0.00826875"],
     "calibration_layergroups": ["50"],
     "inputHitCollections": ["EcalBarrelCollectionDigi"],
     "inputRelationCollections": ["EcalBarrelRelationsSimDigi"],
@@ -412,8 +416,8 @@ MyEcalEndcapDigi.Parameters = {
     "inputHitCollections": ["ECalEndcapCollection"],
     "outputHitCollections": ["EcalEndcapCollectionDigi"],
     "outputRelationCollections": ["EcalEndcapRelationsSimDigi"],
-    "threshold": ["0.002"],
-    #"threshold": ["5e-05"],
+    #"threshold": ["0.002"],
+    "threshold": ["5e-05"],
     "thresholdUnit": ["GeV"],
     "timingCorrectForPropagation": ["1"],
     "timingCut": ["1"],
@@ -429,8 +433,8 @@ MyEcalEndcapReco.ProcessorType = "RealisticCaloRecoSilicon"
 MyEcalEndcapReco.Parameters = {
     "CellIDLayerString": ["layer"],
     #    "calibration_factorsMipGev": ["0.00641222630095"],
-    #"calibration_factorsMipGev": ["0.0066150"], #used for v3
-    "calibration_factorsMipGev": ["0.008015282876"],
+    "calibration_factorsMipGev": ["0.0066150"], #used for v3
+    #"calibration_factorsMipGev": ["0.00826875"],
     "calibration_layergroups": ["50"],
     "inputHitCollections": ["EcalEndcapCollectionDigi"],
     "inputRelationCollections": ["EcalEndcapRelationsSimDigi"],
@@ -443,7 +447,7 @@ MyHcalBarrelDigi.OutputLevel = INFO
 MyHcalBarrelDigi.ProcessorType = "RealisticCaloDigiScinPpd"
 MyHcalBarrelDigi.Parameters = {
     "CellIDLayerString": ["layer"],
-    "calibration_mip": ["0.0004925"],
+    "calibration_mip": ["0.0004725"],
     "inputHitCollections": ["HCalBarrelCollection"],
     "outputHitCollections": ["HcalBarrelCollectionDigi"],
     "outputRelationCollections": ["HcalBarrelRelationsSimDigi"],
@@ -753,10 +757,74 @@ MyDDSimpleMuonDigi.Parameters = {
     "RelationOutputCollection": ["RelationMuonHit"]
 }
 
+OverlayMIX = MarlinProcessorWrapper("OverlayMIX")
+OverlayMIX.OutputLevel = INFO
+OverlayMIX.ProcessorType = "OverlayTimingRandomMix"
+OverlayMIX.Parameters = {
+    "PathToMuPlus": ["/dataMuC/BIB10TeV/sim_mm_pruned/"],
+    "PathToMuMinus": ["/dataMuC/BIB10TeV/sim_mp_pruned/"],
+    "Collection_IntegrationTimes": [
+        "VertexBarrelCollection", "-0.18", "0.18",
+        "VertexEndcapCollection", "-0.18", "0.18",
+        "InnerTrackerBarrelCollection", "-0.36", "0.36",
+        "InnerTrackerEndcapCollection", "-0.36", "0.36",
+        "OuterTrackerBarrelCollection", "-0.36", "0.36",
+        "OuterTrackerEndcapCollection", "-0.36", "0.36",
+        "ECalBarrelCollection", "-0.5", "15.",
+        "ECalEndcapCollection", "-0.5", "15.",
+        "HCalBarrelCollection", "-0.5", "15.",
+        "HCalEndcapCollection", "-0.5", "15.",
+        "YokeBarrelCollection", "-0.5", "15.",
+        "YokeEndcapCollection", "-0.5", "15."
+    ],
+    "IntegrationTimeMin": ["-0.5"],
+    "MCParticleCollectionName": ["MCParticle"],
+    "MergeMCParticles": ["false"],
+    "NumberBackground": ["1666"]
+}
+
+
+OverlayIP = MarlinProcessorWrapper("OverlayIP")
+OverlayIP.OutputLevel = INFO
+OverlayIP.ProcessorType = "OverlayTimingGeneric"
+OverlayIP.Parameters = {
+    "AllowReusingBackgroundFiles": ["true"],
+    "BackgroundFileNames": ["/dataMuC/IPairs/sim_pairs_cycle1.slcio","/dataMuC/IPairs/sim_pairs_cycle2.slcio"],
+    "Collection_IntegrationTimes": [
+        "VertexBarrelCollection", "-0.18", "0.18",
+        "VertexEndcapCollection", "-0.18", "0.18",
+        "InnerTrackerBarrelCollection", "-0.36", "0.36",
+        "InnerTrackerEndcapCollection", "-0.36", "0.36",
+        "OuterTrackerBarrelCollection", "-0.36", "0.36",
+        "OuterTrackerEndcapCollection", "-0.36", "0.36",
+        "ECalBarrelCollection", "-0.5", "15.",
+        "ECalEndcapCollection", "-0.5", "15.",
+        "HCalBarrelCollection", "-0.5", "15.",
+        "HCalEndcapCollection", "-0.5", "15.",
+        "YokeBarrelCollection", "-0.5", "15.",
+        "YokeEndcapCollection", "-0.5", "15."
+    ],
+    "Delta_t": ["10000"],
+    "IntegrationTimeMin": ["-0.5"],
+    "MCParticleCollectionName": ["MCParticle"],
+    "MCPhysicsParticleCollectionName": ["MCPhysicsParticles_IP"],
+    "MergeMCParticles": ["false"],
+    "NBunchtrain": ["1"],
+    "NumberBackground": ["1"],
+    "PhysicsBX": ["1"],
+    "Poisson_random_NOverlay": ["false"],
+    "RandomBx": ["false"],
+    "StartBackgroundFileIndex": ["0"],
+    "TPCDriftvelocity": ["0.05"]
+}
 
 algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
+if the_args.enableBIB:
+    algList.append(OverlayMIX)
+if the_args.enableIP:
+    algList.append(OverlayIP)
 algList.append(VXDBarrelDigitiser)
 algList.append(VXDEndcapDigitiser)
 algList.append(InnerPlanarDigiProcessor)
