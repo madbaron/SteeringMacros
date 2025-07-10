@@ -63,7 +63,7 @@ else:
         ],
         "DropCollectionNames": [
             "AllTracks", "SeedTracks", "SiTracks",
-            "MCPhysicsParticles", 
+            "MCPhysicsParticles", "MCPhysicsParticles_IP",
             "EcalBarrelRelationsSimDigi", "EcalBarrelRelationsSimRec", "EcalBarrelRelationsSimSel", 
             "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  
             "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  
@@ -816,7 +816,12 @@ OverlayIP.OutputLevel = INFO
 OverlayIP.ProcessorType = "OverlayTimingGeneric"
 OverlayIP.Parameters = {
     "AllowReusingBackgroundFiles": ["true"],
-    "BackgroundFileNames": ["/dataMuC/IPairs/sim_pairs_cycle1.slcio","/dataMuC/IPairs/sim_pairs_cycle2.slcio"],
+    "BackgroundFileNames": [
+        "/dataMuC/IPairs/sim/sim_pairs_cycle1.slcio",
+        "/dataMuC/IPairs/sim/sim_pairs_cycle2.slcio",
+        "/dataMuC/IPairs/sim/sim_pairs_cycle3.slcio",
+        "/dataMuC/IPairs/sim/sim_pairs_cycle4.slcio"
+    ],
     "Collection_IntegrationTimes": [
         "VertexBarrelCollection", "-0.18", "0.18",
         "VertexEndcapCollection", "-0.18", "0.18",

@@ -21,10 +21,10 @@ SIM.hepmc3.useHepMC3 = True
 # Macro file to execute for runType 'run' or 'vis'
 SIM.macroFile = []
 # number of events to simulate, used in batch mode
-SIM.numberOfEvents = STEPSIZE
+SIM.numberOfEvents = 10
 # Outputfile from the simulation,only lcio output is supported
 # SIM.outputFile = "out/digi/sim_mod1_mumu2H2bb750.slcio"
-SIM.outputFile = OUTFILENAME
+SIM.outputFile = "output_sim.slcio"
 # SIM.outputFile = "out/sim_mod1_mcparticles.slcio"
 # Verbosity use integers from 1(most) to 7(least) verbose
 # or strings: VERBOSE, DEBUG, INFO, WARNING, ERROR, FATAL, ALWAYS
@@ -36,7 +36,7 @@ SIM.printLevel = 3
 # shell: enable interactive session
 SIM.runType = "batch"
 # Skip first N events when reading a file
-SIM.skipNEvents = EVENTSTOSKIP
+SIM.skipNEvents = 0
 # Steering file to change default behaviour
 SIM.steeringFile = None
 # FourVector of translation for the Smearing of the Vertex position: x y z t
