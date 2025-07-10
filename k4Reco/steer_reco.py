@@ -7,8 +7,12 @@ from k4MarlinWrapper.parseConstants import *
 import os
 
 from k4FWCore.parseArgs import parser
+
 parser.add_argument("--enableBIB", action="store_true", default=False, help="Enable BIB overlay")
 parser.add_argument("--enableIP", action="store_true", default=False, help="Enable IP overlay")
+parser.add_argument("--TypeEvent", type=str, default="electronGun_pT_0_50", help="Type of event to process")
+parser.add_argument("--InFileName", type=str, default="0", help="Input file name for the simulation")
+the_args = parser.parse_args()
 
 algList = []
 evtsvc = EventDataSvc()
@@ -20,7 +24,7 @@ parseConstants(CONSTANTS)
 
 read = LcioEvent()
 read.OutputLevel = INFO
-read.Files = ["/dataMuC/sim/TYPEEVENT/TYPEEVENT_sim_INFILENAME.slcio"]
+read.Files = ["/dataMuC/sim/"+the_args.TypeEvent+"/"+the_args.TypeEvent+"_sim_"+the_args.InFileName+".slcio"]
 algList.append(read)
 
 EventNumber = MarlinProcessorWrapper("EventNumber")
@@ -34,54 +38,57 @@ MyAIDAProcessor = MarlinProcessorWrapper("MyAIDAProcessor")
 MyAIDAProcessor.OutputLevel = INFO
 MyAIDAProcessor.ProcessorType = "AIDAProcessor"
 MyAIDAProcessor.Parameters = {
-    "FileName": ["lctuple_TYPEEVENT_actsseededckf_INFILENAME"],
+    "FileName": ["lctuple_"+the_args.TypeEvent+"_actsseededckf_"+the_args.InFileName],
     "FileType": ["root"]
 }
 
 Output_REC = MarlinProcessorWrapper("Output_REC")
 Output_REC.OutputLevel = INFO
 Output_REC.ProcessorType = "LCIOOutputProcessor"
-Output_REC.Parameters = {
-    "DropCollectionTypes": [],
-    "DropCollectionNames": [],
-    "FullSubsetCollections": ["SiTracks"],
-    "KeepCollectionNames": ["MCParticle_SiTracks"],
-    "LCIOOutputFile": ["/dataMuC/reco/TYPEEVENT/TYPEEVENT_reco_INFILENAME.slcio"],
-    "LCIOWriteMode": ["WRITE_NEW"]
-}
-
-'''
-    "DropCollectionTypes": [
-        "SimTrackerHit", 
-        "CalorimeterHit", "TrackerHitPlane",
-        "LCRelation"
+if not the_args.enableBIB:
+    Output_REC.Parameters = {
+        "DropCollectionTypes": [],
+        "DropCollectionNames": [],
+        "FullSubsetCollections": [],
+        "KeepCollectionNames": ["MCParticle_SiTracks_Refitted"],
+        "LCIOOutputFile": ["/dataMuC/reco/"+the_args.TypeEvent+"/"+the_args.TypeEvent+"_reco_"+the_args.InFileName+".slcio"],
+        "LCIOWriteMode": ["WRITE_NEW"]
+    }
+else:
+    Output_REC.Parameters = {
+        "DropCollectionTypes": [
+            "SimTrackerHit", 
+            "CalorimeterHit", "TrackerHitPlane",
+            "LCRelation"
         ],
-    "DropCollectionNames": [
-        "AllTracks", "SeedTracks",
-        "MCPhysicsParticles", 
-        "EcalBarrelRelationsSimDigi", "EcalBarrelRelationsSimRec", "EcalBarrelRelationsSimSel", 
-        "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  
-        "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  
-        "HcalEndcapRelationsSimDigi", "HcalEndcapRelationsSimRec", "HcalEndcapRelationsSimSel"
+        "DropCollectionNames": [
+            "AllTracks", "SeedTracks", "SiTracks",
+            "MCPhysicsParticles", 
+            "EcalBarrelRelationsSimDigi", "EcalBarrelRelationsSimRec", "EcalBarrelRelationsSimSel", 
+            "EcalEndcapRelationsSimDigi", "EcalEndcapRelationsSimRec", "EcalEndcapRelationsSimSel",  
+            "HcalBarrelRelationsSimDigi", "HcalBarrelRelationsSimRec", "HcalBarrelRelationsSimSel",  
+            "HcalEndcapRelationsSimDigi", "HcalEndcapRelationsSimRec", "HcalEndcapRelationsSimSel"
         ],
-    "FullSubsetCollections": [
-        "EcalBarrelCollectionSel", "EcalEndcapCollectionSel",
-        "HcalBarrelCollectionConed", "HcalEndcapCollectionConed",
-        "IBTrackerHitsConed", "IETrackerHitsConed",
-        "OBTrackerHitsConed", "OETrackerHitsConed", 
-        "VBTrackerHitsConed", "VETrackerHitsConed", 
-        "SiTracks"
+        "FullSubsetCollections": [
+            "EcalBarrelCollectionSel", "EcalEndcapCollectionSel",
+            "HcalBarrelCollectionConed", "HcalEndcapCollectionConed",
+            "IBTrackerHitsConed", "IETrackerHitsConed",
+            "OBTrackerHitsConed", "OETrackerHitsConed", 
+            "VBTrackerHitsConed", "VETrackerHitsConed", 
+            "SiTracks_Refitted"
         ],
-    "KeepCollectionNames": [
-        "EcalBarrelCollectionSel", "EcalEndcapCollectionSel", 
-        "HcalBarrelCollectionConed", "HcalEndcapCollectionConed",
-        "IBTrackerHitsConed", "IETrackerHitsConed",
-        "OBTrackerHitsConed", "OETrackerHitsConed", 
-        "VBTrackerHitsConed", "VETrackerHitsConed", 
-        "SiTracks",
-        "MCParticle_SiTracks"
+        "KeepCollectionNames": [
+            "EcalBarrelCollectionSel", "EcalEndcapCollectionSel", 
+            "HcalBarrelCollectionConed", "HcalEndcapCollectionConed",
+            "IBTrackerHitsConed", "IETrackerHitsConed",
+            "OBTrackerHitsConed", "OETrackerHitsConed", 
+            "VBTrackerHitsConed", "VETrackerHitsConed", 
+            "SiTracks_Refitted",
+            "MCParticle_SiTracks_Refitted"
         ],
-'''
+        "LCIOOutputFile": ["/dataMuC/recoBIB/"+the_args.TypeEvent+"/"+the_args.TypeEvent+"_reco_"+the_args.InFileName+".slcio"],
+        "LCIOWriteMode": ["WRITE_NEW"]
+    }
 
 InitDD4hep = MarlinProcessorWrapper("InitDD4hep")
 InitDD4hep.OutputLevel = INFO
@@ -345,6 +352,26 @@ TrackDeduper.Parameters = {
     "OutputTrackCollectionName": ["SiTracks"]
 }
 
+Refit = MarlinProcessorWrapper("Refit")
+Refit.OutputLevel = WARNING
+Refit.ProcessorType = "RefitFinal"
+Refit.Parameters = {
+    "DoCutsOnRedChi2Nhits": ["true"],
+    "EnergyLossOn": ["true"],
+    "InputRelationCollectionName": ["SiTrackRelations"],
+    "InputTrackCollectionName": ["SiTracks"],
+    "Max_Chi2_Incr": ["1.79769e+30"],
+    "MinClustersOnTrackAfterFit": ["3"],
+    "MultipleScatteringOn": ["true"],
+    "NHitsCuts": ["1,2", "1", "3,4", "1", "5,6", "0"],
+    "OutputRelationCollectionName": ["SiTracks_Refitted_Relation"],
+    "OutputTrackCollectionName": ["SiTracks_Refitted"],
+    "ReducedChi2Cut": ["10."],
+    "ReferencePoint": ["-1"],
+    "SmoothOn": ["false"],
+    "extrapolateForward": ["true"]
+}
+
 MyTrackSelector = MarlinProcessorWrapper("MyTrackSelector")
 MyTrackSelector.OutputLevel = INFO
 MyTrackSelector.ProcessorType = "FilterTracks"
@@ -367,8 +394,8 @@ MyTrackTruth.OutputLevel = INFO
 MyTrackTruth.ProcessorType = "TrackTruthProc"
 MyTrackTruth.Parameters = {
     "MCParticleCollection": ["MCParticle"],
-    "Particle2TrackRelationName": ["MCParticle_SiTracks"],
-    "TrackCollection": ["SiTracks"],
+    "Particle2TrackRelationName": ["MCParticle_SiTracks_Refitted"],
+    "TrackCollection": ["SiTracks_Refitted"],
     "TrackerHit2SimTrackerHitRelationName": ["VBTrackerHitsRelationsConed", "IBTrackerHitsRelationConed", "OBTrackerHitsRelationsConed", "VETrackerHitsRelationsConed", "IETrackerHitsRelationsConed", "OETrackerHitsRelationsConed"]
 }
 
@@ -527,7 +554,7 @@ MyEcalBarrelConer.Parameters = {
     "CaloRelationCollectionName": ["EcalBarrelRelationsSimRec"],
     "GoodHitCollection": ["EcalBarrelCollectionConed"],
     "GoodRelationCollection": ["EcalBarrelRelationsSimConed"],
-    "ConeWidth": ["0.2"]
+    "ConeWidth": ["0.4"]
 }
 
 MyEcalEndcapConer = MarlinProcessorWrapper("MyEcalEndcapConer")
@@ -539,7 +566,7 @@ MyEcalEndcapConer.Parameters = {
     "CaloRelationCollectionName": ["EcalEndcapRelationsSimRec"],
     "GoodHitCollection": ["EcalEndcapCollectionConed"],
     "GoodRelationCollection": ["EcalEndcapRelationsSimConed"],
-    "ConeWidth": ["0.2"]
+    "ConeWidth": ["0.4"]
 }
 
 MyHcalBarrelConer = MarlinProcessorWrapper("MyHcalBarrelConer")
@@ -551,7 +578,7 @@ MyHcalBarrelConer.Parameters = {
     "CaloRelationCollectionName": ["HcalBarrelRelationsSimRec"],
     "GoodHitCollection": ["HcalBarrelCollectionConed"],
     "GoodRelationCollection": ["HcalBarrelRelationsSimConed"],
-    "ConeWidth": ["0.2"]
+    "ConeWidth": ["0.4"]
 }
 
 MyHcalEndcapConer = MarlinProcessorWrapper("MyHcalEndcapConer")
@@ -563,7 +590,7 @@ MyHcalEndcapConer.Parameters = {
     "CaloRelationCollectionName": ["HcalEndcapRelationsSimRec"],
     "GoodHitCollection": ["HcalEndcapCollectionConed"],
     "GoodRelationCollection": ["HcalEndcapRelationsSimConed"],
-    "ConeWidth": ["0.2"]
+    "ConeWidth": ["0.4"]
 }
 
 
@@ -672,7 +699,7 @@ DDMarlinPandora.Parameters = {
     "ReachesECalNBarrelTrackerHits": ["0"],
     "ReachesECalNFtdHits": ["0"],
     "RelCaloHitCollections": ["EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimSel", "HcalBarrelRelationsSimConed", "HcalEndcapRelationsSimConed", "RelationMuonHit"],
-    "RelTrackCollections": ["SiTracks_Relation"],
+    "RelTrackCollections": ["SiTracks_Refitted_Relation"],
     "ShouldFormTrackRelationships": ["1"],
     "SoftwareCompensationEnergyDensityBins": ["0", "2.", "5.", "7.5", "9.5", "13.", "16.", "20.", "23.5", "28.", "33.", "40.", "50.", "75.", "100."],
     "SoftwareCompensationWeights": ["1.61741", "-0.00444385", "2.29683e-05", "-0.0731236", "-0.00157099", "-7.09546e-07", "0.868443", "1.0561", "-0.0238574"],
@@ -706,7 +733,7 @@ DDMarlinPandora.Parameters = {
     "StartVertexAlgorithmName": ["PandoraPFANew"],
     "StartVertexCollectionName": ["PandoraStartVertices"],
     "StripSplittingOn": ["0"],
-    "TrackCollections": ["SiTracks"],
+    "TrackCollections": ["SiTracks_Refitted"],
     "TrackCreatorName": ["DDTrackCreatorCLIC"],
     "TrackStateTolerance": ["0"],
     "TrackSystemName": ["DDKalTest"],
@@ -839,6 +866,7 @@ algList.append(OuterPlanarConer)
 algList.append(OuterEndcapConer)
 algList.append(CKFTracking)
 algList.append(TrackDeduper)
+algList.append(Refit)
 #algList.append(MyTrackSelector)
 algList.append(MyTrackTruth)
 algList.append(MyEcalBarrelDigi)
