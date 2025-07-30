@@ -772,6 +772,42 @@ ValenciaJetProcessor.Parameters = {
     "recombinationScheme": ["E_scheme"]
 }
 
+TrueMCintoRecoForJets = MarlinProcessorWrapper("TrueMCintoRecoForJets")
+TrueMCintoRecoForJets.OutputLevel = INFO
+TrueMCintoRecoForJets.ProcessorType = "TrueMCintoRecoForJets"
+TrueMCintoRecoForJets.Parameters = {
+                                      "MCParticleInputCollectionName": ["MCParticle"],
+                                      "RECOParticleCollectionName": ["MCParticlePandoraPFOs"],
+                                      "RecoParticleInputCollectionName": ["PandoraPFOs"],
+                                      "RecoParticleNoLeptonCollectionName": ["PandoraPFOsNoLeptons"],
+                                      "cosAngle_pfo_lepton": ["0.995"],
+                                      "ignoreNeutrinosInMCJets": ["true"],
+                                      "vetoBosonLeptons": ["false"],
+                                      "vetoBosonLeptonsOnReco": ["false"]
+                                      }
+
+TruthFastJetProcessor = MarlinProcessorWrapper("TruthFastJetProcessor")
+TruthFastJetProcessor.OutputLevel = INFO
+TruthFastJetProcessor.ProcessorType = "FastJetProcessor"
+TruthFastJetProcessor.Parameters = {
+                                    "algorithm": ["kt_algorithm", "0.4"],
+                                    "clusteringMode": ["Inclusive", "5"],
+                                    "jetOut": ["TruthJetOut"],
+                                    "recParticleIn": ["MCParticlePandoraPFOs"],
+                                    "recombinationScheme": ["E_scheme"]
+                                    }
+
+TruthValenciaJetProcessor = MarlinProcessorWrapper("TruthValenciaJetProcessor")
+TruthValenciaJetProcessor.OutputLevel = INFO
+TruthValenciaJetProcessor.ProcessorType = "FastJetProcessor"
+TruthValenciaJetProcessor.Parameters = {
+    "algorithm": ["ValenciaPlugin", "1.2", "1.0", "0.7"],
+    "clusteringMode": ["ExclusiveNJets", "2"],
+    "jetOut": ["TruthValenciaJetOut"],
+    "recParticleIn": ["MCParticlePandoraPFOs"],
+    "recombinationScheme": ["E_scheme"]
+}
+
 MyDDSimpleMuonDigi = MarlinProcessorWrapper("MyDDSimpleMuonDigi")
 MyDDSimpleMuonDigi.OutputLevel = INFO
 MyDDSimpleMuonDigi.ProcessorType = "DDSimpleMuonDigi"
@@ -891,7 +927,10 @@ algList.append(MyEcalEndcapSelector)
 algList.append(MyDDSimpleMuonDigi)
 algList.append(DDMarlinPandora)
 algList.append(FastJetProcessor)
-#algList.append(ValenciaJetProcessor)
+algList.append(ValenciaJetProcessor)
+algList.append(TrueMCintoRecoForJets)
+algList.append(TruthFastJetProcessor)
+algList.append(TruthValenciaJetProcessor)
 algList.append(Output_REC)
 
 ApplicationMgr(TopAlg=algList,
