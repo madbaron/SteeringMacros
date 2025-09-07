@@ -161,9 +161,9 @@
     </algorithm>
 
     <!-- After testing without these, I see many clusters per event. So it seems important. -->
-    <algorithm type = "MainFragmentRemoval"/>
+    <!--algorithm type = "MainFragmentRemoval"/>
     <algorithm type = "NeutralFragmentRemoval"/>
-    <algorithm type = "PhotonFragmentRemoval"/>
+    <algorithm type = "PhotonFragmentRemoval"/-->
 
     <algorithm type = "ClusterPreparation">
         <CandidateListNames>PrimaryClusters PhotonClusters</CandidateListNames>
