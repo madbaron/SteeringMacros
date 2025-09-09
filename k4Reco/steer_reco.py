@@ -228,7 +228,7 @@ VXDBarrelConer.Parameters = {
     "TrackerHitOutputCollections": ["VBTrackerHitsConed"],
     "TrackerSimHitOutputCollections": ["VertexBarrelCollectionConed"],
     "TrackerHitOutputRelations": ["VBTrackerHitsRelationsConed"],
-    "DeltaRCut": ["0.8"],
+    "Dist3DCut": ["30."],
     "FillHistograms": ["false"]
 }
 
@@ -243,7 +243,7 @@ VXDEndcapConer.Parameters = {
     "TrackerHitOutputCollections": ["VETrackerHitsConed"],
     "TrackerSimHitOutputCollections": ["VertexEndcapCollectionConed"],
     "TrackerHitOutputRelations": ["VETrackerHitsRelationsConed"],
-    "DeltaRCut": ["0.8"],
+    "Dist3DCut": ["30."],
     "FillHistograms": ["false"]
 }
 
@@ -258,7 +258,7 @@ InnerPlanarConer.Parameters = {
     "TrackerHitOutputCollections": ["IBTrackerHitsConed"],
     "TrackerSimHitOutputCollections": ["InnerTrackerBarrelCollectionConed"],
     "TrackerHitOutputRelations": ["IBTrackerHitsRelationsConed"],
-    "DeltaRCut": ["0.8"],
+    "Dist3DCut": ["30."],
     "FillHistograms": ["false"]
 }
 
@@ -273,7 +273,7 @@ InnerEndcapConer.Parameters = {
     "TrackerHitOutputCollections": ["IETrackerHitsConed"],
     "TrackerSimHitOutputCollections": ["InnerTrackerEndcapCollectionConed"],
     "TrackerHitOutputRelations": ["IETrackerHitsRelationsConed"],
-    "DeltaRCut": ["0.8"],
+    "Dist3DCut": ["30."],
     "FillHistograms": ["false"]
 }
 
@@ -288,7 +288,7 @@ OuterPlanarConer.Parameters = {
     "TrackerHitOutputCollections": ["OBTrackerHitsConed"],
     "TrackerSimHitOutputCollections": ["OuterTrackerBarrelCollectionConed"],
     "TrackerHitOutputRelations": ["OBTrackerHitsRelationsConed"],
-    "DeltaRCut": ["0.8"],
+    "Dist3DCut": ["30."],
     "FillHistograms": ["false"]
 }
 
@@ -303,7 +303,7 @@ OuterEndcapConer.Parameters = {
     "TrackerHitOutputCollections": ["OETrackerHitsConed"],
     "TrackerSimHitOutputCollections": ["OuterTrackerEndcapCollectionConed"],
     "TrackerHitOutputRelations": ["OETrackerHitsRelationsConed"],
-    "DeltaRCut": ["0.8"],
+    "Dist3DCut": ["30."],
     "FillHistograms": ["false"]
 }
 
