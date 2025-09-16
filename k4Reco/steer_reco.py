@@ -12,6 +12,8 @@ parser.add_argument("--enableBIB", action="store_true", default=False, help="Ena
 parser.add_argument("--enableIP", action="store_true", default=False, help="Enable IP overlay")
 parser.add_argument("--TypeEvent", type=str, default="electronGun_pT_0_50", help="Type of event to process")
 parser.add_argument("--InFileName", type=str, default="0", help="Input file name for the simulation")
+parser.add_argument("--code", type=str, default="/code", help="Top-level directory for code")
+parser.add_argument("--data", type=str, default="/dataMuC", help="Top-level directory for data")
 parser.add_argument("--skipReco", action="store_true", default=False, help="Skip reconstruction")
 the_args = parser.parse_args()
 
@@ -25,7 +27,7 @@ parseConstants(CONSTANTS)
 
 read = LcioEvent()
 read.OutputLevel = INFO
-read.Files = ["/dataMuC/sim/"+the_args.TypeEvent+"/"+the_args.TypeEvent+"_sim_"+the_args.InFileName+".slcio"]
+read.Files = [f"{the_args.data}/sim/{the_args.TypeEvent}/{the_args.TypeEvent}_sim_{the_args.InFileName}.slcio"]
 algList.append(read)
 
 EventNumber = MarlinProcessorWrapper("EventNumber")
@@ -52,7 +54,7 @@ if not the_args.enableBIB:
         "DropCollectionNames": [],
         "FullSubsetCollections": [],
         "KeepCollectionNames": ["MCParticle_SiTracks_Refitted"],
-        "LCIOOutputFile": ["/dataMuC/reco/"+the_args.TypeEvent+"/"+the_args.TypeEvent+"_reco_"+the_args.InFileName+".slcio"],
+        "LCIOOutputFile": [f"{the_args.data}/reco/{the_args.TypeEvent}/{the_args.TypeEvent}_reco_{the_args.InFileName}.slcio"],
         "LCIOWriteMode": ["WRITE_NEW"]
     }
 else:
@@ -94,7 +96,7 @@ else:
             "OuterTrackerBarrelCollectionConed", "OuterTrackerEndcapCollectionConed",
             "SiTracks_Refitted", "MCParticle_SiTracks_Refitted"
         ],
-        "LCIOOutputFile": ["/dataMuC/recoBIB/"+the_args.TypeEvent+"/"+the_args.TypeEvent+"_reco_"+the_args.InFileName+".slcio"],
+        "LCIOOutputFile": [f"{the_args.data}/recoBIB/{the_args.TypeEvent}/{the_args.TypeEvent}_reco_{the_args.InFileName}.slcio"],
         "LCIOWriteMode": ["WRITE_NEW"]
     }
 
@@ -102,8 +104,7 @@ InitDD4hep = MarlinProcessorWrapper("InitDD4hep")
 InitDD4hep.OutputLevel = INFO
 InitDD4hep.ProcessorType = "InitializeDD4hep"
 InitDD4hep.Parameters = {
-    "DD4hepXMLFile": ["/code/detector-simulation/geometries/MAIA_v0/MAIA_v0.xml"],
-    #"DD4hepXMLFile": ["/code/detector-simulation/geometries/MuColl_10TeV_v0A/MuColl_10TeV_v0A.xml"],
+    "DD4hepXMLFile": [f"{the_args.code}/detector-simulation/geometries/MAIA_v0/MAIA_v0.xml"],
     "EncodingStringParameterName": ["GlobalTrackerReadoutID"]
 }
 
@@ -315,7 +316,7 @@ CKFTracking.Parameters = {
     "CKF_NumMeasurementsCutOff": ["1"],
     "CaloFace_Radius": ["1857"],
     "CaloFace_Z": ["2307"],
-    "MatFile": ["/code/detector-simulation/geometries/MAIA_v0/MAIA_v0_material.json"],
+    "MatFile": [f"{the_args.code}/detector-simulation/geometries/MAIA_v0/MAIA_v0_material.json"],
     "PropagateBackward": ["False"],
     "DetectorSchema": ["MAIA_v0"],
     "RunCKF": ["True"],
@@ -346,7 +347,7 @@ CKFTracking.Parameters = {
                       "8", "2",
                       "17", "2",
                       "18", "2"],
-    "TGeoFile": ["/code/detector-simulation/geometries/MAIA_v0/MAIA_v0.root"],
+    "TGeoFile": [f"{the_args.code}/detector-simulation/geometries/MAIA_v0/MAIA_v0.root"],
     "TGeoDescFile": [os.environ['ACTSTRACKING_DATA']+"/MAIA_v0.json"],
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHitsConed", "IBTrackerHitsConed", "OBTrackerHitsConed", "VETrackerHitsConed", "IETrackerHitsConed", "OETrackerHitsConed"]
@@ -610,7 +611,7 @@ MyEcalBarrelSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalBarrelRelationsSimConed"],
     "GoodHitCollection": ["EcalBarrelCollectionSel"],
     "GoodRelationCollection": ["EcalBarrelRelationsSimSel"],
-    "ThresholdsFilePath": ["/code/CaloSelector/ECAL_Thresholds_10TeV.root"],
+    "ThresholdsFilePath": [f"{the_args.code}/CaloSelector/ECAL_Thresholds_10TeV.root"],
     "Nsigma": ["0"],
     "TimeWindowMin": ["-0.3"],
     "TimeWindowMax": ["0.3"],
@@ -625,7 +626,7 @@ MyEcalEndcapSelector.Parameters = {
     "CaloRelationCollectionName": ["EcalEndcapRelationsSimConed"],
     "GoodHitCollection": ["EcalEndcapCollectionSel"],
     "GoodRelationCollection": ["EcalEndcapRelationsSimSel"],
-    "ThresholdsFilePath": ["/code/CaloSelector/ECAL_Thresholds_10TeV.root"],
+    "ThresholdsFilePath": [f"{the_args.code}/CaloSelector/ECAL_Thresholds_10TeV.root"],
     "Nsigma": ["0"],
     "TimeWindowMin": ["-0.3"],
     "TimeWindowMax": ["0.3"],
@@ -641,7 +642,7 @@ MyHcalBarrelSelector.Parameters = {
     "CaloRelationCollectionName": ["HcalBarrelRelationsSimConed"],
     "GoodHitCollection": ["HcalBarrelCollectionSel"],
     "GoodRelationCollection": ["HcalBarrelRelationsSimSel"],
-    "ThresholdsFilePath": ["/code/CaloSelector/ESPPU/HCAL_Thresholds_10TeV.root"],
+    "ThresholdsFilePath": [f"{the_args.code}/CaloSelector/ESPPU/HCAL_Thresholds_10TeV.root"],
     "FlatThreshold": ["5e-05"],
     "Nsigma": ["0"],
     "TimeWindowMin": ["-0.3"],
@@ -657,7 +658,7 @@ MyHcalEndcapSelector.Parameters = {
     "CaloRelationCollectionName": ["HcalEndcapRelationsSimConed"],
     "GoodHitCollection": ["HcalEndcapCollectionSel"],
     "GoodRelationCollection": ["HcalEndcapRelationsSimSel"],
-    "ThresholdsFilePath": ["/code/CaloSelector/ESPPU/HCAL_Thresholds_10TeV.root"],
+    "ThresholdsFilePath": [f"{the_args.code}/CaloSelector/ESPPU/HCAL_Thresholds_10TeV.root"],
     "FlatThreshold": ["5e-05"],
     "Nsigma": ["0"],
     "TimeWindowMin": ["-0.3"],
@@ -736,7 +737,7 @@ DDMarlinPandora.Parameters = {
     "NEventsToSkip": ["0"],
     "NOuterSamplingLayers": ["3"],
     "PFOCollectionName": ["PandoraPFOs"],
-    "PandoraSettingsXmlFile": ["/code/SteeringMacros/PandoraSettings/PandoraSettingsDefault.xml"],
+    "PandoraSettingsXmlFile": [f"{the_args.code}/SteeringMacros/PandoraSettings/PandoraSettingsDefault.xml"],
     "ProngVertexCollections": ["ProngVertices"],
     "ReachesECalBarrelTrackerOuterDistance": ["-100"],
     "ReachesECalBarrelTrackerZMaxDistance": ["-50"],
@@ -870,8 +871,8 @@ OverlayMIX = MarlinProcessorWrapper("OverlayMIX")
 OverlayMIX.OutputLevel = INFO
 OverlayMIX.ProcessorType = "OverlayTimingRandomMix"
 OverlayMIX.Parameters = {
-    "PathToMuPlus": ["/dataMuC/BIB10TeV/sim_mm_pruned/"],
-    "PathToMuMinus": ["/dataMuC/BIB10TeV/sim_mp_pruned/"],
+    "PathToMuPlus": [f"{the_args.data}/BIB10TeV/sim_mm_pruned/"],
+    "PathToMuMinus": [f"{the_args.data}/BIB10TeV/sim_mp_pruned/"],
     "Collection_IntegrationTimes": [
         "VertexBarrelCollection", "-0.18", "0.18",
         "VertexEndcapCollection", "-0.18", "0.18",
@@ -899,10 +900,10 @@ OverlayIP.ProcessorType = "OverlayTimingGeneric"
 OverlayIP.Parameters = {
     "AllowReusingBackgroundFiles": ["true"],
     "BackgroundFileNames": [
-        "/dataMuC/IPairs/sim/sim_pairs_cycle1.slcio",
-        "/dataMuC/IPairs/sim/sim_pairs_cycle2.slcio",
-        "/dataMuC/IPairs/sim/sim_pairs_cycle3.slcio",
-        "/dataMuC/IPairs/sim/sim_pairs_cycle4.slcio"
+        f"{the_args.data}/IPairs/sim/sim_pairs_cycle1.slcio",
+        f"{the_args.data}/IPairs/sim/sim_pairs_cycle2.slcio",
+        f"{the_args.data}/IPairs/sim/sim_pairs_cycle3.slcio",
+        f"{the_args.data}/IPairs/sim/sim_pairs_cycle4.slcio"
     ],
     "Collection_IntegrationTimes": [
         "VertexBarrelCollection", "-0.18", "0.18",
