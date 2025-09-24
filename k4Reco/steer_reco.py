@@ -316,7 +316,7 @@ CKFTracking.Parameters = {
     "CKF_NumMeasurementsCutOff": ["1"],
     "CaloFace_Radius": ["1857"],
     "CaloFace_Z": ["2307"],
-    "MatFile": [f"{the_args.code}/detector-simulation/geometries/MAIA_v0/MAIA_v0_material.json"],
+    "MatFile": [os.environ['ACTSTRACKING_DATA']+"/MAIA_v0_material.json"],
     "PropagateBackward": ["False"],
     "DetectorSchema": ["MAIA_v0"],
     "RunCKF": ["True"],
@@ -347,7 +347,7 @@ CKFTracking.Parameters = {
                       "8", "2",
                       "17", "2",
                       "18", "2"],
-    "TGeoFile": [f"{the_args.code}/detector-simulation/geometries/MAIA_v0/MAIA_v0.root"],
+    "TGeoFile": [os.environ['ACTSTRACKING_DATA']+"/MAIA_v0.root"],
     "TGeoDescFile": [os.environ['ACTSTRACKING_DATA']+"/MAIA_v0.json"],
     "TrackCollectionName": ["AllTracks"],
     "TrackerHitCollectionNames": ["VBTrackerHitsConed", "IBTrackerHitsConed", "OBTrackerHitsConed", "VETrackerHitsConed", "IETrackerHitsConed", "OETrackerHitsConed"]
