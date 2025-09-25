@@ -405,7 +405,7 @@ MyTrackTruth.Parameters = {
     "MCParticleCollection": ["MCParticle"],
     "Particle2TrackRelationName": ["MCParticle_SiTracks_Refitted"],
     "TrackCollection": ["SiTracks_Refitted"],
-    "TrackerHit2SimTrackerHitRelationName": ["VBTrackerHitsRelationsConed", "IBTrackerHitsRelationConed", "OBTrackerHitsRelationsConed", "VETrackerHitsRelationsConed", "IETrackerHitsRelationsConed", "OETrackerHitsRelationsConed"]
+    "TrackerHit2SimTrackerHitRelationName": ["VBTrackerHitsRelationsConed", "IBTrackerHitsRelationsConed", "OBTrackerHitsRelationsConed", "VETrackerHitsRelationsConed", "IETrackerHitsRelationsConed", "OETrackerHitsRelationsConed"]
 }
 
 MyEcalBarrelDigi = MarlinProcessorWrapper("MyEcalBarrelDigi")
