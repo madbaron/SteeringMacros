@@ -328,6 +328,20 @@ MyDDSimpleMuonDigi.Parameters = {
     "RelationOutputCollection": ["RelationMuonHit"]
 }
 
+EcalBarrelComposition = MarlinProcessorWrapper("EcalBarrelComposition")
+EcalBarrelComposition.OutputLevel = DEBUG
+EcalBarrelComposition.ProcessorType = "CaloHitComposition"
+EcalBarrelComposition.Parameters = {
+    "CaloHitCollectionName": ["EcalBarrelCollectionRec"],
+    "CaloHitRelationCollectionName": ["EcalBarrelRelationsSimRec"],
+    "IsBarrel": ["true"],
+    "Nlayers": ["50"],
+    "Zmin": ["-10"],
+    "Zmax": ["10"],
+    "Rmin": ["50"],
+    "Rmax": ["70"]
+}
+
 algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
@@ -346,6 +360,7 @@ algList.append(MyHcalBarrelReco)
 algList.append(MyHcalEndcapDigi)
 algList.append(MyHcalEndcapReco)
 algList.append(MyDDSimpleMuonDigi)
+algList.append(EcalBarrelComposition)
 algList.append(Output_REC)
 
 ApplicationMgr(TopAlg=algList,
