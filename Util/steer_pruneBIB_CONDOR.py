@@ -3,6 +3,11 @@ from Gaudi.Configuration import *
 
 from Configurables import LcioEvent, EventDataSvc, MarlinProcessorWrapper
 from k4MarlinWrapper.parseConstants import *
+
+from k4FWCore.parseArgs import parser
+parser.add_argument("--data", type=str, default="/dataMuC", help="Top-level directory for data")
+the_args = parser.parse_args()
+
 algList = []
 evtsvc = EventDataSvc()
 
@@ -13,7 +18,7 @@ parseConstants(CONSTANTS)
 
 read = LcioEvent()
 read.OutputLevel = INFO
-read.Files = ["/dataMuC/BIB10TeV/sim_TYPEEVENT/BIB_sim_INFILENAME.slcio"]
+read.Files = [f"{the_args.data}/BIB10TeV/sim_TYPEEVENT/BIB_sim_INFILENAME.slcio"]
 algList.append(read)
 
 EventNumber = MarlinProcessorWrapper("EventNumber")
@@ -31,7 +36,7 @@ Output_LCIO.Parameters = {
     "DropCollectionTypes": [],
     "FullSubsetCollections": [],
     "KeepCollectionNames": [],
-    "LCIOOutputFile": ["/dataMuC/BIB10TeV/sim_TYPEEVENT_pruned/BIB_sim_INFILENAME.slcio"],
+    "LCIOOutputFile": [f"{the_args.data}/BIB10TeV/sim_TYPEEVENT_pruned/BIB_sim_INFILENAME.slcio"],
     "LCIOWriteMode": ["WRITE_NEW"]
 }
 
