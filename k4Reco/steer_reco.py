@@ -15,7 +15,10 @@ parser.add_argument("--InFileName", type=str, default="0", help="Input file name
 parser.add_argument("--code", type=str, default="/code", help="Top-level directory for code")
 parser.add_argument("--data", type=str, default="/dataMuC", help="Top-level directory for data")
 parser.add_argument("--skipReco", action="store_true", default=False, help="Skip reconstruction")
+parser.add_argument("--skipTrackerConing", action="store_true", default=False, help="Skip tracker coning")
 the_args = parser.parse_args()
+
+Coned = "" if the_args.skipTrackerConing else "Coned"
 
 algList = []
 evtsvc = EventDataSvc()
@@ -71,29 +74,29 @@ else:
         "FullSubsetCollections": [
             "EcalBarrelCollectionSel", "EcalEndcapCollectionSel",
             "HcalBarrelCollectionSel", "HcalEndcapCollectionSel",
-            "IBTrackerHitsConed", "IETrackerHitsConed",
-            "OBTrackerHitsConed", "OETrackerHitsConed", 
-            "VBTrackerHitsConed", "VETrackerHitsConed",
-            "VBTrackerHitsRelationsConed", "VETrackerHitsRelationsConed",
-            "IBTrackerHitsRelationsConed", "IETrackerHitsRelationsConed",
-            "OBTrackerHitsRelationsConed", "OETrackerHitsRelationsConed",
-            "VertexBarrelCollectionConed", "VertexEndcapCollectionConed",
-            "InnerTrackerBarrelCollectionConed", "InnerTrackerEndcapCollectionConed",
-            "OuterTrackerBarrelCollectionConed", "OuterTrackerEndcapCollectionConed",
+            f"IBTrackerHits{Coned}", f"IETrackerHits{Coned}",
+            f"OBTrackerHits{Coned}", f"OETrackerHits{Coned}",
+            f"VBTrackerHits{Coned}", f"VETrackerHits{Coned}",
+            f"VBTrackerHitsRelations{Coned}", f"VETrackerHitsRelations{Coned}",
+            f"IBTrackerHitsRelations{Coned}", f"IETrackerHitsRelations{Coned}",
+            f"OBTrackerHitsRelations{Coned}", f"OETrackerHitsRelations{Coned}",
+            f"VertexBarrelCollection{Coned}", f"VertexEndcapCollection{Coned}",
+            f"InnerTrackerBarrelCollection{Coned}", f"InnerTrackerEndcapCollection{Coned}",
+            f"OuterTrackerBarrelCollection{Coned}", f"OuterTrackerEndcapCollection{Coned}",
             "SiTracks_Refitted"
         ],
         "KeepCollectionNames": [
             "EcalBarrelCollectionSel", "EcalEndcapCollectionSel",
             "HcalBarrelCollectionSel", "HcalEndcapCollectionSel",
-            "IBTrackerHitsConed", "IETrackerHitsConed",
-            "OBTrackerHitsConed", "OETrackerHitsConed", 
-            "VBTrackerHitsConed", "VETrackerHitsConed",
-            "VBTrackerHitsRelationsConed", "VETrackerHitsRelationsConed",
-            "IBTrackerHitsRelationsConed", "IETrackerHitsRelationsConed",
-            "OBTrackerHitsRelationsConed", "OETrackerHitsRelationsConed",
-            "VertexBarrelCollectionConed", "VertexEndcapCollectionConed",
-            "InnerTrackerBarrelCollectionConed", "InnerTrackerEndcapCollectionConed",
-            "OuterTrackerBarrelCollectionConed", "OuterTrackerEndcapCollectionConed",
+            f"IBTrackerHits{Coned}", f"IETrackerHits{Coned}",
+            f"OBTrackerHits{Coned}", f"OETrackerHits{Coned}",
+            f"VBTrackerHits{Coned}", f"VETrackerHits{Coned}",
+            f"VBTrackerHitsRelations{Coned}", f"VETrackerHitsRelations{Coned}",
+            f"IBTrackerHitsRelations{Coned}", f"IETrackerHitsRelations{Coned}",
+            f"OBTrackerHitsRelations{Coned}", f"OETrackerHitsRelations{Coned}",
+            f"VertexBarrelCollection{Coned}", f"VertexEndcapCollection{Coned}",
+            f"InnerTrackerBarrelCollection{Coned}", f"InnerTrackerEndcapCollection{Coned}",
+            f"OuterTrackerBarrelCollection{Coned}", f"OuterTrackerEndcapCollection{Coned}",
             "SiTracks_Refitted", "MCParticle_SiTracks_Refitted"
         ],
         "LCIOOutputFile": [f"{the_args.data}/recoBIB/{the_args.TypeEvent}/{the_args.TypeEvent}_reco_{the_args.InFileName}.slcio"],
@@ -350,7 +353,7 @@ CKFTracking.Parameters = {
     "TGeoFile": [os.environ['ACTSTRACKING_DATA']+"/MAIA_v0.root"],
     "TGeoDescFile": [os.environ['ACTSTRACKING_DATA']+"/MAIA_v0.json"],
     "TrackCollectionName": ["AllTracks"],
-    "TrackerHitCollectionNames": ["VBTrackerHitsConed", "IBTrackerHitsConed", "OBTrackerHitsConed", "VETrackerHitsConed", "IETrackerHitsConed", "OETrackerHitsConed"]
+    "TrackerHitCollectionNames": [f"VBTrackerHits{Coned}", f"IBTrackerHits{Coned}", f"OBTrackerHits{Coned}", f"VETrackerHits{Coned}", f"IETrackerHits{Coned}", f"OETrackerHits{Coned}"]
 }
 
 TrackDeduper = MarlinProcessorWrapper("TrackDeduper")
@@ -405,7 +408,7 @@ MyTrackTruth.Parameters = {
     "MCParticleCollection": ["MCParticle"],
     "Particle2TrackRelationName": ["MCParticle_SiTracks_Refitted"],
     "TrackCollection": ["SiTracks_Refitted"],
-    "TrackerHit2SimTrackerHitRelationName": ["VBTrackerHitsRelationsConed", "IBTrackerHitsRelationsConed", "OBTrackerHitsRelationsConed", "VETrackerHitsRelationsConed", "IETrackerHitsRelationsConed", "OETrackerHitsRelationsConed"]
+    "TrackerHit2SimTrackerHitRelationName": [f"VBTrackerHitsRelations{Coned}", f"IBTrackerHitsRelation{Coned}", f"OBTrackerHitsRelations{Coned}", f"VETrackerHitsRelations{Coned}", f"IETrackerHitsRelations{Coned}", f"OETrackerHitsRelations{Coned}"]
 }
 
 MyEcalBarrelDigi = MarlinProcessorWrapper("MyEcalBarrelDigi")
@@ -946,12 +949,13 @@ algList.append(InnerPlanarDigiProcessor)
 algList.append(InnerEndcapPlanarDigiProcessor)
 algList.append(OuterPlanarDigiProcessor)
 algList.append(OuterEndcapPlanarDigiProcessor)
-algList.append(VXDBarrelConer)
-algList.append(VXDEndcapConer)
-algList.append(InnerPlanarConer)
-algList.append(InnerEndcapConer)
-algList.append(OuterPlanarConer)
-algList.append(OuterEndcapConer)
+if not the_args.skipTrackerConing:
+    algList.append(VXDBarrelConer)
+    algList.append(VXDEndcapConer)
+    algList.append(InnerPlanarConer)
+    algList.append(InnerEndcapConer)
+    algList.append(OuterPlanarConer)
+    algList.append(OuterEndcapConer)
 algList.append(MyEcalBarrelDigi)
 algList.append(MyEcalBarrelReco)
 algList.append(MyEcalEndcapDigi)
