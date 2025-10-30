@@ -60,8 +60,10 @@ if not the_args.enableBIB:
 else:
     Output_REC.Parameters = {
         "DropCollectionTypes": [
-            "SimTrackerHit", "SimCalorimeterHit",
-            "CalorimeterHit", "TrackerHitPlane",
+            "SimTrackerHit", 
+            "SimCalorimeterHit",
+            "CalorimeterHit", 
+            "TrackerHitPlane",
             "LCRelation"
         ],
         "DropCollectionNames": [
@@ -874,6 +876,12 @@ OverlayMIX.Parameters = {
     "PathToMuPlus": [f"{the_args.data}/BIB10TeV/sim_mm_pruned/"],
     "PathToMuMinus": [f"{the_args.data}/BIB10TeV/sim_mp_pruned/"],
     "Collection_IntegrationTimes": [
+        #"VertexBarrelCollection", "-0.5", "15",
+        #"VertexEndcapCollection", "-0.5", "15",
+        #"InnerTrackerBarrelCollection", "-0.5", "15",
+        #"InnerTrackerEndcapCollection", "-0.5", "15",
+        #"OuterTrackerBarrelCollection", "-0.5", "15",
+        #"OuterTrackerEndcapCollection", "-0.5", "15"
         "VertexBarrelCollection", "-0.18", "0.18",
         "VertexEndcapCollection", "-0.18", "0.18",
         "InnerTrackerBarrelCollection", "-0.36", "0.36",
@@ -906,6 +914,12 @@ OverlayIP.Parameters = {
         f"{the_args.data}/IPairs/sim/sim_pairs_cycle4.slcio"
     ],
     "Collection_IntegrationTimes": [
+        #"VertexBarrelCollection", "-0.5", "15",
+        #"VertexEndcapCollection", "-0.5", "15",
+        #"InnerTrackerBarrelCollection", "-0.5", "15",
+        #"InnerTrackerEndcapCollection", "-0.5", "15",
+        #"OuterTrackerBarrelCollection", "-0.5", "15",
+        #"OuterTrackerEndcapCollection", "-0.5", "15"
         "VertexBarrelCollection", "-0.18", "0.18",
         "VertexEndcapCollection", "-0.18", "0.18",
         "InnerTrackerBarrelCollection", "-0.36", "0.36",
