@@ -10,6 +10,8 @@ from k4FWCore.parseArgs import parser
 
 parser.add_argument("--TypeEvent", type=str, default="electronGun_pT_0_50", help="Type of event to process")
 parser.add_argument("--InFileName", type=str, default="0", help="Input file name for the simulation")
+parser.add_argument("--code", type=str, default="/code", help="Top-level directory for code")
+parser.add_argument("--data", type=str, default="/dataMuC", help="Top-level directory for data")
 the_args = parser.parse_args()
 
 algList = []
@@ -22,7 +24,7 @@ parseConstants(CONSTANTS)
 
 read = LcioEvent()
 read.OutputLevel = INFO
-read.Files = ["/dataMuC/BIB10TeV/sim_"+the_args.TypeEvent+"/BIB_sim_"+the_args.InFileName+".slcio"]
+read.Files = [f"{the_args.data}/sim/{the_args.TypeEvent}/{the_args.TypeEvent}_sim_{the_args.InFileName}.slcio"]
 algList.append(read)
 
 EventNumber = MarlinProcessorWrapper("EventNumber")
@@ -36,7 +38,7 @@ MyAIDAProcessor = MarlinProcessorWrapper("MyAIDAProcessor")
 MyAIDAProcessor.OutputLevel = INFO
 MyAIDAProcessor.ProcessorType = "AIDAProcessor"
 MyAIDAProcessor.Parameters = {
-    "FileName": ["lctuple_"+the_args.TypeEvent+"_BIB_"+the_args.InFileName],
+    "FileName": [f"{the_args.data}/BIB10TeV/digi/histos_BIB_{the_args.InFileName}"],
     "FileType": ["root"]
 }
 
@@ -48,7 +50,7 @@ Output_REC.Parameters = {
     "DropCollectionNames": [],
     "FullSubsetCollections": [],
     "KeepCollectionNames": [],
-    "LCIOOutputFile": ["/dataMuC/BIB10TeV/reco_"+the_args.TypeEvent+"/BIB_reco_"+the_args.InFileName+".slcio"],
+    "LCIOOutputFile": [f"{the_args.data}/recoBIB/{the_args.TypeEvent}/{the_args.TypeEvent}_reco_{the_args.InFileName}.slcio"],
     "LCIOWriteMode": ["WRITE_NEW"]
 }
 
@@ -56,8 +58,74 @@ InitDD4hep = MarlinProcessorWrapper("InitDD4hep")
 InitDD4hep.OutputLevel = INFO
 InitDD4hep.ProcessorType = "InitializeDD4hep"
 InitDD4hep.Parameters = {
-    "DD4hepXMLFile": ["/code/detector-simulation/geometries/MAIA_v0/MAIA_v0.xml"],
+    "DD4hepXMLFile": [f"{the_args.code}/detector-simulation/geometries/MAIA_v0/MAIA_v0.xml"],
     "EncodingStringParameterName": ["GlobalTrackerReadoutID"]
+}
+
+OverlayMIX = MarlinProcessorWrapper("OverlayMIX")
+OverlayMIX.OutputLevel = INFO
+OverlayMIX.ProcessorType = "OverlayTimingRandomMix"
+OverlayMIX.Parameters = {
+    "PathToMuPlus": [f"{the_args.data}/BIB10TeV/sim_mm/"],
+    "PathToMuMinus": [f"{the_args.data}/BIB10TeV/sim_mp/"],
+    "Collection_IntegrationTimes": [
+        #"VertexBarrelCollection", "-0.18", "0.18",
+        #"VertexEndcapCollection", "-0.18", "0.18",
+        #"InnerTrackerBarrelCollection", "-0.36", "0.36",
+        #"InnerTrackerEndcapCollection", "-0.36", "0.36",
+        #"OuterTrackerBarrelCollection", "-0.36", "0.36",
+        #"OuterTrackerEndcapCollection", "-0.36", "0.36",
+        "ECalBarrelCollection", "-0.5", "15.",
+        #"ECalEndcapCollection", "-0.5", "15.",
+        #"HCalBarrelCollection", "-0.5", "15.",
+        #"HCalEndcapCollection", "-0.5", "15.",
+        #"YokeBarrelCollection", "-0.5", "15.",
+        #"YokeEndcapCollection", "-0.5", "15."
+    ],
+    "IntegrationTimeMin": ["-0.5"],
+    "MCParticleCollectionName": ["MCParticle"],
+    "MergeMCParticles": ["true"],
+    "NumberBackground": ["1666"]
+}
+
+
+OverlayIP = MarlinProcessorWrapper("OverlayIP")
+OverlayIP.OutputLevel = INFO
+OverlayIP.ProcessorType = "OverlayTimingGeneric"
+OverlayIP.Parameters = {
+    "AllowReusingBackgroundFiles": ["true"],
+    "BackgroundFileNames": [
+        f"{the_args.data}/IPairs/sim/sim_pairs_cycle1.slcio",
+        f"{the_args.data}/IPairs/sim/sim_pairs_cycle2.slcio",
+        f"{the_args.data}/IPairs/sim/sim_pairs_cycle3.slcio",
+        f"{the_args.data}/IPairs/sim/sim_pairs_cycle4.slcio"
+    ],
+    "Collection_IntegrationTimes": [
+        #"VertexBarrelCollection", "-0.18", "0.18",
+        #"VertexEndcapCollection", "-0.18", "0.18",
+        #"InnerTrackerBarrelCollection", "-0.36", "0.36",
+        #"InnerTrackerEndcapCollection", "-0.36", "0.36",
+        #"OuterTrackerBarrelCollection", "-0.36", "0.36",
+        #"OuterTrackerEndcapCollection", "-0.36", "0.36",
+        "ECalBarrelCollection", "-0.5", "15.",
+        #"ECalEndcapCollection", "-0.5", "15.",
+        #"HCalBarrelCollection", "-0.5", "15.",
+        #"HCalEndcapCollection", "-0.5", "15.",
+        #"YokeBarrelCollection", "-0.5", "15.",
+        #"YokeEndcapCollection", "-0.5", "15."
+    ],
+    "Delta_t": ["10000"],
+    "IntegrationTimeMin": ["-0.5"],
+    "MCParticleCollectionName": ["MCParticle"],
+    "MCPhysicsParticleCollectionName": ["MCPhysicsParticles_IP"],
+    "MergeMCParticles": ["true"],
+    "NBunchtrain": ["1"],
+    "NumberBackground": ["1"],
+    "PhysicsBX": ["1"],
+    "Poisson_random_NOverlay": ["false"],
+    "RandomBx": ["false"],
+    "StartBackgroundFileIndex": ["0"],
+    "TPCDriftvelocity": ["0.05"]
 }
 
 VXDBarrelDigitiser = MarlinProcessorWrapper("VXDBarrelDigitiser")
@@ -336,8 +404,8 @@ EcalBarrelComposition.Parameters = {
     "CaloHitRelationCollectionName": ["EcalBarrelRelationsSimRec"],
     "IsBarrel": ["true"],
     "Nlayers": ["50"],
-    "Zmin": ["-10"],
-    "Zmax": ["10"],
+    "Zmin": ["-50"],
+    "Zmax": ["50"],
     "Rmin": ["50"],
     "Rmax": ["70"]
 }
@@ -345,21 +413,23 @@ EcalBarrelComposition.Parameters = {
 algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
-algList.append(VXDBarrelDigitiser)
-algList.append(VXDEndcapDigitiser)
-algList.append(InnerPlanarDigiProcessor)
-algList.append(InnerEndcapPlanarDigiProcessor)
-algList.append(OuterPlanarDigiProcessor)
-algList.append(OuterEndcapPlanarDigiProcessor)
+algList.append(OverlayMIX)
+algList.append(OverlayIP)
+#algList.append(VXDBarrelDigitiser)
+#algList.append(VXDEndcapDigitiser)
+#algList.append(InnerPlanarDigiProcessor)
+#algList.append(InnerEndcapPlanarDigiProcessor)
+#algList.append(OuterPlanarDigiProcessor)
+#algList.append(OuterEndcapPlanarDigiProcessor)
 algList.append(MyEcalBarrelDigi)
 algList.append(MyEcalBarrelReco)
-algList.append(MyEcalEndcapDigi)
-algList.append(MyEcalEndcapReco)
-algList.append(MyHcalBarrelDigi)
-algList.append(MyHcalBarrelReco)
-algList.append(MyHcalEndcapDigi)
-algList.append(MyHcalEndcapReco)
-algList.append(MyDDSimpleMuonDigi)
+#algList.append(MyEcalEndcapDigi)
+#algList.append(MyEcalEndcapReco)
+#algList.append(MyHcalBarrelDigi)
+#algList.append(MyHcalBarrelReco)
+#algList.append(MyHcalEndcapDigi)
+#algList.append(MyHcalEndcapReco)
+#algList.append(MyDDSimpleMuonDigi)
 algList.append(EcalBarrelComposition)
 algList.append(Output_REC)
 
