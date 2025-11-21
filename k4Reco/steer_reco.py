@@ -903,25 +903,6 @@ MyDDSimpleMuonDigi.Parameters = {
     "RelationOutputCollection": ["RelationMuonHit"]
 }
 
-muonID = MarlinProcessorWrapper("MarlinMuonID")
-muonID.OutputLevel = WARNING 
-muonID.ProcessorType = "MarlinMuonID" 
-muonID.Parameters = {
-    "InputTrackCollection": ["SelectedTracks"],
-    "InputMuonHitCollection": ["MUON"],
-    "OutputMuonCollection": ["RecoMuons"],
-    "TrackPtMin": ["1."], # [GeV]
-    "TrackD0Max": ["0.1"], # [mm]
-    "TrackZ0Max": ["4."], # [mm]
-    "MuonHitsTimeResolution": ["0.1"], # [ns]
-    "TrackTofCorrFunction": [], # string in ROOT's TFormula format (with no spaces!)
-    "DeltaRMatch": ["0.2", "0.3"], # for barrel and endcaps
-    "BarrelHitsTimeWindow": ["-0.3", "0.3"], # [ns]
-    "EndcapHitsTimeWindow": ["-0.3", "0.3"], # [ns]
-    "NHitsMatch": ["4"],
-    "FillHistograms":["false"]
-}
-
 OverlayMIX = MarlinProcessorWrapper("OverlayMIX")
 OverlayMIX.OutputLevel = INFO
 OverlayMIX.ProcessorType = "OverlayTimingRandomMix"
@@ -1051,7 +1032,6 @@ if not the_args.skipReco:
     algList.append(TrueMCintoRecoForJets)
     algList.append(TruthFastJetProcessor)
     algList.append(TruthValenciaJetProcessor)
-    algList.append(muonID)
 algList.append(Output_REC)
 
 ApplicationMgr(TopAlg=algList,
