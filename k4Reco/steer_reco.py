@@ -366,51 +366,81 @@ TrackDeduper.Parameters = {
     "OutputTrackCollectionName": ["SiTracks"]
 }
 
-Refit = MarlinProcessorWrapper("Refit")
-Refit.OutputLevel = WARNING
-Refit.ProcessorType = "RefitFinal"
-Refit.Parameters = {
-    "DoCutsOnRedChi2Nhits": ["true"],
-    "EnergyLossOn": ["true"],
-    "InputRelationCollectionName": ["SiTrackRelations"],
-    "InputTrackCollectionName": ["SiTracks"],
-    "Max_Chi2_Incr": ["1.79769e+30"],
-    "MinClustersOnTrackAfterFit": ["3"],
-    "MultipleScatteringOn": ["true"],
-    "NHitsCuts": ["1,2", "1", "3,4", "1", "5,6", "0"],
-    "OutputRelationCollectionName": ["SiTracks_Refitted_Relation"],
-    "OutputTrackCollectionName": ["SiTracks_Refitted"],
-    "ReducedChi2Cut": ["10."],
-    "ReferencePoint": ["-1"],
-    "SmoothOn": ["false"],
-    "extrapolateForward": ["true"]
-}
-
-MyTrackSelector = MarlinProcessorWrapper("MyTrackSelector")
-MyTrackSelector.OutputLevel = INFO
-MyTrackSelector.ProcessorType = "FilterTracks"
-MyTrackSelector.Parameters = {
-    "BarrelOnly": ["false"],
-    "HasCaloState": ["true"],
-    "NHitsTotal": ["5"],
-    "NHitsVertex": ["2"],
-    "NHitsInner": ["1"],
-    "NHitsOuter": ["1"],
-    "MinPt": ["0.5"],
-    "Chi2Spatial": ["0"],
-    "MaxHoles": ["5"],
-    "InputTrackCollectionName": ["SiTracks"],
-    "OutputTrackCollectionName": ["SelectedTracks"]
-}
-
 MyTrackTruth = MarlinProcessorWrapper("MyTrackTruth")
 MyTrackTruth.OutputLevel = INFO
 MyTrackTruth.ProcessorType = "TrackTruthProc"
 MyTrackTruth.Parameters = {
     "MCParticleCollection": ["MCParticle"],
-    "Particle2TrackRelationName": ["MCParticle_SiTracks_Refitted"],
-    "TrackCollection": ["SiTracks_Refitted"],
-    "TrackerHit2SimTrackerHitRelationName": [f"VBTrackerHitsRelations{Coned}", f"IBTrackerHitsRelation{Coned}", f"OBTrackerHitsRelations{Coned}", f"VETrackerHitsRelations{Coned}", f"IETrackerHitsRelations{Coned}", f"OETrackerHitsRelations{Coned}"]
+    "Particle2TrackRelationName": ["MCParticle_SiTracks"],
+    "TrackCollection": ["SiTracks"],
+    "TrackerHit2SimTrackerHitRelationName": [f"VBTrackerHitsRelations{Coned}", f"IBTrackerHitsRelations{Coned}", f"OBTrackerHitsRelations{Coned}", f"VETrackerHitsRelations{Coned}", f"IETrackerHitsRelations{Coned}", f"OETrackerHitsRelations{Coned}"]
+}
+
+MyTrackSelectorHoles = MarlinProcessorWrapper("MyTrackSelectorHoles")
+MyTrackSelectorHoles.OutputLevel = ERROR
+MyTrackSelectorHoles.ProcessorType = "FilterTracks"
+MyTrackSelectorHoles.Parameters = {
+    "InputTrackCollectionName": ["SiTracks"],
+    "OutputTrackCollectionName": ["SiTracksPreFit"],
+    "BarrelOnly": ["false"],
+    "HasCaloState": ["false"],
+    "NHitsTotal": ["8"],
+    "NHitsVertex": ["0"],
+    "NHitsInner": ["0"],
+    "NHitsOuter": ["0"],
+    "MinPt": ["0.5"],
+    "MaxChi2OverNdf": ["5"],
+    "MaxHoles": ["1"],
+    "MaxD0": ["999"],
+    "MaxZ0": ["999"]
+}
+
+Refit = MarlinProcessorWrapper("Refit")
+Refit.OutputLevel = WARNING
+Refit.ProcessorType = "RefitFinal"
+Refit.Parameters = {
+    "InputTrackCollectionName": ["SiTracksPreFit"],
+    "InputRelationCollectionName": ["SiTrackRelations"],
+    "OutputTrackCollectionName": ["SiTracks_Refitted"],
+    "OutputRelationCollectionName": ["SiTracks_Refitted_Relation"],
+    "MultipleScatteringOn": ["true"],
+    "EnergyLossOn": ["true"],
+    "SmoothOn": ["false"],
+    "Max_Chi2_Incr": ["10."],
+    "ReferencePoint": ["-1"],
+    "extrapolateForward": ["true"],
+    "MinClustersOnTrackAfterFit": ["3"],
+    "MaxOutliersAllowed": ["2"],
+    "ReducedChi2Cut": ["10."]
+}
+
+MyTrackSelector = MarlinProcessorWrapper("MyTrackSelector")
+MyTrackSelector.OutputLevel = ERROR
+MyTrackSelector.ProcessorType = "FilterTracks"
+MyTrackSelector.Parameters = {
+    "BarrelOnly": ["false"],
+    "HasCaloState": ["true"],
+    "NHitsTotal": ["8"],
+    "NHitsVertex": ["0"],
+    "NHitsInner": ["0"],
+    "NHitsOuter": ["0"],
+    "MinPt": ["0.5"],
+    "MaxChi2OverNdf": ["3"],
+    "MaxHoles": ["5"], # meaningless cut at this stage, nholes not available after refit
+    "InputTrackCollectionName": ["SiTracks_Refitted"],
+    "OutputTrackCollectionName": ["SelectedTracks"],
+    "MaxD0": ["999"],
+    "MaxZ0": ["999"]
+}
+
+MyTrackTruthSelected = MarlinProcessorWrapper("MyTrackTruthSelected")
+MyTrackTruthSelected.OutputLevel = INFO
+MyTrackTruthSelected.ProcessorType = "TrackTruthProc"
+MyTrackTruthSelected.Parameters = {
+    "MCParticleCollection": ["MCParticle"],
+    "Particle2TrackRelationName": ["MCParticle_SelectedTracks"],
+    "TrackCollection": ["SelectedTracks"],
+    "TrackerHit2SimTrackerHitRelationName": [f"VBTrackerHitsRelations{Coned}", f"IBTrackerHitsRelations{Coned}", f"OBTrackerHitsRelations{Coned}", f"VETrackerHitsRelations{Coned}", f"IETrackerHitsRelations{Coned}", f"OETrackerHitsRelations{Coned}"]
 }
 
 MyEcalBarrelDigi = MarlinProcessorWrapper("MyEcalBarrelDigi")
@@ -568,7 +598,7 @@ MyEcalBarrelConer.Parameters = {
     "CaloRelationCollectionName": ["EcalBarrelRelationsSimRec"],
     "GoodHitCollection": ["EcalBarrelCollectionConed"],
     "GoodRelationCollection": ["EcalBarrelRelationsSimConed"],
-    "ConeWidth": ["0.4"]
+    "ConeWidth": ["0.6"]
 }
 
 MyEcalEndcapConer = MarlinProcessorWrapper("MyEcalEndcapConer")
@@ -580,7 +610,7 @@ MyEcalEndcapConer.Parameters = {
     "CaloRelationCollectionName": ["EcalEndcapRelationsSimRec"],
     "GoodHitCollection": ["EcalEndcapCollectionConed"],
     "GoodRelationCollection": ["EcalEndcapRelationsSimConed"],
-    "ConeWidth": ["0.4"]
+    "ConeWidth": ["0.6"]
 }
 
 MyHcalBarrelConer = MarlinProcessorWrapper("MyHcalBarrelConer")
@@ -592,7 +622,7 @@ MyHcalBarrelConer.Parameters = {
     "CaloRelationCollectionName": ["HcalBarrelRelationsSimRec"],
     "GoodHitCollection": ["HcalBarrelCollectionConed"],
     "GoodRelationCollection": ["HcalBarrelRelationsSimConed"],
-    "ConeWidth": ["0.4"]
+    "ConeWidth": ["0.6"]
 }
 
 MyHcalEndcapConer = MarlinProcessorWrapper("MyHcalEndcapConer")
@@ -604,7 +634,7 @@ MyHcalEndcapConer.Parameters = {
     "CaloRelationCollectionName": ["HcalEndcapRelationsSimRec"],
     "GoodHitCollection": ["HcalEndcapCollectionConed"],
     "GoodRelationCollection": ["HcalEndcapRelationsSimConed"],
-    "ConeWidth": ["0.4"]
+    "ConeWidth": ["0.6"]
 }
 
 
@@ -751,7 +781,7 @@ DDMarlinPandora.Parameters = {
     "ReachesECalNBarrelTrackerHits": ["0"],
     "ReachesECalNFtdHits": ["0"],
     "RelCaloHitCollections": ["EcalBarrelRelationsSimSel", "EcalEndcapRelationsSimSel", "HcalBarrelRelationsSimSel", "HcalEndcapRelationsSimSel", "RelationMuonHit"],
-    "RelTrackCollections": ["SiTracks_Refitted_Relation"],
+    "RelTrackCollections": ["SelectedTracks_Relation"],
     "ShouldFormTrackRelationships": ["1"],
     "SoftwareCompensationEnergyDensityBins": ["0", "2.", "5.", "7.5", "9.5", "13.", "16.", "20.", "23.5", "28.", "33.", "40.", "50.", "75.", "100."],
     "SoftwareCompensationWeights": ["1.61741", "-0.00444385", "2.29683e-05", "-0.0731236", "-0.00157099", "-7.09546e-07", "0.868443", "1.0561", "-0.0238574"],
@@ -785,7 +815,7 @@ DDMarlinPandora.Parameters = {
     "StartVertexAlgorithmName": ["PandoraPFANew"],
     "StartVertexCollectionName": ["PandoraStartVertices"],
     "StripSplittingOn": ["0"],
-    "TrackCollections": ["SiTracks_Refitted"],
+    "TrackCollections": ["SelectedTracks"],
     "TrackCreatorName": ["DDTrackCreatorCLIC"],
     "TrackStateTolerance": ["0"],
     "TrackSystemName": ["DDKalTest"],
@@ -990,9 +1020,11 @@ algList.append(MyDDSimpleMuonDigi)
 if not the_args.skipReco:
     algList.append(CKFTracking)
     algList.append(TrackDeduper)
-    algList.append(Refit)
-    #algList.append(MyTrackSelector)
     algList.append(MyTrackTruth)
+    algList.append(MyTrackSelectorHoles)
+    algList.append(Refit)
+    algList.append(MyTrackSelector)
+    algList.append(MyTrackTruthSelected)
     algList.append(DDMarlinPandora)
     algList.append(FastJetProcessor)
     algList.append(ValenciaJetProcessor)
