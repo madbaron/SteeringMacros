@@ -56,7 +56,7 @@ if not the_args.enableBIB:
         "DropCollectionTypes": [],
         "DropCollectionNames": [],
         "FullSubsetCollections": [],
-        "KeepCollectionNames": ["MCParticle_SiTracks_Refitted"],
+        "KeepCollectionNames": ["MCParticle_SiTracks", "MCParticle_SelectedTracks"],
         "LCIOOutputFile": [f"{the_args.data}/reco/{the_args.TypeEvent}/{the_args.TypeEvent}_reco_{the_args.InFileName}.slcio"],
         "LCIOWriteMode": ["WRITE_NEW"]
     }
@@ -70,7 +70,7 @@ else:
             "LCRelation"
         ],
         "DropCollectionNames": [
-            "AllTracks", "SeedTracks", "SiTracks",
+            "AllTracks", "SeedTracks", "SiTracks_Refitted",
             "MCPhysicsParticles", "MCPhysicsParticles_IP"
         ],
         "FullSubsetCollections": [
@@ -85,7 +85,7 @@ else:
             f"VertexBarrelCollection{Coned}", f"VertexEndcapCollection{Coned}",
             f"InnerTrackerBarrelCollection{Coned}", f"InnerTrackerEndcapCollection{Coned}",
             f"OuterTrackerBarrelCollection{Coned}", f"OuterTrackerEndcapCollection{Coned}",
-            "SiTracks_Refitted"
+            "SiTracks", "SelectedTracks"
         ],
         "KeepCollectionNames": [
             "EcalBarrelCollectionSel", "EcalEndcapCollectionSel",
@@ -99,7 +99,8 @@ else:
             f"VertexBarrelCollection{Coned}", f"VertexEndcapCollection{Coned}",
             f"InnerTrackerBarrelCollection{Coned}", f"InnerTrackerEndcapCollection{Coned}",
             f"OuterTrackerBarrelCollection{Coned}", f"OuterTrackerEndcapCollection{Coned}",
-            "SiTracks_Refitted", "MCParticle_SiTracks_Refitted"
+            "SiTracks", "SelectedTracks",
+            "MCParticle_SiTracks", "MCParticle_SelectedTracks"
         ],
         "LCIOOutputFile": [f"{the_args.data}/recoBIB/{the_args.TypeEvent}/{the_args.TypeEvent}_reco_{the_args.InFileName}.slcio"],
         "LCIOWriteMode": ["WRITE_NEW"]
@@ -109,7 +110,7 @@ InitDD4hep = MarlinProcessorWrapper("InitDD4hep")
 InitDD4hep.OutputLevel = INFO
 InitDD4hep.ProcessorType = "InitializeDD4hep"
 InitDD4hep.Parameters = {
-    "DD4hepXMLFile": [f"{the_args.code}/detector-simulation/geometries/MAIA_v0/MAIA_v0.xml"],
+    "DD4hepXMLFile": [os.environ['k4geo_DIR']+"/MuColl/MAIA/compact/MAIA_v0/MAIA_v0.xml"],
     "EncodingStringParameterName": ["GlobalTrackerReadoutID"]
 }
 
@@ -902,6 +903,25 @@ MyDDSimpleMuonDigi.Parameters = {
     "RelationOutputCollection": ["RelationMuonHit"]
 }
 
+muonID = MarlinProcessorWrapper("MarlinMuonID")
+muonID.OutputLevel = WARNING 
+muonID.ProcessorType = "MarlinMuonID" 
+muonID.Parameters = {
+    "InputTrackCollection": ["SelectedTracks"],
+    "InputMuonHitCollection": ["MUON"],
+    "OutputMuonCollection": ["RecoMuons"],
+    "TrackPtMin": ["1."], # [GeV]
+    "TrackD0Max": ["0.1"], # [mm]
+    "TrackZ0Max": ["4."], # [mm]
+    "MuonHitsTimeResolution": ["0.1"], # [ns]
+    "TrackTofCorrFunction": [], # string in ROOT's TFormula format (with no spaces!)
+    "DeltaRMatch": ["0.2", "0.3"], # for barrel and endcaps
+    "BarrelHitsTimeWindow": ["-0.3", "0.3"], # [ns]
+    "EndcapHitsTimeWindow": ["-0.3", "0.3"], # [ns]
+    "NHitsMatch": ["4"],
+    "FillHistograms":["false"]
+}
+
 OverlayMIX = MarlinProcessorWrapper("OverlayMIX")
 OverlayMIX.OutputLevel = INFO
 OverlayMIX.ProcessorType = "OverlayTimingRandomMix"
@@ -1031,6 +1051,7 @@ if not the_args.skipReco:
     algList.append(TrueMCintoRecoForJets)
     algList.append(TruthFastJetProcessor)
     algList.append(TruthValenciaJetProcessor)
+    algList.append(muonID)
 algList.append(Output_REC)
 
 ApplicationMgr(TopAlg=algList,
