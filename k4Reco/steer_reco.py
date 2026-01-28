@@ -15,6 +15,7 @@ parser.add_argument("--InFileName", type=str, default="0", help="Input file name
 parser.add_argument("--code", type=str, default="/code", help="Top-level directory for code")
 parser.add_argument("--data", type=str, default="/dataMuC", help="Top-level directory for data")
 parser.add_argument("--compressionLevel", type=int, default=None, help="Set compression level of output")
+parser.add_argument("--overlayMixNumberBackground", type=int, default=1666, help="Number of background files for OverlayMix")
 parser.add_argument("--skipReco", action="store_true", default=False, help="Skip reconstruction")
 parser.add_argument("--skipTrackerConing", action="store_true", default=False, help="Skip tracker coning")
 the_args = parser.parse_args()
@@ -935,7 +936,7 @@ OverlayMIX.Parameters = {
     "IntegrationTimeMin": ["-0.5"],
     "MCParticleCollectionName": ["MCParticle"],
     "MergeMCParticles": ["false"],
-    "NumberBackground": ["1666"]
+    "NumberBackground": [str(the_args.overlayMixNumberBackground)]
 }
 
 
