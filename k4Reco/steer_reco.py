@@ -11,6 +11,7 @@ from k4FWCore.parseArgs import parser
 
 parser.add_argument("--enableBIB", action="store_true", default=False, help="Enable BIB overlay")
 parser.add_argument("--enableIP", action="store_true", default=False, help="Enable IP overlay")
+parser.add_argument("--enableTruthLinker", action="store_true", default=False, help="Enable MCTruthLinker")
 parser.add_argument("--TypeEvent", type=str, default="electronGun_pT_0_50", help="Type of event to process")
 parser.add_argument("--InFileName", type=str, default="0", help="Input file name for the simulation")
 parser.add_argument("--code", type=str, default="/code", help="Top-level directory for code")
@@ -951,6 +952,96 @@ MyDDSimpleMuonDigi.Parameters = {
     "RelationOutputCollection": ["RelationMuonHit"]
 }
 
+RecoMCTruthLinker = MarlinProcessorWrapper("RecoMCTruthLinker")
+RecoMCTruthLinker.OutputLevel = INFO
+RecoMCTruthLinker.ProcessorType = "RecoMCTruthLinker"
+RecoMCTruthLinker.Parameters = {
+    "BremsstrahlungEnergyCut": ["1"],
+    "CalohitMCTruthLinkName": ["CalohitMCTruthLink"],
+    "ClusterCollection": ["PandoraClusters"],
+    "ClusterMCTruthLinkName": ["ClusterMCTruthLink"],
+    "FullRecoRelation": ["false"],
+    "InvertedNonDestructiveInteractionLogic": ["false"],
+    "KeepDaughtersPDG": ["22", "111", "310", "13", "211", "321", "3120"],
+    "MCParticleCollection": ["MCPhysicsParticles"],
+    "MCParticlesSkimmedName": ["MCParticlesSkimmed"],
+    "MCTruthClusterLinkName": [],
+    "MCTruthRecoLinkName": [],
+    "MCTruthTrackLinkName": [],
+    "RecoMCTruthLinkName": ["RecoMCTruthLink"],
+    "RecoParticleCollection": ["MergedRecoParticles"],
+    "SaveBremsstrahlungPhotons": ["false"],
+    "SimCaloHitCollections": [
+        "ECalBarrelCollection",
+        "ECalEndcapCollection",
+        "ECalPlugCollection",
+        "HCalBarrelCollection",
+        "HCalEndcapCollection",
+        "HCalRingCollection",
+        "YokeBarrelCollection",
+        "YokeEndcapCollection",
+        "LumiCalCollection",
+        "BeamCalCollection",
+    ],
+    "SimCalorimeterHitRelationNames": [
+        "EcalBarrelRelationsSimDigi",
+        "EcalEndcapRelationsSimDigi",
+        "HcalBarrelRelationsSimDigi",
+        "HcalEndcapRelationsSimDigi",
+    ],
+    "SimTrackerHitCollections": [
+        f"VertexBarrelCollection{Coned}",
+        f"VertexEndcapCollection{Coned}",
+        f"InnerTrackerBarrelCollection{Coned}",
+        f"OuterTrackerBarrelCollection{Coned}",
+        f"InnerTrackerEndcapCollection{Coned}",
+        f"OuterTrackerEndcapCollection{Coned}",
+    ],
+    "TrackCollection": ["SiTracks_Refitted"],
+    "TrackMCTruthLinkName": ["SiTracksMCTruthLink"],
+    "TrackerHitsRelInputCollections": [
+        f"VBTrackerHitsRelations{Coned}",
+        f"VETrackerHitsRelations{Coned}",
+        f"IBTrackerHitsRelations{Coned}",
+        f"IETrackerHitsRelations{Coned}",
+        f"OBTrackerHitsRelations{Coned}",
+        f"OETrackerHitsRelations{Coned}",
+    ],
+    "UseTrackerHitRelations": ["true"],
+    "UsingParticleGun": ["false"],
+    "daughtersECutMeV": ["10"],
+}
+
+OverlayFalse = MarlinProcessorWrapper("OverlayFalse")
+OverlayFalse.OutputLevel = INFO
+OverlayFalse.ProcessorType = "OverlayTimingGeneric"
+OverlayFalse.Parameters = {
+    "BackgroundFileNames": [],
+    "Collection_IntegrationTimes": [
+        #"VertexBarrelCollection", "-0.5", "15",
+        #"VertexEndcapCollection", "-0.5", "15",
+        #"InnerTrackerBarrelCollection", "-0.5", "15",
+        #"InnerTrackerEndcapCollection", "-0.5", "15",
+        #"OuterTrackerBarrelCollection", "-0.5", "15",
+        #"OuterTrackerEndcapCollection", "-0.5", "15"
+        "VertexBarrelCollection", "-0.18", "0.18",
+        "VertexEndcapCollection", "-0.18", "0.18",
+        "InnerTrackerBarrelCollection", "-0.36", "0.36",
+        "InnerTrackerEndcapCollection", "-0.36", "0.36",
+        "OuterTrackerBarrelCollection", "-0.36", "0.36",
+        "OuterTrackerEndcapCollection", "-0.36", "0.36",
+        "ECalBarrelCollection", "-0.5", "15.",
+        "ECalEndcapCollection", "-0.5", "15.",
+        "HCalBarrelCollection", "-0.5", "15.",
+        "HCalEndcapCollection", "-0.5", "15.",
+        "YokeBarrelCollection", "-0.5", "15.",
+        "YokeEndcapCollection", "-0.5", "15."
+    ],
+    "MCParticleCollectionName": ["MCParticle"],
+    "MCPhysicsParticleCollectionName": ["MCPhysicsParticles"],
+    "NumberBackground": ["0."],
+}
+
 OverlayMIX = MarlinProcessorWrapper("OverlayMIX")
 OverlayMIX.OutputLevel = INFO
 OverlayMIX.ProcessorType = "OverlayTimingRandomMix"
@@ -1032,6 +1123,8 @@ OverlayIP.Parameters = {
 algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
+if the_args.enableTruthLinker:
+    algList.append(OverlayFalse)
 if the_args.enableBIB:
     algList.append(OverlayMIX)
 if the_args.enableIP:
@@ -1080,6 +1173,8 @@ if not the_args.skipReco:
     algList.append(TrueMCintoRecoForJets)
     algList.append(TruthFastJetProcessor)
     algList.append(TruthValenciaJetProcessor)
+    if the_args.enableTruthLinker:
+        algList.append(RecoMCTruthLinker)
 algList.append(Output_REC)
 
 ApplicationMgr(TopAlg=algList,
